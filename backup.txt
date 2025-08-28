@@ -1,0 +1,22 @@
+<View style={styles.cardContainer} onPress={handleWhiteBoundaryClick}>
+            <View style={styles.universityHeader}>
+              <Text style={styles.universityTitle}>University Name</Text>
+              {/* University Bookmark Icon next to the title */}
+              {/* <TouchableOpacity onPress={toggleBookmarkUniversity}>
+                <Image 
+                  source={bookmarkIconPath} 
+                  style={[styles.bookmarkIcon, isBookmarkedUniversity && styles.bookmarkIconSelected]} 
+                />
+              </TouchableOpacity> */}
+            </View>
+
+            {/* <Text style={styles.detailsLabel}>Language: <Text style={styles.detailsValue}>{language}</Text></Text>
+            <Text style={styles.detailsLabel}>Beginning: <Text style={styles.detailsValue}>{beginning}</Text></Text>
+            <Text style={styles.detailsLabel}>Duration: <Text style={styles.detailsValue}>{duration}</Text></Text>
+            <Text style={styles.detailsLabel}>Tuition fees per semester: <Text style={styles.detailsValue}>{tuitionFees}</Text></Text> */}
+
+            {/* More clickable link */}
+            <TouchableOpacity onPress={handleMoreClick}>
+              <Text style={styles.moreLink}>{"\u2192"} More</Text>  {/* Right arrow with text "More" */}
+            </TouchableOpacity>
+          </View>
