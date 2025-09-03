@@ -7,6 +7,7 @@ import { useContext, useEffect, useState } from 'react';
 import { addDoc, collection, getDoc, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { AuthContext, useRole } from '../../auth.context';
+import { FontAwesome5 } from '@expo/vector-icons';
 
 function SignIn({ navigation }) {
 
@@ -75,7 +76,7 @@ function SignIn({ navigation }) {
             secureTextEntry
           />
 
-          <View>
+          <View style={{ alignItems: 'flex-end' }}>
             <TouchableOpacity onPress={() => navigation.navigate('forgot')}>
               <Text style={styles.forgotPassword}>Forgot Password?</Text>
             </TouchableOpacity>
@@ -88,13 +89,23 @@ function SignIn({ navigation }) {
             <Text style={styles.buttonText}>Sign in</Text>
           </TouchableOpacity>
 
-          <Text style={styles.footerText}>Don't Have an Account?</Text>
+          <Text style={styles.or}>- or -</Text>
+
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.replace('SignUp')}
+            onPress={handlegoogleauth}
           >
-            <Text style={styles.buttonText}>Sign Up</Text>
+            <FontAwesome5 name="google" size={24} color="#203a43" brand />
+            <Text style={styles.buttonText}>Sign in with Google</Text>
           </TouchableOpacity>
+
+          <TouchableOpacity onPress={() => navigation.replace('SignUp')}>
+            <Text style={styles.footerText}>
+              Don't Have an Account?
+              <Text style={styles.click}> Sign Up</Text>
+            </Text>
+          </TouchableOpacity>
+
 
 
           <TouchableOpacity
@@ -102,13 +113,6 @@ function SignIn({ navigation }) {
             onPress={() => navigation.navigate('HomeScreen')}
           >
             <Text style={styles.buttonText}>Sign in</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handlegoogleauth}
-          >
-            <Text style={styles.buttonText}>Sign in with Google</Text>
           </TouchableOpacity>
 
         </View>
@@ -123,7 +127,7 @@ export default SignIn;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2C3E50',       // dark navy background
+    backgroundColor: '#2C3E50',
     alignItems: 'center',
     paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 20 : 80,
   },
@@ -154,19 +158,26 @@ const styles = StyleSheet.create({
     paddingHorizontal: 12,
   },
   button: {
-    backgroundColor: '#FFFFFF',
-    borderRadius: 8,
-    paddingVertical: 10,
-    paddingHorizontal: 20,
-    alignSelf: 'center',
-    marginTop: 25,
-    minWidth: 120,
+    backgroundColor: '#fff',
+    borderRadius: 12,
+    paddingVertical: 15,
+    marginTop: 20,
+    alignItems: 'center',
   },
   buttonText: {
     fontSize: 16,
     fontWeight: '600',
     color: '#000000',
     textAlign: 'center',
+  },
+  or: { 
+    color: '#fff', 
+    textAlign: 'center', 
+    marginVertical: 8 
+  },
+  click: {
+    color: '#8080FF',
+    fontSize: 18,
   },
   footerText: {
     fontSize: 14,

@@ -1,4 +1,3 @@
-
 import {  DrawerActions, useNavigation } from '@react-navigation/native';
 import { View, Text,StyleSheet, TouchableOpacity,Image, Pressable } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
@@ -10,7 +9,6 @@ import { addDoc, collection, getDoc, getDocs, query, where } from 'firebase/fire
 
 import { db } from '../../firebase.config';
 import { AuthContext, useAuth, useRole } from '../../auth.context';
-
 
 const HomeScreen = () => {
 
@@ -25,7 +23,6 @@ const HomeScreen = () => {
   useEffect(() => {
     setImage(profile?.photo)
   },[user])
-
 
   return(
     <View style={styles.container}>
@@ -45,44 +42,77 @@ const HomeScreen = () => {
         </View>
       </View>
 
+      <Text style={styles.greeting}><Text style={styles.wave}>👋</Text> Hi Najibur,</Text>
+      <Text style={styles.subtitle}>Here's your dashboard for today</Text>
 
-      {/* Navigation Buttons */}
+
+    
+
+
+
+      {/* Navigation Buttons styled as cards */}
       <TouchableOpacity
-        style={styles.button}
+        style={styles.card}
         onPress={() => navigation.navigate('UniversityList')}
       >
-        <Text style={styles.buttonText}>University List</Text>
+        <View style={styles.iconUniversity}>
+          <Ionicons name="school" size={32} color="#2e6bf6" />
+        </View>
+        <View>
+          <Text style={styles.cardTitle}>University List</Text>
+          <Text style={styles.cardSubtitle}>Bachelor's & master's programs</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={24} color="#babec6" style={styles.chevron} />
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={styles.card}
         onPress={() => navigation.navigate('ManageAccounts')}
       >
-        <Text style={styles.buttonText}>Manage Accounts</Text>
+        <View style={styles.iconManage}>
+          <Ionicons name="person" size={32} color="#4CAF50" />
+        </View>
+        <View>
+          <Text style={styles.cardTitle}>Manage Accounts</Text>
+          <Text style={styles.cardSubtitle}>Add or update user roles</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={24} color="#babec6" style={styles.chevron} />
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={styles.card}
         onPress={() => navigation.navigate('CoustomSend')}
       >
-        <Text style={styles.buttonText}>Send Notification</Text>
+        <View style={styles.iconNotification}>
+          <Ionicons name="notifications" size={32} color="#FFB946" />
+        </View>
+        <View>
+          <Text style={styles.cardTitle}>Send Notification</Text>
+          <Text style={styles.cardSubtitle}>Reach all users instantly</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={24} color="#babec6" style={styles.chevron} />
       </TouchableOpacity>
 
       <TouchableOpacity
-        style={styles.button}
+        style={styles.card}
         onPress={() => navigation.navigate('Seminars')}
       >
-        <Text style={styles.buttonText}>Seminars</Text>
+        <View style={styles.iconSeminar}>
+          <Ionicons name="calendar" size={32} color="#886cff" />
+        </View>
+        <View>
+          <Text style={styles.cardTitle}>Seminars</Text>
+          <Text style={styles.cardSubtitle}>View and manage events</Text>
+        </View>
+        <Ionicons name="chevron-forward" size={24} color="#babec6" style={styles.chevron} />
       </TouchableOpacity>
-
-
 
       {/* Bottom Icon */}
       <View style={styles.bottomIcon}>
         <TouchableOpacity
-                onPress={() => navigation.navigate('Community')} // Leave blank for now
+                onPress={() => navigation.navigate('Community')}
                 style={styles.communityIcon}
-              >
+                >
                 <Image source={communityIcon} style={styles.communityImage} />
               </TouchableOpacity>
       </View>
@@ -94,21 +124,34 @@ const styles = StyleSheet.create({
     container: {
     flex: 1,
     backgroundColor: '#2c3e50',
-    padding: 20,
+    padding: 24,
     justifyContent: 'flex-start',
   },
+  greeting: {
+    fontSize: 28,
+    fontWeight: '700',
+    color: '#1e1e1e',
+    marginBottom: 2,
+  },
+  wave: {
+    fontSize: 28,
+  },
+  subtitle: {
+    fontSize: 17,
+    color: '#6c757d',
+    marginBottom: 24,
+  },
   header: {
-    marginTop: 30,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 76,
+    marginTop: 30,
+    marginBottom: 60,
   },
   title: {
-    color: '#fff',
+    color: '#1e1e1e',
     fontSize: 28,
     fontWeight: 'bold',
-    
   },
   icons: {
     flexDirection: 'row',
@@ -119,18 +162,44 @@ const styles = StyleSheet.create({
     width: 40,
     height: 40,
     marginLeft: 10,
-    borderRadius: 40
+    borderRadius: 20,
   },
-  button: {
-    backgroundColor: '#ecf0f1',
-    paddingVertical: 12,
-    borderRadius: 5,
-    marginBottom: 15,
+  card: {
+    backgroundColor: '#fff',
+    borderRadius: 16,
+    flexDirection: 'row',
     alignItems: 'center',
+    padding: 20,
+    marginBottom: 18,
+    shadowColor: "#171717",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05,
+    shadowRadius: 6,
   },
-  buttonText: {
-    fontWeight: 'bold',
-    fontSize: 16,
+  iconUniversity: {
+    marginRight: 20,
+  },
+  iconManage: {
+    marginRight: 20,
+  },
+  iconNotification: {
+    marginRight: 20,
+  },
+  iconSeminar: {
+    marginRight: 20,
+  },
+  cardTitle: {
+    fontSize: 19,
+    fontWeight: '700',
+    color: '#1e293b',
+  },
+  cardSubtitle: {
+    fontSize: 15,
+    color: '#616e87',
+    marginTop: 3,
+  },
+  chevron: {
+    marginLeft: 'auto',
   },
   bottomIcon: {
     position: 'absolute',
@@ -142,7 +211,11 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 25,
   },
-  
+  communityImage: {
+    width: 60,
+    height: 60,
+    borderRadius: 25,
+  },
 });
 
 export default HomeScreen;

@@ -30,6 +30,7 @@ import Community from './Screen/User/Community.js';
 import AdminRolesScreen from './Screen/Admin/AdminRolesScreen';
 import BachelorList from './Screen/Admin/BachelorList';
 import MastersList from './Screen/Admin/MastersList';
+import phdList from './Screen/Admin/phdList.js';
 import AddAdmin from './Screen/Admin/AddAdmin';
 import AddSeminar from './Screen/Admin/AddSeminar'
 import RegisteredList from './Screen/Admin/RegisteredList'
@@ -73,6 +74,7 @@ function DrawerRoutes() {
       <Drawer.Screen name="Home" component={Home} />
       <Drawer.Screen name="BachelorList" component={BachelorList} />
       <Drawer.Screen name="MastersList" component={MastersList} />
+      <Drawer.Screen name="phdList" component={phdList} />
       <Drawer.Screen name="Seminars" component={Seminars} />
       <Drawer.Screen name="stack" component={AppNavigator} />
       <Drawer.Screen name="UniversityList" component={UniversityList} />
@@ -157,6 +159,7 @@ export default function AppNavigator() {
       <Stack.Screen name="AdminRoles" component={AdminRolesScreen} />
       <Stack.Screen name="BachelorList" component={BachelorList} />
       <Stack.Screen name="MastersList" component={MastersList} />
+      <Stack.Screen name="phdList" component={phdList} />
       <Stack.Screen name="AddAdmin" component={AddAdmin} />
       <Stack.Screen name="AddSeminar" component={AddSeminar} />
       <Stack.Screen name="RegisterList" component={RegisteredList} />

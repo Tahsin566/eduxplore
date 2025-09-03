@@ -11,6 +11,7 @@ function SignUp({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+   const [termsAccepted, setTermsAccepted] = useState(false);
 
   const handleSignUp = async() => {
 
@@ -43,11 +44,11 @@ function SignUp({ navigation }) {
       >
         <Text style={styles.backButtonText}>←</Text>
       </TouchableOpacity>
-      <Text style={styles.header}>Sign up</Text>
-
+      <Text style={styles.header}>REGISTER</Text>
+      <Text style={styles.subtitle}>IT'S COMPLETELY FREE</Text>
       <View style={styles.form}>
 
-        <Text style={styles.label}>User Name</Text>
+        <Text style={styles.label}>NAME</Text>
         <TextInput
           style={styles.input}
           onChangeText={setUsername}
@@ -55,7 +56,7 @@ function SignUp({ navigation }) {
           placeholderTextColor="#999"
         />
 
-        <Text style={styles.label}>Email Address</Text>
+        <Text style={styles.label}>EMAIL</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter your email"
@@ -65,7 +66,7 @@ function SignUp({ navigation }) {
           autoCapitalize="none"
         />
 
-        <Text style={styles.label}>Password</Text>
+        <Text style={styles.label}>PASSWORD</Text>
         <TextInput
           style={styles.input}
           placeholder="Enter your password"
@@ -74,7 +75,7 @@ function SignUp({ navigation }) {
           onChangeText={setPassword}
         />
 
-        <Text style={styles.label}>Confirm Password</Text>
+        <Text style={styles.label}>CONFIRM PASSWORD</Text>
         <TextInput
           style={styles.input}
           placeholder="Confirm your password"
@@ -83,21 +84,28 @@ function SignUp({ navigation }) {
           onChangeText={setConfirmPassword}
         />
       
+      <View style={styles.checkbox}>
+        <Text style={styles.checkboxLabel}>
+          I accept the Terms of Service and Privacy Policy
+        </Text>
+      </View>
 
         <TouchableOpacity
           style={styles.button}
           onPress={handleSignUp}
           
           >
-          <Text style={styles.buttonText}>Sign Up</Text>
+          <Text style={styles.buttonText}>CREATE ACCOUNT</Text>
         </TouchableOpacity>
 
-        <Text style={styles.footerText}>Already have an account?</Text>
+        
         <TouchableOpacity
-          style={styles.button}
           onPress={() => navigation.navigate('SignIn')}
           >
-          <Text style={styles.buttonText}>Sign In</Text>
+          <Text style={styles.footerText}>Already have an account?
+              <Text style={styles.click}>  Sign In </Text>
+          </Text>
+          
         </TouchableOpacity>
       </View>
           </View>
@@ -110,7 +118,7 @@ export default SignUp;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2C3E50', // Dark blue background
+    backgroundColor: '#2C3E50',
     alignItems: 'center',
     paddingTop: 50,
   },
@@ -120,14 +128,18 @@ const styles = StyleSheet.create({
     top: 40,
   },
   backButtonText: {
-    fontSize: 24,
+    fontSize: 34,
     color: '#FFFFFF',
+    fontWeight: 'bold'
   },
   header: {
     fontSize: 24,
     color: '#FFFFFF',
     fontWeight: '600',
     textAlign: 'center',
+  },
+  subtitle: {
+    color: '#79e9e5',
   },
   form: {
     width: '80%',
@@ -145,11 +157,27 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 12,
   },
+    checkbox: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 24,
+  },
+  checkboxLabel: {
+    color: '#7fa3b9',
+    marginLeft: 8,
+    fontSize: 12,
+    flex: 1,
+  },
+  condition: {
+    color: '#fff',
+    fontSize: 16,
+    marginTop: 25,
+  },
   button: {
-    backgroundColor: '#FFFFFF',
+    backgroundColor: '#008080',
     borderRadius: 8,
     paddingVertical: 10,
-    paddingHorizontal: 20,
+    paddingHorizontal: 80,
     alignSelf: 'center',
     marginTop: 25,
     minWidth: 120,
@@ -166,4 +194,8 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 30,
   },
+  click: {
+    color: '#8080FF',
+    fontSize: 18,
+  }
 })

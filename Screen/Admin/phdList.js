@@ -1,36 +1,34 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useEffect, useState } from 'react';
 import { collection, getDocs } from 'firebase/firestore';
 import { db } from '../../firebase.config';
+import { useEffect, useState } from 'react';
 import { useRole } from '../../auth.context';
 
 const data = ['University 1', 'University 2', 'University 3', 'University 4'];
 
-export default function BachelorList() {
+export default function phdList() {
   const navigation = useNavigation();
+
+  const [universities, setUniversities] = useState([]);
 
   const {role} = useRole()
 
-  const [universities, setUniversities] = useState([]);
+  const handlePress = (item) => {
+    navigation.navigate("UniversityOverview", { universityName: item,path : 'MastersList' });
+  };
 
   const getUniversities = async () => {
     try {
       const universitiesRef = collection(db, 'university');
       const querySnapshot = await getDocs(universitiesRef);
-      const universitiesData = querySnapshot.docs.map((doc) => { return {...doc.data(), id: doc.id}});
+      const universitiesData = querySnapshot.docs.map((doc) =>{ return {...doc.data(), id: doc.id}});
       setUniversities(universitiesData);
     } catch (error) {
       console.error('Error fetching universities:', error);
     }
   };
-
-  const handlePress = (item) => {
-    navigation.navigate("UniversityOverview", { universityName: item,path : 'BachelorList' });
-  };
-
-  
 
   useEffect(() => {
     getUniversities();
@@ -39,24 +37,19 @@ export default function BachelorList() {
   return (
     <View style={styles.container}>
       {/* Back Button & Title */}
-      <View style={styles.edit}><Text style={styles.title}>Bachelor List</Text></View>
+      <View style={styles.edit}><Text style={styles.title}>PHD List</Text></View>
         <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
           <Ionicons name="arrow-back" size={24} color="#fff" />
         </TouchableOpacity>
-   
-    <View style={styles.space}><Text></Text></View>
-
+        <View style={styles.space}><Text></Text></View>
       {/* List */}
       <View style={styles.listContainer}>
         {universities.map((item, index) => (
-          <View key={index} style={styles.listItem}>
-
           <TouchableOpacity key={index} onPress={() => handlePress(item)}>
             <Text style={styles.listItem}>
-              {item?.name}
+              {item.name}
             </Text>
           </TouchableOpacity>
-          </View>
         ))}
       </View>
 
@@ -89,18 +82,18 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
   },
-  space: {
+    space: {
     marginTop: '30',
   },
   listContainer: {
-    borderRadius: 5,
     gap: 10,
+    borderRadius: 5,
     padding: 12,
   },
   listItem: {
     fontSize: 16,
     backgroundColor: '#ecf0f1',
-    padding: 8,
+    padding: 20,
     borderRadius: 5,
     fontWeight: 'bold',
     marginBottom: 8,
