@@ -63,7 +63,7 @@ function WishList({ navigation }) {
       setWishlist(wishlist);
     })
 
-    return unsubscribe
+    return () => unsubscribe && unsubscribe
   
   }
 

@@ -25,7 +25,7 @@ const ViewProfile = () => {
         setUserDetails(profile[0]);
       })
 
-      return unsubscribe
+      return () => unsubscribe && unsubscribe
     }, [profile?.email]);
 
   return (

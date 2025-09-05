@@ -78,7 +78,7 @@ export const AuthProvider = ({ children }) => {
             navigation.navigate('SignIn')
         }
 
-        return unsubscribe
+        return () => unsubscribe && unsubscribe
 
     }, [user])
 

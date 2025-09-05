@@ -25,7 +25,7 @@ export default function Seminars() {
       setSeminars(seminars);
     })
 
-    return unsubscribe
+    return () => unsubscribe && unsubscribe
   },[])
 
   const RenderItem = ({ item }) => {
