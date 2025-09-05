@@ -22,23 +22,6 @@ const tokenCache = {
 }
 
 export default function App() {
-
-  // useEffect(() => {
-  //   onSnapshot(collection(db, "users"), (snapshot) => {
-  //     snapshot.docChanges().forEach((change) => {
-  //       if (change.type === "added") {
-  //         console.log("New user: ", change.doc.data());
-  //       }
-  //       if (change.type === "modified") {
-  //         console.log("Modified user: ", change.doc.data());
-  //       }
-  //       if (change.type === "removed") {
-  //         console.log("Removed user: ", change.doc.data());
-  //       }
-  //     });
-  //   })
-  // },[])
-
   
   return <NavigationContainer>
     <View style={{paddingTop: 10, backgroundColor: '#1a2d3f',flex: 1}}>
