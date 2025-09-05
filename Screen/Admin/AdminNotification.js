@@ -17,10 +17,12 @@ export default function AdminNotification() {
   useEffect(() => {
 
     const q = query(collection(db, "notification"), orderBy("time", "desc"),where("recipient","!=","user"));
-    onSnapshot(q ,(snapshot) => {
+    const unsubscribe = onSnapshot(q ,(snapshot) => {
       const notifications = snapshot.docs.map((doc) => doc.data());
       setNotifications(notifications);
     })
+
+    return () => unsubscribe && unsubscribe
   }, []);
 
   return (
