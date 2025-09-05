@@ -89,9 +89,8 @@ export default function RegisteredListScreen({ route }) {
 
 const styles = StyleSheet.create({
   container: {
-    // position: 'relative',
     flex: 1, 
-    backgroundColor: '#2c3e50', 
+    backgroundColor: '#1a2d3f', 
     paddingTop: 40, 
     paddingHorizontal: 20 
   },

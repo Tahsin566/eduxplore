@@ -74,9 +74,9 @@ export default function UniversityList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2c3e50',
+    backgroundColor: '#1a2d3f',
     paddingHorizontal: 20,
-    paddingTop: 10,
+    paddingTop: 30,
   },
   header: {
     flexDirection: 'row',
@@ -120,7 +120,7 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   cardText: {
-    fontSize: 26,
+    fontSize: 21,
     fontWeight: '600',
     color: '#333',
   },

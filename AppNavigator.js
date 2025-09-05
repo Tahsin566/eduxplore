@@ -55,6 +55,8 @@ import AdminNotification from './Screen/Admin/AdminNotification.js';
 import ChangePasswordFinal from './Screen/User/ChangePassword.js';
 import ViewProfile from './Screen/User/ViewProfile.js';
 import LOMChecker from './Screen/User/LOM.js';
+import PHDList from './Screen/Admin/phdList.js';
+import { useRole } from './auth.context.js';
 
 
 const Stack = createStackNavigator();
@@ -62,6 +64,9 @@ const Drawer = createDrawerNavigator()
 
 
 function DrawerRoutes() {
+
+  const { role } = useRole();
+
   return (
 
     <Drawer.Navigator
@@ -70,13 +75,13 @@ function DrawerRoutes() {
     >
       {/* <Drawer.Screen name="loading" component={Loading} /> */}
       <Drawer.Screen name="SignIn" component={SignIn} />
-      <Drawer.Screen name="HomeScreen" component={HomeScreen} />
+      <Drawer.Screen name="stack" component={AppNavigator} />
       <Drawer.Screen name="Home" component={Home} />
+      <Drawer.Screen name="HomeScreen" component={HomeScreen} />
       <Drawer.Screen name="BachelorList" component={BachelorList} />
       <Drawer.Screen name="MastersList" component={MastersList} />
       <Drawer.Screen name="phdList" component={phdList} />
       <Drawer.Screen name="Seminars" component={Seminars} />
-      <Drawer.Screen name="stack" component={AppNavigator} />
       <Drawer.Screen name="UniversityList" component={UniversityList} />
       <Drawer.Screen name="CoustomSend" component={CoustomSend} />
       <Drawer.Screen name="Notification" component={Notification} />
@@ -159,7 +164,7 @@ export default function AppNavigator() {
       <Stack.Screen name="AdminRoles" component={AdminRolesScreen} />
       <Stack.Screen name="BachelorList" component={BachelorList} />
       <Stack.Screen name="MastersList" component={MastersList} />
-      <Stack.Screen name="phdList" component={phdList} />
+      <Stack.Screen name="phdList" component={PHDList} />
       <Stack.Screen name="AddAdmin" component={AddAdmin} />
       <Stack.Screen name="AddSeminar" component={AddSeminar} />
       <Stack.Screen name="RegisterList" component={RegisteredList} />

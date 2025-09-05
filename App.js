@@ -7,6 +7,7 @@ import * as SecureStore from 'expo-secure-store';
 import { AuthProvider } from './auth.context';
 import { collection, onSnapshot } from 'firebase/firestore';
 import { db } from './firebase.config';
+import { View } from 'react-native';
 
 
 
@@ -40,12 +41,15 @@ export default function App() {
 
   
   return <NavigationContainer>
+    <View style={{paddingTop: 10, backgroundColor: '#1a2d3f',flex: 1}}>
+
     
     <ClerkProvider tokenCache={tokenCache}>
       <AuthProvider>
         <AppNavigator />
       </AuthProvider>
     </ClerkProvider>
+    </View>
   </NavigationContainer>;
 
 

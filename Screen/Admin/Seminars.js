@@ -3,7 +3,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useRole } from '../../auth.context';
 import { useEffect, useState } from 'react';
-import { addDoc, collection, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 
 const dummyData = [
@@ -20,10 +20,12 @@ export default function Seminars() {
   const [seminars, setSeminars] = useState([]);
 
   useEffect(()=>{
-    onSnapshot(collection(db, "seminars"), (snapshot) => {
+    const unsubscribe = onSnapshot(collection(db, "seminars"), (snapshot) => {
       const seminars = snapshot.docs.map((doc) =>{ return {...doc.data(), id: doc.id}});
       setSeminars(seminars);
     })
+
+    return unsubscribe
   },[])
 
   const RenderItem = ({ item }) => {
@@ -36,7 +38,7 @@ export default function Seminars() {
       const querySnapshot = await getDocs(q);
       if(querySnapshot.docs.length !== 0){
         setIsRegistered(!isRegistered)
-        await updateDoc(doc(db, "seminars_reg", querySnapshot.docs[0].id), { isRegistered: !isRegistered });
+        await deleteDoc(doc(db, "seminars_reg", querySnapshot.docs[0].id));
         console.log('already registered');
         return;
       }
@@ -116,7 +118,7 @@ export default function Seminars() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2c3e50',
+    backgroundColor: '#1a2d3f',
     paddingHorizontal: 16,
   },
   edit:{

@@ -6,6 +6,8 @@ import { useEffect, useState } from 'react';
 import { collection, doc, getDoc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
+import * as ImagePicker from 'expo-image-picker';
+import Checkbox from 'expo-checkbox';
 
 export default function UpdateOverView({ route }) {
   const navigation = useNavigation();
@@ -13,6 +15,9 @@ export default function UpdateOverView({ route }) {
   const university = route.params.university
 
   console.log(university.id)
+
+  const [image, setImage] = useState('');
+  const [file, setFile] = useState(null);
 
   const fields = [
     'Degree',
@@ -35,6 +40,16 @@ export default function UpdateOverView({ route }) {
   const [overview, setOverview] = useState('');
   const [requirements, setRequirements] = useState('');
   const [about, setAbout] = useState('');
+  const [person, setPerson] = useState('');
+  const [designation, setDesignation] = useState('');
+  const [address, setAddress] = useState('');
+  const [phone, setPhone] = useState('');
+  const [email, setEmail] = useState('');
+  const [website, setWebsite] = useState('');
+  const [ieltsScore, setIeltsScore] = useState('');
+  const [bachelorCheck, setBachelorCheck] = useState(false);
+  const [masterCheck, setMasterCheck] = useState(false);
+  const [phdCheck, setPhdCheck] = useState(false);
 
   // Contact handlers
   const handlePhonePress = () => {
@@ -53,15 +68,80 @@ export default function UpdateOverView({ route }) {
     Linking.openURL('https://www2.daad.de/deutschland/studienangebote/internationale-programme/en/detail/7801/#tab_overview');
   };
 
-  const handleUpdate = async() => {
+  const pickImage = async () => {
+
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert('Permission to access media library is required!');
+      return;
+    }
+
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ["images"],
+      allowsEditing: true,
+      aspect: [1, 1],
+      quality: 0.8,
+    });
+
+    if (!result.canceled) {
+      const newFile = {
+        uri: result.assets[0].uri,
+        type: result.assets[0].mimeType,
+        name: result.assets[0].fileName
+      }
+      setImage(result.assets[0].uri);
+      setFile(newFile);
+    }
+  };
+
+  const uploadToCloudinary = async () => {
+
+
+    if (!file) return
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'images-expo-app');
+
     try {
-      await updateDoc(doc(db,'university',university?.id),{
+      const response = await fetch('https://api.cloudinary.com/v1_1/dkmdyo7bm/image/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      console.log(data)
+      // console.log(JSON.stringify(data, null, 2));
+      return data?.secure_url
+
+    } catch (error) {
+      console.log('Error uploading image:', error.message);
+      return ''
+    }
+  };
+
+
+  const handleUpdate = async () => {
+    try {
+      await updateDoc(doc(db, 'university', university?.id), {
         name: name ? name : university?.name,
         overview: overview ? overview : university?.overview,
         requirements: requirements ? requirements : university?.requirements,
-        about: about ? about : university?.about
+        about: about ? about : university?.about,
+        photo: image !== '' ? await uploadToCloudinary() : university?.photo,
+        person: person ? person : university?.person,
+        designation: designation ? designation : university?.designation,
+        address: address ? address : university?.address,
+        phone: phone ? phone : university?.phone,
+        email: email ? email : university?.email,
+        website: website ? website : university?.website,
+        ieltsScore: ieltsScore ? ieltsScore : university?.ieltsScore,
+        hasBachelor:bachelorCheck,
+        hasMaster:masterCheck,
+        hasPhd:phdCheck
       })
       console.log('Document updated');
+      navigation.navigate('UniversityList')
     } catch (error) {
       console.log('Error adding document: ', error);
     }
@@ -82,19 +162,38 @@ export default function UpdateOverView({ route }) {
 
   useEffect(() => {
 
+    setFile(null)
+    setImage('')
+
     setName('');
     setOverview('');
     setRequirements('');
     setAbout('');
+    setPerson('');
+    setDesignation('');
+    setAddress('');
+    setPhone('');
+    setEmail('');
+    setWebsite('');
 
     setTimeout(() => {
       setName(university?.name);
       setOverview(university?.overview);
       setRequirements(university?.requirements);
       setAbout(university?.about);
-    },0);
+      setPerson(university?.person);
+      setDesignation(university?.designation);
+      setAddress(university?.address);
+      setPhone(university?.phone);
+      setEmail(university?.email);
+      setWebsite(university?.website);
+      setIeltsScore(university?.ieltsScore);
+      setBachelorCheck(university?.hasBachelor);
+      setMasterCheck(university?.hasMaster);
+      setPhdCheck(university?.hasPhd);
+    }, 5);
 
-  }, [university]);
+  }, [university?.id]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
@@ -102,7 +201,7 @@ export default function UpdateOverView({ route }) {
       <View style={styles.card}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>
           <Text style={styles.title}>Update Overview</Text>
         </View>
@@ -183,6 +282,11 @@ export default function UpdateOverView({ route }) {
       {tab === 'about' && <View style={styles.formSection}>
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Update About</Text>
+          <Text style={styles.label}>Enter the University Photo</Text>
+          {image && <Image source={{ uri: image }} style={{ width: '90%', height: 200, resizeMode: 'cover', top: 0 }} />}
+          <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+            <Text style={{ color: '#000' }}>Upload Photo</Text>
+          </TouchableOpacity>
           <TextInput
             style={[{ ...styles.input }, { height: 200 }]}
             multiline
@@ -193,34 +297,99 @@ export default function UpdateOverView({ route }) {
           />
         </View>
       </View>}
+      <Text style={[{...styles.label},{marginHorizontal:10}]}>University Degree</Text>
+      <View style={styles.checkboxContainer}>
+        <Checkbox
+          style={styles.checkbox}
+          value={bachelorCheck}
+          onValueChange={setBachelorCheck}
+          color={bachelorCheck ? '#1a2d3f' : undefined}
+        />
+        <Text>Bachelor</Text>
+      </View>
+      <View style={styles.checkboxContainer}>
+        <Checkbox
+          style={styles.checkbox}
+          value={masterCheck}
+          onValueChange={setMasterCheck}
+          color={masterCheck ? '#1a2d3f' : undefined}
+        />
+        <Text>Masters</Text>
+      </View>
+      <View style={styles.checkboxContainer}>
+        <Checkbox
+          style={styles.checkbox}
+          value={phdCheck}
+          onValueChange={setPhdCheck}
+          color={phdCheck ? '#1a2d3f' : undefined}
+        />
+        <Text>PHD</Text>
+      </View>
+      <View style={styles.separator}>
+        <Text style={styles.label}>Enter contact information</Text>
+        <TextInput
+          style={styles.singleInput}
+          onChangeText={setPerson}
+          value={person}
+          multiline
+          placeholder={`Name`}
+          placeholderTextColor="#999"
+        />
+        <TextInput
+          style={styles.singleInput}
+          multiline
+          onChangeText={setDesignation}
+          value={designation}
+          placeholder={`Designation`}
+          placeholderTextColor="#999"
+        />
+        <TextInput
+          style={styles.singleInput}
+          multiline
+          onChangeText={setPhone}
+          value={phone}
+          placeholder={`Phone number`}
+          placeholderTextColor="#999"
+        />
+        <TextInput
+          style={styles.singleInput}
+          multiline
+          onChangeText={setEmail}
+          value={email}
+          placeholder={`Email`}
+          placeholderTextColor="#999"
+        />
+        <TextInput
+          style={styles.singleInput}
+          multiline
+          onChangeText={setAddress}
+          value={address}
+          placeholder={`address`}
+          placeholderTextColor="#999"
+        />
+        <TextInput
+          style={styles.singleInput}
+          multiline
+          value={ieltsScore}
+          onChangeText={setIeltsScore}
+          placeholder={`Minimum IELTS Score`}
+          placeholderTextColor="#999"
+        />
+        <TextInput
+          style={styles.singleInput}
+          multiline
+          onChangeText={setWebsite}
+          value={website}
+          placeholder={`Official Website link`}
+          placeholderTextColor="#999"
+        />
+      </View>
 
       {/* Contact Info */}
-      <TouchableOpacity style={[{...styles.button1},{marginHorizontal:10}]} onPress={handleUpdate}>
-          <Text style={styles.buttonText1}>Save changes</Text>
-        </TouchableOpacity>
+      <TouchableOpacity style={[{ ...styles.button1 }, { margin: 10, marginHorizontal: 20 }]} onPress={handleUpdate}>
+        <Text style={styles.buttonText1}>Save changes</Text>
+      </TouchableOpacity>
       <View>
-        <View style={styles.contactHeader}>
-          <Ionicons name="person-circle" size={50} color="#1abc9c" />
-          <Text style={styles.contactTitle}>SRH Universities</Text>
-          <Text style={styles.subTitle}>Study Advisor</Text>
-        </View>
-
-        
-
-        <Text style={styles.address}>Sonnenallee 221</Text>
-        <Text style={styles.address}>12059 Berlin</Text>
-
-        <TouchableOpacity style={styles.button1} onPress={handlePhonePress}>
-          <Text style={styles.buttonText1}>+49 30515650200</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button1} onPress={handleEmailPress}>
-          <Text style={styles.buttonText1}>Email</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={styles.button1} onPress={handleWebsitePress}>
-          <Text style={styles.buttonText1}>Course website</Text>
-        </TouchableOpacity>
 
         <View style={styles.sourceSection}>
           <Text style={styles.sourceText}>Source</Text>
@@ -231,16 +400,21 @@ export default function UpdateOverView({ route }) {
           </TouchableOpacity>
         </View>
       </View>
-    </ScrollView>
+    </ScrollView >
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 20,
+    paddingBottom: 400,
     backgroundColor: '#f4f4f4',
-    marginLeft: '10',
-    marginRight: '10',
+  },
+  checkboxContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 10,
+    paddingHorizontal: 20,
+    marginBottom: 20,
   },
   card: {
     backgroundColor: '#1a2d3f',
@@ -273,6 +447,18 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginTop: 20,
   },
+  separator: {
+    gap: 10,
+    paddingHorizontal: 20,
+  },
+  singleInput: {
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    fontSize: 16,
+    borderColor: '#ccc',
+    backgroundColor: '#f5f5f5',
+  },
   main: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -303,6 +489,14 @@ const styles = StyleSheet.create({
   },
   inputGroup: {
     marginBottom: 15,
+  },
+  uploadButton: {
+    backgroundColor: '#d9d9d9',
+    alignItems: 'center',
+    justifyContent: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 20,
+    borderRadius: 8,
   },
   label: {
     fontSize: 16,

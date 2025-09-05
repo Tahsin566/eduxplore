@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useEffect, useState } from 'react';
 import { useRole } from '../../auth.context';
@@ -21,8 +21,8 @@ export default function MastersList() {
 
   const getUniversities = async () => {
     try {
-      const universitiesRef = collection(db, 'university');
-      const querySnapshot = await getDocs(universitiesRef);
+      const q = query(collection(db, "university"), where("hasMaster", "==", true));
+      const querySnapshot = await getDocs(q);
       const universitiesData = querySnapshot.docs.map((doc) =>{ return {...doc.data(), id: doc.id}});
       setUniversities(universitiesData);
     } catch (error) {
@@ -39,7 +39,7 @@ export default function MastersList() {
       {/* Back Button & Title */}
       <View style={styles.edit}><Text style={styles.title}>Master's List</Text></View>
         <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.space}><Text></Text></View>
       {/* List */}
@@ -66,8 +66,8 @@ export default function MastersList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2c3e50',
-    paddingTop: 40,
+    backgroundColor: '#1a2d3f',
+    paddingTop: 10,
     paddingHorizontal: 20,
   },
   edit:{

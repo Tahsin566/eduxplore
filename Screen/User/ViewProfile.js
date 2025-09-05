@@ -1,10 +1,11 @@
-import { StyleSheet, Text, View,Image, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View,Image, TouchableOpacity,Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useRole } from '../../auth.context'
 import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore'
 import { db } from '../../firebase.config'
 import { useUser } from '@clerk/clerk-expo'
 import { useNavigation } from '@react-navigation/native'
+import { Ionicons } from '@expo/vector-icons'
 
 const ViewProfile = () => {
 
@@ -19,25 +20,27 @@ const ViewProfile = () => {
     useEffect(() => {
         // setUserDetails(null);
     const q = query(collection(db, "profile"), where("email", "==", profile?.email));
-      onSnapshot(q, (snapshot) => {
+      const unsubscribe = onSnapshot(q, (snapshot) => {
         const profile = snapshot.docs.map((doc) =>{ return {...doc.data(), id: doc.id}});
         setUserDetails(profile[0]);
       })
-    }, []);
+
+      return unsubscribe
+    }, [profile?.email]);
 
   return (
     <>
     <View style={styles.container}>
 
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('ProfileButton')} >
-        <Text style={{color: '#fff',fontSize:30}}>←</Text>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
 
         <View style={{alignItems:'center'}}>
         <Text style={[{...styles.text},{...styles.header}]}>User Profile</Text>
         <Image style={styles.image} source={{uri: profile?.photo}} />
         <View style={{height: 10}}></View>
-        <Text style={styles.text}>{profile?.name}</Text>
+        <Text style={styles.text}>{profile?.name?.includes('null') ? profile?.name.split('nullc')[0] : profile?.name}</Text>
         <Text style={styles.text}>{profile?.email}</Text>
         <View style={{height: 10}}></View>
         <Text style={styles.text}>Additional Details</Text>
@@ -65,7 +68,8 @@ const styles = StyleSheet.create({
     container: {
       flex: 1,
       paddingTop: 60,
-      backgroundColor: '#2C3E50'
+      paddingHorizontal: 20,
+      backgroundColor: '#1a2d3f'
       
     },
     text:{

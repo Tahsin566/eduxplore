@@ -5,6 +5,7 @@ import { useAuth, useUser } from '@clerk/clerk-expo';
 import { useRole } from '../../auth.context';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase.config';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function ProfileUpload({ navigation }) {
 
@@ -18,6 +19,12 @@ export default function ProfileUpload({ navigation }) {
   const { signOut, isSignedIn } = useAuth()
 
   const pickImage = async () => {
+
+    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!permissionResult.granted) {
+      alert('Permission to access media library is required!');
+      return;
+    }
   
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
@@ -39,25 +46,6 @@ export default function ProfileUpload({ navigation }) {
 
   const uploadToCloudinary = async () => {
 
-    // if(profile?.photo?.toString()?.includes('https://res.cloudinary.com')) {
-
-
-    //   const res = await fetch('https://api.cloudinary.com/v1_1/dkmdyo7bm/image/destroy', {
-    //     method: 'POST',
-    //     headers: {
-    //       'Content-Type': 'application/json',
-    //     },
-    //     body: JSON.stringify({
-    //       public_id: [profile?.photo],
-    //       api_key: '258347628372499',
-    //       signature:false,
-    //       timestamp:false
-    //     }),
-        
-    //   })
-    //   const data = await res.json()
-    //   console.log(data)
-    // }
 
     if(!file) return
 
@@ -108,17 +96,17 @@ export default function ProfileUpload({ navigation }) {
     <View style={styles.container}>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => role === 'admin' ? navigation.navigate('HomeScreen')  : navigation.navigate('Home') }>
-        <Text style={styles.backButtonText}>←</Text>
+        <Ionicons name="chevron-back" size={24} color="#fff" />
       </TouchableOpacity>
 
       {/* Profile Picture (Center) */}
       <TouchableOpacity style={styles.profilePicContainer} onPress={pickImage}>
         <Image
-          source={profile.photo ? { uri: image} : require('../../Images/Profile.png')}
+          source={profile?.photo ? { uri: image} : require('../../Images/Profile.png')}
           style={styles.profilePic}
         />
       </TouchableOpacity>
-      <Text style={styles.name}>{profile?.name}</Text>
+      <Text style={styles.name}>{profile?.name?.includes('null') ? profile?.name?.split('null')[0] : profile?.name}</Text>
       <Text style={styles.email}>{profile?.email}</Text>
       {file && <TouchableOpacity style={{backgroundColor: '#ECF0F1',marginBottom: 10,padding: 12,borderRadius: 6}} onPress={uploadProfilePic}>
         <Text style={{color: '#000'}}>Upload Profile Picture</Text>
@@ -150,7 +138,7 @@ export default function ProfileUpload({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#1a2d3f',
     alignItems: 'center',
     paddingTop: 60,
   },

@@ -68,7 +68,7 @@ const styles = StyleSheet.create({
     backgroundColor: BG 
   },
   header: {
-    backgroundColor: PURPLE,
+    backgroundColor: '#1a2d3f',
     height: 118,
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,

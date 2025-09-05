@@ -1,9 +1,10 @@
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, StatusBar, Image } from 'react-native';
 import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
 import WishlistItem from './WishlistItem';
+import { Ionicons } from '@expo/vector-icons';
 
 // Import the bookmark image
 const bookmarkIconPath = require('../../Images/Bookmark.png');  // Bookmark Image Path
@@ -11,6 +12,7 @@ const bookmarkIconPath = require('../../Images/Bookmark.png');  // Bookmark Imag
 function WishList({ navigation }) {
 
   const {profile,role} = useRole()
+  const [loading, setLoading] = useState(true);
   // States for dynamic data
   const [wishlist, setWishlist] = useState([]);
   const [language, setLanguage] = useState('English');
@@ -52,14 +54,22 @@ function WishList({ navigation }) {
 
   const getWishList = async() => {
     const q = query(collection(db, "wishlist"), where("email", "==", profile?.email),where("isMarked", "==", true));
-    const querySnapshot = await getDocs(q);
-    const wishlist = querySnapshot.docs.map((doc) => doc.data());
-    setWishlist(wishlist);
+    const unsubscribe = onSnapshot(q, (querySnapshot) => {
+      if(querySnapshot.docs.length === 0) {
+        setWishlist([])
+        return
+      }
+      const wishlist = querySnapshot.docs.map((doc) => { return {...doc.data(), docid: doc.id}});
+      setWishlist(wishlist);
+    })
+
+    return unsubscribe
+  
   }
 
   useEffect(() => {
     getWishList();
-  },[wishlist])
+  },[])
 
   return (
     <View style={styles.root}>
@@ -72,7 +82,7 @@ function WishList({ navigation }) {
             style={styles.iconBtn}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Text style={styles.iconText}>←</Text>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
             {/* <Text style={styles.iconText}>{JSON.stringify(wishlist)}</Text> */}
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Wish List</Text>
@@ -97,12 +107,19 @@ function WishList({ navigation }) {
           keyboardShouldPersistTaps="handled"
         >
           {/* University Title and Details */}
-          {
+          {wishlist.length !== 0 ?
             wishlist.map((item) => (
               
                 <WishlistItem key={item.id} item={item} />
       
             ))
+          :
+            <View style={{alignItems: 'center', justifyContent: 'center', height: '100%'}}>
+              <Text style={{color: 'white', fontSize: 18, fontWeight: 'bold', marginTop: 20}}>No wishlisted universities yet</Text>
+              <TouchableOpacity style={{alignItems: 'center', justifyContent: 'center', marginTop: 20, padding: 10, backgroundColor: '#fff', borderRadius: 10}} onPress={() => navigation.navigate('UniversityList')}>
+                <Text style={{color: '#000', fontSize: 16}}>Find a University</Text>
+              </TouchableOpacity>
+            </View>
           }
           
         </ScrollView>
@@ -115,11 +132,11 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     paddingTop:25,
-    backgroundColor: '#2E3E4A',
+    backgroundColor: '#1a2d3f',
   },
   canvas: {
     flex: 1,
-    backgroundColor: '#2E3E4A',
+    backgroundColor: '#1a2d3f',
     paddingHorizontal: 14,
     paddingBottom: 16,
   },

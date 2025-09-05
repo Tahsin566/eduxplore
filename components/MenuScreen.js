@@ -12,7 +12,6 @@ export const MenuScreen = ({ navigation}) => {
   const menuItems = [
     { label : 'Home', route: 'Home' },
     { label : 'University List', route: 'UniversityList' },
-    { label: 'Send Notification', route: 'CoustomSend' },
     { label: 'Community', route: 'Community' },
     { label: 'Seminars', route: 'Seminars' },
     { label: 'Wishlist', route: 'WishList' }
@@ -59,7 +58,7 @@ export const MenuScreen = ({ navigation}) => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2c3e50',
+    backgroundColor: '#1a2d3f',
     paddingTop: 40,
     paddingHorizontal: 15,
   },

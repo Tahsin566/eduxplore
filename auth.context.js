@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
 
         if (!isSignedIn) return
 
-        const q = query(collection(db, "users"), where("email", "==", user.emailAddresses[0].emailAddress));
+        const q = query(collection(db, "users"), where("email", "==", user?.emailAddresses[0]?.emailAddress));
         const querySnapshot = await getDocs(q);
 
 
@@ -37,8 +37,8 @@ export const AuthProvider = ({ children }) => {
 
 
         const data = {
-            name: user.firstName + ' ' + user.lastName || 'user',
-            email: user.emailAddresses[0].emailAddress,
+            name: user.firstName + ' ' + user.lastName || '',
+            email: user?.emailAddresses[0]?.emailAddress,
             role: 'user',
             photo: user.imageUrl || '',
         }
@@ -58,11 +58,13 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
 
+        let unsubscribe=null
+
         if (user) {
             EnterUserToDb()
 
-            const q = query(collection(db, "users"), where("email", "==", user.emailAddresses[0].emailAddress));
-            onSnapshot(q, (snapshot) => {
+            const q = query(collection(db, "users"), where("email", "==", user?.emailAddresses[0]?.emailAddress));
+            unsubscribe = onSnapshot(q, (snapshot) => {
                 console.log('changed');
                 const data = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
                 setRole(data[0].role);
@@ -75,6 +77,8 @@ export const AuthProvider = ({ children }) => {
         else {
             navigation.navigate('SignIn')
         }
+
+        return unsubscribe
 
     }, [user])
 

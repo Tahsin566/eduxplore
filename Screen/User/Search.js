@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, StatusBar, Image } from 'react-native';
 
@@ -74,7 +75,7 @@ export default function FindUniversity({ navigation }) {
 
   const courseTypeOptions = [
     { label: 'Bachelor', value: 'bachelor' },
-    { label: "Master's", value: 'masters' },
+    { label: "Masters", value: 'masters' },
   ];
 
   const courseLanguageOptions = [
@@ -98,7 +99,7 @@ export default function FindUniversity({ navigation }) {
 
   const handleSearchClick = () => {
     // navigation.navigate('Result'); // Replace 'YourNextScreen' with the actual screen name
-    navigation.navigate('Result', { search, courseType, courseLanguage, intake, fieldOfStudy, ieltsScore });
+    navigation.navigate('Result', {path:'search', search, courseType, courseLanguage, intake, fieldOfStudy, ieltsScore });
   };
 
   // Function to increment the bookmark count
@@ -122,7 +123,7 @@ export default function FindUniversity({ navigation }) {
             style={styles.iconBtn}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Text style={styles.iconText}>←</Text>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Find a University</Text>
           <View style={styles.iconBtn}>
@@ -160,35 +161,9 @@ export default function FindUniversity({ navigation }) {
             setOpenDropdown={setOpenDropdown}
           />
 
-          <Dropdown
-            label="Course Language"
-            options={courseLanguageOptions}
-            value={courseLanguage}
-            onChange={setCourseLanguage}
-            openDropdown={openDropdown}
-            setOpenDropdown={setOpenDropdown}
-          />
+    
 
-          <Dropdown
-            label="Intake"
-            options={intakeOptions}
-            value={intake}
-            onChange={setIntake}
-            openDropdown={openDropdown}
-            setOpenDropdown={setOpenDropdown}
-          />
-
-          <Dropdown
-            label="Field of study"
-            placeholder="Please select"
-            options={fieldOfStudyOptions}
-            value={fieldOfStudy}
-            onChange={setFieldOfStudy}
-            radio
-            openDropdown={openDropdown}
-            setOpenDropdown={setOpenDropdown}
-          />
-
+          
           {/* IELTS (optional) */}
           <Text style={styles.fieldLabel}>IELTS Score</Text>
           <TextInput
@@ -213,11 +188,12 @@ export default function FindUniversity({ navigation }) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#2E3E4A',
+    paddingTop: 40,
+    backgroundColor: '#1a2d3f',
   },
   canvas: {
     flex: 1,
-    backgroundColor: '#2E3E4A',
+    backgroundColor: '#1a2d3f',
     paddingHorizontal: 14,
     paddingBottom: 16,
   },

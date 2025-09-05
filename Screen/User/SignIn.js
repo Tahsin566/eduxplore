@@ -11,6 +11,9 @@ import { FontAwesome5 } from '@expo/vector-icons';
 
 function SignIn({ navigation }) {
 
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
+
 
   UseWeb()
 
@@ -21,7 +24,7 @@ function SignIn({ navigation }) {
 
   const { user } = useUser()
 
-  const { setActive } = useSignIn()
+  const { setActive ,signIn} = useSignIn()
 
   const [loading, setLoading] = useState(true)
 
@@ -47,12 +50,31 @@ function SignIn({ navigation }) {
     }
 }
 
+const handleSignIn = async () => {
+
+  if(user){
+    navigation.navigate(role === 'admin' ? 'HomeScreen' : 'Home')
+  }
+
+  try {
+    const result = await signIn.create({password,identifier:email})
+    console.log(result)
+    if(result.status === 'complete'){
+      await setActive({ session: result.createdSessionId })
+    }
+  } catch (error) {
+    console.log(error)
+  }
+}
+
+
+
 
 
 
 
   return (
-    <ScrollView  endFillColor={'#2C3E50'}>
+    <ScrollView  endFillColor={'#1a2d3f'}>
 
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
@@ -62,6 +84,7 @@ function SignIn({ navigation }) {
           <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
+            onChangeText={setEmail}
             placeholder="Enter your email"
             placeholderTextColor="#999"
             keyboardType="email-address"
@@ -71,6 +94,7 @@ function SignIn({ navigation }) {
           <Text style={styles.label}>Password</Text>
           <TextInput
             style={styles.input}
+            onChangeText={setPassword}
             placeholder="Enter your password"
             placeholderTextColor="#999"
             secureTextEntry
@@ -82,12 +106,12 @@ function SignIn({ navigation }) {
             </TouchableOpacity>
           </View>
 
-          <TouchableOpacity
+          {/* <TouchableOpacity
             style={styles.button}
             onPress={() => navigation.navigate('Home')}
           >
             <Text style={styles.buttonText}>Sign in</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
 
           <Text style={styles.or}>- or -</Text>
 
@@ -96,13 +120,14 @@ function SignIn({ navigation }) {
             onPress={handlegoogleauth}
           >
             <FontAwesome5 name="google" size={24} color="#203a43" brand />
+            <Text>{' '}</Text>
             <Text style={styles.buttonText}>Sign in with Google</Text>
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.replace('SignUp')}>
             <Text style={styles.footerText}>
               Don't Have an Account?
-              <Text style={styles.click}> Sign Up</Text>
+              <Text style={styles.click} onPress={() => navigation.navigate('SignUp')}> Sign Up</Text>
             </Text>
           </TouchableOpacity>
 
@@ -110,9 +135,9 @@ function SignIn({ navigation }) {
 
           <TouchableOpacity
             style={styles.button}
-            onPress={() => navigation.navigate('HomeScreen')}
+            onPress={handleSignIn}
           >
-            <Text style={styles.buttonText}>Sign in</Text>
+            <Text style={styles.buttonText}>Sign in </Text>
           </TouchableOpacity>
 
         </View>
@@ -126,10 +151,11 @@ export default SignIn;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#2C3E50',
+    flexGrow: 1,
+    paddingTop: 50,
+    backgroundColor: '#1a2d3f',
     alignItems: 'center',
-    paddingTop: Platform.OS === 'android' ? StatusBar.currentHeight + 20 : 80,
+    
   },
   header: {
     fontSize: 24,
@@ -159,6 +185,8 @@ const styles = StyleSheet.create({
   },
   button: {
     backgroundColor: '#fff',
+    flexDirection: 'row',
+    justifyContent: 'center',
     borderRadius: 12,
     paddingVertical: 15,
     marginTop: 20,
@@ -168,7 +196,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '600',
     color: '#000000',
-    textAlign: 'center',
+    
   },
   or: { 
     color: '#fff', 

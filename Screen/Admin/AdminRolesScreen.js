@@ -7,22 +7,22 @@ import { db } from '../../firebase.config';
 
 const INPUT_HEIGHT = 48;
 
-export default function AdminRoles({route}) {
+export default function AdminRoles({ route }) {
   const navigation = useNavigation();
   const [selectedRole, setSelectedRole] = useState('Please select');
+  const [visible, setVisible] = useState(false);
 
   const roles = ['Moderator (Community)', 'Admin (Full Access)', 'User'];
 
   const id = route.params.id
 
-  console.log(id)
-
   const updateUserPrevilege = async () => {
     try {
-      const res = await updateDoc(doc(db, "users",id),{
+      await updateDoc(doc(db, "users", id), {
         role: selectedRole.split(' ')[0].toLowerCase()
       })
-      console.log('Document updated with ID',id);
+      console.log('Document updated with ID', id);
+      navigation.navigate('ManageAccounts')
     } catch (error) {
       console.log('Error adding document: ', error);
     }
@@ -32,25 +32,35 @@ export default function AdminRoles({route}) {
     <View style={styles.container}>
       {/* Header */}
       <View style={styles.edit}><Text style={styles.title}>Admin Roles</Text></View>
-        <TouchableOpacity onPress={() => navigation.navigate('ManageAccounts')}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        
+      <TouchableOpacity onPress={() => navigation.navigate('ManageAccounts')}>
+        <Ionicons name="arrow-back" size={24} color="#fff" />
+      </TouchableOpacity>
+
       <View style={styles.space}><Text></Text></View>
 
       {/* Label */}
       <Text style={styles.label}>Roles</Text>
 
       {/* Readonly "input" showing current selection */}
-      <TextInput
-        style={styles.input}
-        value={selectedRole}
-        editable={false}
-      />
+      <View style={styles.inputContainer}>
+
+        <TextInput
+          style={styles.input}
+          value={selectedRole}
+          editable={false}
+        />
+
+        <TouchableOpacity
+          style={[{ ...styles.toggleButton }, { position: 'absolute', right: 0, top: 0, padding: 10 }]}
+          onPress={() => setVisible(!visible)}
+        >
+          <Text style={styles.toggleButtonText}>{visible ? <Ionicons name="chevron-up" size={24} color="#000" /> : <Ionicons name="chevron-down" size={24} color="#00" />}</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Options */}
       {roles.map((role) => (
-        <TouchableOpacity
+        visible && <TouchableOpacity
           key={role}
           style={styles.radioRow}
           onPress={() => setSelectedRole(role)}
@@ -74,11 +84,15 @@ export default function AdminRoles({route}) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2E3A4F',
-    padding: 20,
-    paddingTop: 50,
+    backgroundColor: '#1a2d3f',
+    paddingHorizontal: 20,
   },
-  edit:{
+  dropdown: {
+    position: 'absolute',
+    right: 10,
+    padding: 5
+  },
+  edit: {
     marginTop: '30',
   },
   space: {

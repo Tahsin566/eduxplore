@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useLayoutEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 
@@ -32,7 +33,7 @@ export default function VPDCalculator({ navigation }) {
     <ScrollView contentContainerStyle={styles.container}>
       {/* Back Arrow */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('GradeConverter')}>
-        <Text style={styles.backText}>←</Text>
+        <Ionicons name="chevron-back" size={24} color="#fff" />
       </TouchableOpacity>
 
       {/* Title */}
@@ -126,13 +127,14 @@ export default function VPDCalculator({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#1a2d3f',
     padding: 20,
     paddingTop: 60,
   },
   backButton: { 
     position:'absolute', 
     top:57, 
+    zIndex:100,
     left:20
   },
   backText: { 
@@ -232,6 +234,6 @@ const styles = StyleSheet.create({
   headerCell:{ 
     color:'#fff', 
     fontWeight:'600', 
-    backgroundColor:'#33475B'
+    backgroundColor:'#1a2d3f'
   },
 });

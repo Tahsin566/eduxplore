@@ -1,14 +1,14 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { collection, getDocs } from 'firebase/firestore';
+import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useEffect, useState } from 'react';
 import { useRole } from '../../auth.context';
 
 const data = ['University 1', 'University 2', 'University 3', 'University 4'];
 
-export default function phdList() {
+export default function PHDList() {
   const navigation = useNavigation();
 
   const [universities, setUniversities] = useState([]);
@@ -21,8 +21,8 @@ export default function phdList() {
 
   const getUniversities = async () => {
     try {
-      const universitiesRef = collection(db, 'university');
-      const querySnapshot = await getDocs(universitiesRef);
+      const q = query(collection(db, "university"), where("hasPhd", "==", true));
+      const querySnapshot = await getDocs(q);
       const universitiesData = querySnapshot.docs.map((doc) =>{ return {...doc.data(), id: doc.id}});
       setUniversities(universitiesData);
     } catch (error) {
@@ -39,7 +39,7 @@ export default function phdList() {
       {/* Back Button & Title */}
       <View style={styles.edit}><Text style={styles.title}>PHD List</Text></View>
         <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.space}><Text></Text></View>
       {/* List */}
@@ -66,7 +66,7 @@ export default function phdList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2c3e50',
+    backgroundColor: '#1a2d3f',
     paddingTop: 10,
     paddingHorizontal: 20,
   },

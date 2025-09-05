@@ -28,13 +28,14 @@ function SignUp({ navigation }) {
         password
       })
       console.log('Sign up successful');
+      navigation.navigate('SignIn')
     } catch (error) {
       console.log(error);
     }
   };
 
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic" endFillColor={'#2C3E50'}>
+    <ScrollView contentInsetAdjustmentBehavior="automatic" endFillColor={'#1a2d3f'}>
       <View style={styles.container}>
 
       <StatusBar barStyle="light-content" />
@@ -117,8 +118,8 @@ export default SignUp;
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    backgroundColor: '#2C3E50',
+    flexGrow: 1,
+    backgroundColor: '#1a2d3f',
     alignItems: 'center',
     paddingTop: 50,
   },

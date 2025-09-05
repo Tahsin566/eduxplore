@@ -1,4 +1,4 @@
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { and, collection, getDocs, or, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, StatusBar, Image } from 'react-native';
 import { db } from '../../firebase.config';
@@ -9,7 +9,7 @@ function SearchResult({ navigation,route }) {
 
 
   const data = route.params;
-  console.log(data)
+  console.log(data?.ieltsScore)
 
   
   const [language, setLanguage] = useState('English');
@@ -17,7 +17,7 @@ function SearchResult({ navigation,route }) {
   const [duration, setDuration] = useState('7 Semester');
   const [tuitionFees, setTuitionFees] = useState('EUR 4,800');
 
-  const [university, setUniversity] = useState();
+  const [university, setUniversity] = useState([]);
 
   const [bookmarkCountHeader, setBookmarkCountHeader] = useState(0);
   const [isBookmarkedHeader, setIsBookmarkedHeader] = useState(false);
@@ -38,12 +38,39 @@ function SearchResult({ navigation,route }) {
   };
   
   const getUniversitySearch = async() => {
+    setUniversity([])
     try {
-      const q = query(collection(db, "university"), where("name", "==", data.search));
+
+      let q = null
+      if(data?.search !== ''){
+        q = query(collection(db, "university"), where("name", "==", data?.search));
+      }
+      else if(data?.ieltsScore){
+        q = query(collection(db, "university"),where("ieltsScore",">=",Number(data?.ieltsScore)));
+      }
+      else if(data?.courseType === 'bachelor'){
+        q = query(collection(db, "university"),where("hasBachelor", "==", true));
+      }
+      else if(data?.courseType === 'masters'){
+        q = query(collection(db, "university"),where("hasMaster", "==", true));
+      }
+      else if(data?.courseType === 'phd'){
+        q = query(collection(db, "university"),where("hasPhd", "==", true));
+      }
+
+      
+      // q = query(collection(db,"university"),or(
+      //   where("name", "==", data?.search || ''),
+      //   where("ieltsScore",">=",Number(data?.ieltsScore || 0))
+      // ));
       const res = await getDocs(q);
+      if(res.docs.length === 0){
+        setUniversity([]);
+        return
+      }
       const university = res.docs.map((doc) => { return {...doc.data(), id: doc.id}});
       console.log('data is',university) 
-      setUniversity(university[0]);
+      setUniversity(university);
     } catch (error) {
       console.log('')
     }
@@ -61,7 +88,7 @@ function SearchResult({ navigation,route }) {
         {/* Header */}
         <View style={styles.headerBar}>
           <TouchableOpacity
-            onPress={() => navigation?.navigate('Search')}
+            onPress={() => navigation?.navigate('Search',{path:'search'})}
             style={styles.iconBtn}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
@@ -89,7 +116,8 @@ function SearchResult({ navigation,route }) {
           keyboardShouldPersistTaps="handled"
         >
           {/* University Title and Details */}
-          <View style={styles.cardContainer} >
+
+          {university.map((university) => (<View style={styles.cardContainer} >
             <View style={styles.universityHeader}>
               <Text style={styles.universityTitle}>Bachelor's degree. Applied Mechatronic System(BEng).SRH University.Berline</Text>
               {/* University Bookmark Icon next to the title */}
@@ -100,6 +128,7 @@ function SearchResult({ navigation,route }) {
                 />
               </TouchableOpacity>
             </View>
+
 
             <View style={{flexDirection:'row'}}>
               <Text style={styles.detailsLabel}>Language : </Text>
@@ -125,7 +154,7 @@ function SearchResult({ navigation,route }) {
             <TouchableOpacity onPress={() => navigation?.navigate('UniversityOverview',{universityName: university,path:'Result'})}>
               <Text style={styles.moreLink}> {"\u2192"} More</Text>  {/* Right arrow with text "More" */}
             </TouchableOpacity>
-          </View>
+          </View> ))}
         </ScrollView>
       </View>
     </View>
@@ -135,11 +164,11 @@ function SearchResult({ navigation,route }) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#2E3E4A',
+    backgroundColor: '#1a2d3f',
   },
   canvas: {
     flex: 1,
-    backgroundColor: '#2E3E4A',
+    backgroundColor: '#1a2d3f',
     paddingHorizontal: 14,
     paddingBottom: 16,
   },

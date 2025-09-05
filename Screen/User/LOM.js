@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, StatusBar, KeyboardAvoidingView, Platform, ToastAndroid } from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import Markdown from 'react-native-markdown-display';
+import { Ionicons } from '@expo/vector-icons';
 
 // Read Gemini key from app.json -> expo.extra.GEMINI_API_KEY
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
@@ -116,26 +117,26 @@ export default function LOMChecker({ navigation }) {
   };
 
   return (
-    <View style={styles.container}>
+    <ScrollView contentContainerStyle={styles.container}>
       <StatusBar barStyle="light-content" />
 
       {/* Header */}
       <View style={styles.headerBar}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconBtn}>
-          <Text style={styles.iconText}>←</Text>
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>LOM Checker</Text>
         <View style={styles.iconBtn} />
       </View>
 
       {/* KeyboardAvoidingView wraps messages + composer (Android only config) */}
-      <KeyboardAvoidingView
+      {/* <KeyboardAvoidingView
         style={styles.flex}
         behavior="height"
-        keyboardVerticalOffset={0}
-      >
+        keyboardVerticalOffset={0} */}
+      
         {/* Messages */}
-        <ScrollView ref={scrollRef} style={styles.messages}>
+        {/* <ScrollView ref={scrollRef} style={styles.messages}> */}
           {messages.map((m) => (
             <TouchableOpacity
               key={m.id}
@@ -162,7 +163,7 @@ export default function LOMChecker({ navigation }) {
               </Text>
             </View>
           )}
-        </ScrollView>
+        {/* </ScrollView> */}
 
         {/* Composer */}
         <View style={styles.composerRow}>
@@ -182,14 +183,13 @@ export default function LOMChecker({ navigation }) {
             <Text style={styles.sendText}>Send</Text>
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
-    </View>
+      {/* </KeyboardAvoidingView> */}
+    </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
-  flex: { flex: 1 },
-  container: { flex: 1, backgroundColor: '#2C3E50' },
+  container: { flex: 1, backgroundColor: '#1a2d3f',padding: 10 },
   headerBar: {
     height: 56,
     flexDirection: 'row',
@@ -217,10 +217,11 @@ const styles = StyleSheet.create({
 
   composerRow: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
     paddingVertical: 10,
+    position: 'absolute',
+    bottom: 0,
     paddingHorizontal: 10,
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#1a2d3f',
   },
   input: {
     flex: 1,

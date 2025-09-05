@@ -36,7 +36,7 @@ export default function SendNotification() {
       <View style={styles.edit}><Text style={styles.heading}>Send Notification</Text></View>
       
         <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home') }>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
       
       <View style={styles.space}><Text></Text></View>
@@ -99,9 +99,8 @@ export default function SendNotification() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2E3A4F',
-    padding: 20,
-    paddingTop: 50,
+    backgroundColor: '#1a2d3f',
+    padding: 20
   },
   edit:{
     marginTop: '30',

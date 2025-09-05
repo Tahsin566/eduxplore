@@ -42,8 +42,8 @@ const HomeScreen = () => {
         </View>
       </View>
 
-      <Text style={styles.greeting}><Text style={styles.wave}>👋</Text> Hi Najibur,</Text>
-      <Text style={styles.subtitle}>Here's your dashboard for today</Text>
+      <Text style={styles.greeting}><Text style={styles.wave}>👋</Text> Hi {profile?.name},</Text>
+      <Text style={styles.subtitle}>Here's your dashboard</Text>
 
 
     
@@ -123,22 +123,23 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
     container: {
     flex: 1,
-    backgroundColor: '#2c3e50',
-    padding: 24,
+    backgroundColor: '#1a2d3f',
+    paddingHorizontal: 24,
     justifyContent: 'flex-start',
   },
   greeting: {
     fontSize: 28,
     fontWeight: '700',
-    color: '#1e1e1e',
+    color: '#fff',
     marginBottom: 2,
   },
   wave: {
     fontSize: 28,
+    color: '#fff',
   },
   subtitle: {
     fontSize: 17,
-    color: '#6c757d',
+    color: 'white',
     marginBottom: 24,
   },
   header: {
@@ -149,7 +150,7 @@ const styles = StyleSheet.create({
     marginBottom: 60,
   },
   title: {
-    color: '#1e1e1e',
+    color: '#fff',
     fontSize: 28,
     fontWeight: 'bold',
   },

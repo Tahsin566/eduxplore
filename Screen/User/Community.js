@@ -1,46 +1,99 @@
-import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Image, Alert, ActivityIndicator } from 'react-native';
+import React, { useEffect, useRef, useState } from 'react';
+import {
+  View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView,
+  Image, Alert, ActivityIndicator, Modal, Pressable, KeyboardAvoidingView, Platform
+} from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
+import * as Clipboard from 'expo-clipboard';
 import { addDoc, collection, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useUser } from '@clerk/clerk-expo';
 import { useRole } from '../../auth.context';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function Community({ navigation }) {
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [image, setImage] = useState(null);
+  const [file, setFile] = useState(null);
   const [messages, setMessages] = useState([]);
-  const [showOptions, setShowOptions] = useState(null);
-  const [replyTo, setReplyTo] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchActive, setSearchActive] = useState(false);
 
-  const {user} = useUser()
-  const { role } = useRole();
+
+  // reply + action modal
+  const [replyTo, setReplyTo] = useState(null);     // { id, text, image, email }
+  const [actionOpen, setActionOpen] = useState(false);
+  const [selectedMsg, setSelectedMsg] = useState(null);
+
+  // UI-only local hide for “delete” without touching DB
+  const [hiddenIds, setHiddenIds] = useState(new Set());
+
+  const { user } = useUser();
+  const { role, profile } = useRole();
+  const insets = useSafeAreaInsets();
+
+  // full-screen image viewer
+  const [viewerUri, setViewerUri] = useState(null);
+
+  // Scroll + composer measurement
+  const scrollRef = useRef(null);
+  const [composerHeight, setComposerHeight] = useState(58); // default guess
 
   useEffect(() => {
-    setLoading(true);
-    const q = query(collection(db, "chat"), orderBy("time", "asc"));
-    onSnapshot(q, (snapshot) => {
-
-
-      if (!snapshot) return
-      const chats = []
-
+    const q = query(collection(db, 'chat'), orderBy('time', 'asc'));
+    const unsub = onSnapshot(q, (snapshot) => {
+      if (!snapshot) return;
+      const chats = [];
       snapshot.docs.forEach((doc) => {
-        chats.push({
-          ...doc.data(),
-          id: doc.id
-        })
-      })
-      setMessages(chats)
-      setLoading(false)
+        chats.push({ ...doc.data(), id: doc.id });
+      });
+      setMessages(chats);
+      setLoading(false);
 
-      console.log(chats)
+      // scroll to bottom on new messages
+      setTimeout(() => {
+        if (scrollRef.current) scrollRef.current.scrollToEnd({ animated: true });
+      }, 50);
+    });
+    return () => unsub && unsub();
+  }, []);
 
-    })
-  }, [])
+  const myEmail = user?.emailAddresses?.[0]?.emailAddress;
+
+  const displayNameOf = (msg) =>
+    (msg?.name && String(msg.name).trim()) ||
+    (msg?.email ? msg.email.split('@')[0] : 'User');
+
+  const formatTime = (t) => {
+    try {
+      let d;
+      if (!t) return '';
+      if (t.seconds) d = new Date(t.seconds * 1000);
+      else d = new Date(t);
+      if (isNaN(d.getTime())) return '';
+      let hr = d.getHours();
+      const min = String(d.getMinutes()).padStart(2, '0');
+      const ampm = hr >= 12 ? 'PM' : 'AM';
+      hr = hr % 12 || 12;
+      return `${hr}:${min} ${ampm}`;
+    } catch { return ''; }
+  };
+
+  const parseReplyParts = (text) => {
+    if (!text) return { quote: null, body: '' };
+    const prefix = '↪ Replying to: ';
+    if (text.startsWith(prefix)) {
+      const nl = text.indexOf('\n');
+      const head = nl !== -1 ? text.slice(0, nl) : text;
+      const body = nl !== -1 ? text.slice(nl + 1) : '';
+      const quote = head.slice(prefix.length);
+      return { quote, body };
+    }
+    return { quote: null, body: text };
+  };
+
+  const canDelete = (msg) => role === 'admin' || msg?.email === myEmail;
 
   // Image picker
   const pickImage = async () => {
@@ -56,324 +109,470 @@ export default function Community({ navigation }) {
       quality: 1,
     });
     if (!result.canceled) {
+      const newFile = {
+        uri: result.assets[0].uri,
+        type: result.assets[0].mimeType,
+        name: result.assets[0].fileName
+      }
       setImage(result.assets[0].uri);
+      setFile(newFile);
     }
   };
 
-  // Send message (handles normal + reply)
-  const sendMessage = () => {
-    if (!message.trim() && !image) {
-      Alert.alert('Please enter a message');
-      return;
-    }
-
-    const next = {
-      id: messages?.length,
-      message: message,
-      image,
-      // mark as reply if replyTo is set
-      isReply: !!replyTo,
-      replyToId: replyTo?.id ?? null,
-      replyToText: replyTo?.text ?? null,
-      isSender: true,  // Marks whether the message is from the user (right side)
-    };
+  const uploadToCloudinary = async () => {
 
 
+    if(!file) return
+
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', 'images-expo-app');
 
     try {
-      const res = addDoc(collection(db, "chat"), {
-        name: 'User',
-        email: user.emailAddresses[0].emailAddress,
-        message: message,
-        time: new Date()
-      })
-      console.log('Inserted document with ID: ', res.id);
+      const response = await fetch('https://api.cloudinary.com/v1_1/dkmdyo7bm/image/upload', {
+        method: 'POST',
+        body: formData
+      });
+
+      const data = await response.json();
+      console.log(data)
+      // console.log(JSON.stringify(data, null, 2));
+      return data?.secure_url
+
     } catch (error) {
-      console.log('Error adding document: ', error);
+      console.log('Error uploading image:', error.message);
+      return profile?.photo
+    }
+  };
+  
+
+  // Send message (kept simple; DB/auth untouched)
+  const sendMessage = async() => {
+    if (!message.trim() && !image) {
+      Alert.alert('Please enter a message or pick an image');
+      return;
+    }
+    const quoted =
+      replyTo?.text
+        ? `↪ Replying to: ${replyTo.text.length > 80 ? replyTo.text.slice(0, 80) + '…' : replyTo.text}\n`
+        : replyTo?.image
+        ? `↪ Replying to: Photo\n`
+        : '';
+
+    try {
+      addDoc(collection(db, 'chat'), {
+        name: profile?.name,
+        email: myEmail,
+        message: quoted + (message || ''),
+        photo: profile?.photo,
+        image: await uploadToCloudinary() || '',
+        time: new Date(),
+      });
+    } catch (e) {
+      console.log('Error adding document: ', e);
     }
 
-    setMessages([...messages, next]);
     setMessage('');
     setImage(null);
-    setReplyTo(null); // clear reply state after sending
+    setReplyTo(null);
+    setFile(null);
+
+    requestAnimationFrame(() => {
+      if (scrollRef.current) scrollRef.current.scrollToEnd({ animated: true });
+    });
   };
 
-  // Toggle options menu
-  const toggleOptions = (messageId, event) => {
-    setShowOptions(showOptions === messageId ? null : messageId);  // Toggle visibility of options menu
+  // Long-press actions (UI only)
+  const onLongPressMessage = (msg) => {
+    setSelectedMsg(msg);
+    setActionOpen(true);
   };
 
-  // Handle options actions (Copy, Save, Edit, Delete)
-  const handleOptionAction = (action) => {
-    Alert.alert(`${action} clicked!`);
-    setShowOptions(null); // Close the dropdown after clicking an option
+  const handleReply = () => {
+    if (!selectedMsg) return;
+    setReplyTo({
+      id: selectedMsg.id,
+      text: selectedMsg.message || '',
+      image: selectedMsg.image || null,
+      email: selectedMsg.email || '',
+    });
+    setActionOpen(false);
   };
 
-  // Start reply to a specific message
-  const startReply = (msg) => {
-    setReplyTo({ id: msg.id, text: msg.text });
-    setShowOptions(null); // Close options after clicking reply
+  const handleCopy = async () => {
+    if (!selectedMsg?.message) {
+      Alert.alert('Nothing to copy');
+      return;
+    }
+    await Clipboard.setStringAsync(selectedMsg.message);
+    setActionOpen(false);
+    Alert.alert('Copied to clipboard');
   };
 
-  // Filter messages based on the search query
-  const filteredMessages = messages.filter((msg) => msg.text?.toLowerCase().includes(searchQuery.toLowerCase()));
+  // UI-only delete
+  const handleDeleteLocal = () => {
+    if (!selectedMsg) return;
+    if (!canDelete(selectedMsg)) {
+      setActionOpen(false);
+      Alert.alert("You can't delete this message.");
+      return;
+    }
+    setHiddenIds((prev) => new Set(prev).add(selectedMsg.id));
+    setActionOpen(false);
+  };
 
+  // --------- ONLY CHANGE: avatar resolution (UI only)
+  const resolveAvatar = (msg, isMine) => {
+    // Try any avatar fields that might exist on the message:
+    const fromMsg =
+      msg?.photoURL ||
+      msg?.avatar ||
+      msg?.profileImageUrl ||
+      msg?.profilePhoto ||
+      msg?.photo ||
+      null;
+    if (fromMsg) return fromMsg;
+    // For your own messages, fall back to your current profile image:
+    if (isMine) return user?.imageUrl || user?.imageUrl || null;
+    return null;
+  };
+  // --------------------------------------------------
 
-  if (loading) return (<View style={{ flex: 1, justifyContent: "center", alignItems: "center",backgroundColor:'#2C3E50' }}><ActivityIndicator size="large" color="#0000ff" /></View>)
+  // Filter messages
+  const shownMessages = messages
+    .filter((m) => !hiddenIds.has(m.id))
+    .filter((m) => (m.message || '').toLowerCase().includes(searchQuery.toLowerCase()));
+
+  if (loading) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2C3E50' }}>
+        <ActivityIndicator size="large" color="#0000ff" />
+      </View>
+    );
+  }
+
+  const bottomInsetPad = insets.bottom > 0 ? 4 : 0;
 
   return (
-
-    <View style={styles.container}>
-      {/* Header */}
-      <View style={styles.headerBar}>
-        <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('HomeScreen')  : navigation.navigate('Home')} style={styles.iconBtn}>
-          <Text style={styles.iconText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Community</Text>
-        {/* Search Icon */}
-        <TouchableOpacity onPress={() => setSearchActive(!searchActive)} style={styles.iconBtn}>
-          <Text style={styles.iconText}>🔍</Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Search Input Field */}
-      {searchActive && (
-        <View style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
-            placeholder="Search messages..."
-            placeholderTextColor="#B0B0B0"
-            value={searchQuery}
-            onChangeText={setSearchQuery}
-            />
-        </View>
-      )}
-
-      {/* Chat Messages */}
-      <ScrollView style={styles.messagesContainer}>
-        {messages.map((msg) => (
-          <View key={msg.id} style={styles.messageContainer}>
-            <View
-              style={[styles.messageBubble, msg?.email === user.emailAddresses[0].emailAddress ? { alignSelf: 'flex-end' } : { alignSelf: 'flex-start' }]} // Right for sender, left for others
-              >
-              {/* If this is a reply, show a tiny quoted preview */}
-              {msg.isReply && !!msg.replyToText && (
-                <Text style={{ fontSize: 12, color: '#5A6B7A', marginBottom: 4 }}>
-                  Replying to: “{msg.replyToText?.length > 60 ? msg.replyToText.slice(0, 60) + '…' : msg.replyToText}”
-                </Text>
-              )}
-
-              {msg.image && <Image source={{ uri: msg.image }} style={styles.messageImage} />}
-              {!!msg.message && <Text style={styles.messageText}>{msg.message}</Text>}
-            </View>
-
-            {/* Right-side actions: only the 3 dots */}
-            <View style={styles.messageActions}>
-              <TouchableOpacity onPress={(event) => toggleOptions(msg.id, event)} style={styles.moreButton}>
-                <Text style={styles.moreText}>⋮</Text>
-              </TouchableOpacity>
-            </View>
-
-            {/* Options menu (with Reply added) */}
-            {showOptions === msg.id && (
-              <View style={styles.optionsMenu}>
-                <TouchableOpacity onPress={() => startReply(msg)} style={styles.optionItem}>
-                  <Text style={styles.optionText}>Reply</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleOptionAction('Copy')} style={styles.optionItem}>
-                  <Text style={styles.optionText}>Copy</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleOptionAction('Edit')} style={styles.optionItem}>
-                  <Text style={styles.optionText}>Edit</Text>
-                </TouchableOpacity>
-                <TouchableOpacity onPress={() => handleOptionAction('Delete')} style={styles.optionItem}>
-                  <Text style={styles.optionText}>Delete</Text>
-                </TouchableOpacity>
-              </View>
-            )}
-          </View>
-        ))}
-      </ScrollView>
-
-      {/* Reply banner (shows when replying) */}
-      {replyTo && (
-        <View style={styles.replyBanner}>
-          <Text style={styles.replyBannerText}>
-            Replying to: {replyTo.text?.length > 60 ? replyTo.text.slice(0, 60) + '…' : replyTo.text}
-          </Text>
-          <TouchableOpacity onPress={() => setReplyTo(null)}>
-            <Text style={styles.replyBannerClose}>✕</Text>
+    <KeyboardAvoidingView
+      style={styles.kav}
+      behavior="padding"
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 84 : 24}
+      enabled
+    >
+      <View style={styles.container}>
+        {/* Header */}
+        <View style={styles.headerBar}>
+          <TouchableOpacity
+            onPress={() => (role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home'))}
+            style={styles.iconBtn}
+          >
+            <Text style={styles.iconText}>←</Text>
+          </TouchableOpacity>
+          <Text style={styles.headerTitle}>Community</Text>
+          <TouchableOpacity onPress={() => setSearchActive(!searchActive)} style={styles.iconBtn}>
+            <Text style={styles.iconText}>🔍</Text>
           </TouchableOpacity>
         </View>
-      )}
 
-      {/* Composer */}
-      <View style={styles.inputContainer}>
-        <TouchableOpacity onPress={pickImage} style={styles.iconButton}>
-          <Text style={styles.iconText}>📸</Text>
-        </TouchableOpacity>
-        <TextInput
-          style={styles.input}
-          placeholder="Message"
-          placeholderTextColor="#B0B0B0"
-          value={message}
-          onChangeText={setMessage}
+        {/* Search */}
+        {searchActive && (
+          <View style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Search messages..."
+              placeholderTextColor="#B0B0B0"
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+          </View>
+        )}
+
+        {/* Messages */}
+        <ScrollView
+          ref={scrollRef}
+          style={styles.messagesContainer}
+          contentContainerStyle={{ paddingBottom: composerHeight + 8 }}
+          onContentSizeChange={() => {
+            if (scrollRef.current) scrollRef.current.scrollToEnd({ animated: true });
+          }}
+          keyboardShouldPersistTaps="handled"
+          keyboardDismissMode="interactive"
+        >
+          {shownMessages.map((msg) => {
+            const isMine = msg?.email === myEmail;
+            const isAdminSender = msg?.role === 'admin' || (isMine && role === 'admin');
+            const name = displayNameOf(msg);
+            const { quote, body } = parseReplyParts(msg.message || '');
+            const timeStr = formatTime(msg.time);
+            const quoteImage = msg.replyImage || null;
+
+            const leftUri = !isMine ? resolveAvatar(msg, false) : null;
+            const rightUri = isMine ? resolveAvatar(msg, true) : null;
+
+            return (
+              <View key={msg.id} style={[styles.row, isMine ? styles.rowRight : styles.rowLeft]}>
+                {!isMine && (
+                  leftUri ? (
+                    <Image source={{ uri: leftUri }} style={styles.avatar} />
+                  ) : (
+                    <View style={styles.avatarFallback}>
+                      <Text style={styles.avatarLetter}>{(name?.[0] || 'U').toUpperCase()}</Text>
+                    </View>
+                  )
+                )}
+
+                <TouchableOpacity
+                  activeOpacity={0.8}
+                  onLongPress={() => onLongPressMessage(msg)}
+                  delayLongPress={250}
+                  style={[
+                    styles.messageBubble,
+                    isMine ? styles.rightBubble : styles.leftBubble,
+                  ]}
+                >
+                  {/* Name */}
+                  <Text style={[styles.username, isAdminSender && styles.adminName]} numberOfLines={1}>
+                    {name}
+                  </Text>
+
+                  {/* Quote preview (reply) — supports text and/or image */}
+                  {(quote || quoteImage) ? (
+                    <View style={styles.quoteBox}>
+                      {quoteImage ? (
+                        <TouchableOpacity onPress={() => setViewerUri(quoteImage)} activeOpacity={0.9}>
+                          <Image source={{ uri: quoteImage }} style={styles.quoteThumb} />
+                        </TouchableOpacity>
+                      ) : null}
+                      {!!quote && (
+                        <Text style={styles.quoteText} numberOfLines={2}>
+                          {quote}
+                        </Text>
+                      )}
+                    </View>
+                  ) : null}
+
+                  {/* Main Image (tap to open full screen) */}
+                  {msg.image ? (
+                    <TouchableOpacity onPress={() => setViewerUri(msg.image)} activeOpacity={0.9}>
+                      <Image source={{ uri: msg.image }} style={styles.messageImage} />
+                    </TouchableOpacity>
+                  ) : null}
+
+                  {/* Body */}
+                  {!!body && <Text style={styles.messageText}>{body}</Text>}
+
+                  {/* Time bottom-right */}
+                  <Text style={styles.timeText}>{timeStr}</Text>
+                </TouchableOpacity>
+
+                {isMine && (
+                  rightUri ? (
+                    <Image source={{ uri: rightUri }} style={styles.avatar} />
+                  ) : (
+                    <View style={styles.avatarFallback}>
+                      <Text style={styles.avatarLetter}>{(name?.[0] || 'U').toUpperCase()}</Text>
+                    </View>
+                  )
+                )}
+              </View>
+            );
+          })}
+        </ScrollView>
+
+        {/* Reply banner (shows tiny image if replying to an image; UI-only) */}
+        {replyTo && (
+          <View style={styles.replyBanner}>
+            {replyTo.image ? (
+              <TouchableOpacity onPress={() => setViewerUri(replyTo.image)} activeOpacity={0.9}>
+                <Image source={{ uri: replyTo.image }} style={styles.replyThumb} />
+              </TouchableOpacity>
+            ) : null}
+            <Text style={styles.replyBannerText}>
+              Replying to: {replyTo.text?.length > 60 ? replyTo.text.slice(0, 60) + '…' : (replyTo.text || (replyTo.image ? 'Photo' : ''))}
+            </Text>
+            <TouchableOpacity onPress={() => setReplyTo(null)}>
+              <Text style={styles.replyBannerClose}>✕</Text>
+            </TouchableOpacity>
+          </View>
+        )}
+
+        {/* Composer */}
+        <View
+          style={[styles.inputContainer, { paddingBottom: 8 + (insets.bottom > 0 ? 4 : 0) }]}
+          onLayout={(e) => setComposerHeight(e.nativeEvent.layout.height)}
+        >
+          <TouchableOpacity onPress={pickImage} style={styles.iconButton}>
+            <Text style={styles.iconText}>📸</Text>
+          </TouchableOpacity>
+          <TextInput
+            style={styles.input}
+            placeholder="Message"
+            placeholderTextColor="#B0B0B0"
+            value={message}
+            onChangeText={setMessage}
+            onFocus={() => {
+              if (scrollRef.current) scrollRef.current.scrollToEnd({ animated: true });
+            }}
           />
-        <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
-          <Text style={styles.sendButtonText}>Send</Text>
-        </TouchableOpacity>
-      </View>
-    </View>
+          <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
+            <Text style={styles.sendButtonText}>Send</Text>
+          </TouchableOpacity>
+        </View>
 
+        {/* Action Modal */}
+        <Modal transparent visible={actionOpen} animationType="fade" onRequestClose={() => setActionOpen(false)}>
+          <Pressable style={styles.modalBackdrop} onPress={() => setActionOpen(false)}>
+            <View style={styles.modalCard}>
+              <Text style={styles.modalTitle}>Message options</Text>
+
+              <TouchableOpacity style={styles.modalItem} onPress={handleReply}>
+                <Text style={styles.modalItemText}>Reply</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity style={styles.modalItem} onPress={handleCopy}>
+                <Text style={styles.modalItemText}>Copy</Text>
+              </TouchableOpacity>
+
+              {selectedMsg && canDelete(selectedMsg) && (
+                <TouchableOpacity style={styles.modalItem} onPress={handleDeleteLocal}>
+                  <Text style={[styles.modalItemText, { color: '#E11D48' }]}>Delete</Text>
+                </TouchableOpacity>
+              )}
+
+              <TouchableOpacity style={[styles.modalItem, styles.modalCancel]} onPress={() => setActionOpen(false)}>
+                <Text style={styles.modalCancelText}>Cancel</Text>
+              </TouchableOpacity>
+            </View>
+          </Pressable>
+        </Modal>
+
+        {/* Full-screen Image Viewer */}
+        <Modal
+          transparent
+          visible={!!viewerUri}
+          animationType="fade"
+          onRequestClose={() => setViewerUri(null)}
+        >
+          <Pressable style={styles.viewerBackdrop} onPress={() => setViewerUri(null)}>
+            {viewerUri ? (
+              <Image source={{ uri: viewerUri }} style={styles.viewerImage} resizeMode="contain" />
+            ) : null}
+          </Pressable>
+        </Modal>
+      </View>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#2C3E50',
-    paddingTop: 20,
-  },
+  kav: { flex: 1, backgroundColor: '#2C3E50' },
+
+  container: { flex: 1, backgroundColor: '#2C3E50', paddingTop: 20 },
+
   headerBar: {
-    height: 50,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 16,
+    height: 50, flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'space-between', paddingHorizontal: 16
   },
-  iconBtn: {
-    width: 36,
-    height: 36,
-    alignItems: 'center',
-    justifyContent: 'center',
+  iconBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
+  iconText: { color: '#E7EDF3', fontSize: 22 },
+  headerTitle: { color: '#E7EDF3', fontSize: 18, fontWeight: '700' },
+
+  searchContainer: { padding: 8, backgroundColor: '#2C3E50' },
+  searchInput: { backgroundColor: '#FFF', borderRadius: 20, paddingLeft: 12, height: 40 },
+
+  messagesContainer: { flex: 1, paddingHorizontal: 12, backgroundColor: '#2C3E50' },
+  row: { flexDirection: 'row', alignItems: 'flex-end', marginVertical: 6, gap: 8 },
+  rowLeft: { justifyContent: 'flex-start' },
+  rowRight: { justifyContent: 'flex-end' },
+
+  avatar: { width: 34, height: 34, borderRadius: 17, backgroundColor: '#cfd8dc' },
+  avatarFallback: {
+    width: 34, height: 34, borderRadius: 17, backgroundColor: '#b0bec5',
+    alignItems: 'center', justifyContent: 'center'
   },
-  iconText: {
-    color: '#E7EDF3',
-    fontSize: 22,
-  },
-  profileIcon: {
-    width: 30,
-    height: 30,
-    borderRadius: 15,
-  },
-  headerTitle: {
-    color: '#E7EDF3',
-    fontSize: 18,
-    fontWeight: '700',
-  },
-  searchContainer: {
-    padding: 8,
-    backgroundColor: '#2C3E50',
-  },
-  searchInput: {
-    backgroundColor: '#FFF',
-    borderRadius: 20,
-    paddingLeft: 12,
-    height: 40,
-  },
-  messagesContainer: {
-    flex: 1,
-    paddingHorizontal: 16,
-  },
-  messageContainer: {
-    marginVertical: 8,
-  },
+  avatarLetter: { color: '#1F2933', fontWeight: '700' },
+
   messageBubble: {
-    backgroundColor: '#E7EDF3',
-    padding: 10,
+    padding: 8,
     borderRadius: 12,
-    maxWidth: '70%',
-    alignSelf: 'flex-end',
-    marginBottom: 6,
+    maxWidth: '75%',
+    position: 'relative',
+    paddingBottom: 18, // room for time
   },
-  messageImage: {
-    width: 100,
-    height: 100,
-    borderRadius: 8,
-    color: '#fff',
-    marginBottom: 8,
+  rightBubble: { alignSelf: 'flex-end', backgroundColor: '#DDEAF6' },
+  leftBubble: { alignSelf: 'flex-start', backgroundColor: '#E7EDF3' },
+
+  username: { fontSize: 12, color: '#1F2933', fontWeight: '700', marginBottom: 2 },
+  adminName: { color: '#007AFF' },
+
+  quoteBox: {
+    borderLeftWidth: 3, borderLeftColor: '#5A6B7A',
+    backgroundColor: '#f1f5f9', paddingVertical: 4, paddingHorizontal: 6,
+    borderRadius: 6, marginBottom: 6,
+    flexDirection: 'row', alignItems: 'center', gap: 8,
   },
-  messageText: {
-    fontSize: 16,
-    color: '#000',
+  quoteText: { fontSize: 12, color: '#334155', flexShrink: 1 },
+  quoteThumb: { width: 56, height: 56, borderRadius: 6 },
+
+  messageImage: { width: 140, height: 140, borderRadius: 8, marginBottom: 6 },
+  messageText: { fontSize: 16, color: '#000', paddingRight: 44 },
+
+  timeText: {
+    position: 'absolute',
+    bottom: 2,
+    right: 8,
+    fontSize: 11,
+    color: '#5A6B7A',
   },
-  messageActions: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-    paddingTop: 6,
-  },
-  moreButton: {
-    padding: 4,
-  },
-  moreText: {
-    fontSize: 18,
-    color: '#B0B0B0',
-  },
-  optionsMenu: {
-    right: 0,
-    backgroundColor: '#FFF',
-    padding: 10,
-    borderRadius: 8,
-    width: 120,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    top: 85,
-  },
-  optionItem: {
-    paddingVertical: 8,
-  },
-  optionText: {
-    color: '#007AFF',
-    fontSize: 14,
-  },
+
   replyBanner: {
-    backgroundColor: '#E7EDF3',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 12,
-    paddingVertical: 6,
+    backgroundColor: '#E7EDF3', flexDirection: 'row', alignItems: 'center',
+    justifyContent: 'space-between', paddingHorizontal: 12, paddingVertical: 6
   },
-  replyBannerText: {
-    color: '#1F2933',
-    fontSize: 12,
-    flex: 1,
-    paddingRight: 8,
-  },
-  replyBannerClose: {
-    color: '#1F2933',
-    fontSize: 16,
-  },
+  replyThumb: { width: 32, height: 32, borderRadius: 6, marginRight: 8 },
+  replyBannerText: { color: '#1F2933', fontSize: 12, flex: 1, paddingRight: 8 },
+  replyBannerClose: { color: '#1F2933', fontSize: 16 },
 
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#2C3E50',
-    padding: 10,
-    bottom: 10,
+    paddingHorizontal: 10,
+    paddingTop: 8,
   },
-  iconButton: {
-    marginHorizontal: 8,
-  },
+  iconButton: { marginHorizontal: 8 },
   input: {
-    flex: 1,
-    height: 40,
-    backgroundColor: '#FFF',
-    borderRadius: 20,
-    paddingLeft: 12,
-    fontSize: 16,
+    flex: 1, height: 40, backgroundColor: '#FFF',
+    borderRadius: 20, paddingLeft: 12, fontSize: 16
   },
   sendButton: {
-    backgroundColor: '#007AFF',
-    paddingVertical: 8,
-    paddingHorizontal: 16,
-    borderRadius: 20,
-    marginLeft: 8,
+    backgroundColor: '#007AFF', paddingVertical: 8,
+    paddingHorizontal: 16, borderRadius: 20, marginLeft: 8
   },
-  sendButtonText: {
-    color: '#FFF',
-    fontWeight: '700',
-    fontSize: 16,
+  sendButtonText: { color: '#FFF', fontWeight: '700', fontSize: 16 },
+
+  // Modal
+  modalBackdrop: {
+    flex: 1, backgroundColor: 'rgba(0,0,0,0.25)',
+    justifyContent: 'center', alignItems: 'center'
   },
+  modalCard: {
+    width: 260, backgroundColor: '#FFF', borderRadius: 12,
+    paddingVertical: 8, paddingHorizontal: 10, elevation: 4
+  },
+  modalTitle: { fontSize: 14, color: '#111827', marginBottom: 6, fontWeight: '700' },
+  modalItem: { paddingVertical: 10, paddingHorizontal: 8 },
+  modalItemText: { fontSize: 16, color: '#111827' },
+  modalCancel: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: '#E5E7EB' },
+  modalCancelText: { fontSize: 16, color: '#6B7280' },
+
+  // Full-screen viewer
+  viewerBackdrop: {
+    flex: 1,
+    backgroundColor: 'rgba(0,0,0,0.95)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  viewerImage: { width: '100%', height: '100%' },
 });

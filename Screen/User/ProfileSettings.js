@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { useRole } from '../../auth.context';
 import { db } from '../../firebase.config';
+import { Ionicons } from '@expo/vector-icons';
 
 const ProfileSettings = ({ navigation }) => {
 
@@ -107,12 +108,12 @@ const ProfileSettings = ({ navigation }) => {
 
   useEffect(() => {
     getProfileData();
-  }, []);
+  }, [profile?.email]);
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('ProfileButton')}>
-        <Text style={styles.backText}>←</Text>
+        <Ionicons name="chevron-back" size={24} color="#fff" />
       </TouchableOpacity>
 
       <Text style={styles.header}>Profile Details</Text>
@@ -177,13 +178,14 @@ export default ProfileSettings;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#1a2d3f',
     paddingTop: 60,
     alignItems: 'center',
   },
   backButton: {
     position: 'absolute',
     top: 60,
+    paddingHorizontal: 20,
     left: 20,
   },
   backText: {

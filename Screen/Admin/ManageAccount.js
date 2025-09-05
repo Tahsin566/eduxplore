@@ -16,7 +16,7 @@ export default function ManageAccountsScreen() {
 
   const getAdmins = async() => {
     try {
-      const q = query(collection(db, "users"), where("role", "==", "admin"));
+      const q = query(collection(db, "users"));
       const res = await getDocs(q);
       const data = res.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setAdmins(data);
@@ -42,7 +42,7 @@ export default function ManageAccountsScreen() {
       <View style={styles.space}><Text></Text></View>
 
       {/* Subheading */}
-      <Text style={styles.subheading}>Admins</Text>
+      <Text style={styles.subheading}>Users</Text>
 
       {/* List */}
       <View style={styles.listContainer}>
@@ -51,7 +51,7 @@ export default function ManageAccountsScreen() {
     key={index}
     onPress={() => navigation.navigate('AdminRoles', { id : admin.id })}
   >
-    <Text style={styles.listItem}>{admin.name}</Text>
+    <Text style={styles.listItem}>{admin?.name?.includes('null') ? admin?.name?.split('null')[0] : admin?.name}</Text>
   </TouchableOpacity>
 ))}
 
@@ -71,8 +71,7 @@ export default function ManageAccountsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2c3e50',
-    paddingTop: 40,
+    backgroundColor: '#1a2d3f',
     paddingHorizontal: 20,
   },
   edit:{

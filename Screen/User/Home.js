@@ -4,10 +4,17 @@ import profileIcon from '../../Images/Profile.png';
 import communityIcon from '../../Images/Community.png';
 import { Ionicons } from '@expo/vector-icons';
 import { useRole } from '../../auth.context';
+import { useEffect } from 'react';
 
 function Home({ navigation }) {
 
+
+
   const {role,profile} = useRole()
+
+  useEffect(() => {
+    if(!profile) navigation.navigate('SignIn')
+  }, [profile?.email]);
 
   return (
     <View style={styles.container}>
@@ -23,7 +30,7 @@ function Home({ navigation }) {
       
 
         <View style={{flexDirection:'row',alignItems:'center'}}>
-        <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('AdminNotification')  : navigation.navigate('Notification')}>
+        <TouchableOpacity onPress={() => role && role === 'admin' ? navigation.navigate('AdminNotification')  : navigation.navigate('Notification')}>
             <Ionicons name="notifications" size={24} color="#fff" />
           </TouchableOpacity>
 
@@ -45,8 +52,12 @@ function Home({ navigation }) {
           <Text style={styles.buttonText}>Appointment</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Search')}>
+        {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Search')}>
           <Text style={styles.buttonText}>Find a University</Text>
+        </TouchableOpacity> */}
+
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('UniversityList')}>
+          <Text style={styles.buttonText}>University List</Text>
         </TouchableOpacity>
 
         <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('GradeConverter')}>
@@ -78,7 +89,7 @@ export default Home;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#1a2d3f',
     alignItems: 'center',
     paddingTop: 80,
   },

@@ -25,6 +25,7 @@ export default function AddSeminar() {
         guest
       })
       console.log('Inserted document with ID: ', res.id);
+      navigation.navigate('Seminars')
     } catch (error) {
       console.log('Error adding document: ', error);
     }
@@ -81,7 +82,7 @@ export default function AddSeminar() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2E3A4F',
+    backgroundColor: '#1a2d3f',
     padding: 20,
     paddingTop: 50,
   },

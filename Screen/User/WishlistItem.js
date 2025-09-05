@@ -1,27 +1,45 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { collection, doc, getDoc, getDocs } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore';
 import { getDocumentAsync } from 'expo-document-picker';
 import { db } from '../../firebase.config';
 import { useNavigation } from '@react-navigation/native';
+import { useRole } from '../../auth.context';
+import Markdown from 'react-native-markdown-display';
+import { Ionicons } from '@expo/vector-icons';
 
-const WishlistItem = ({item}) => {
+const WishlistItem = ({ item }) => {
 
     const navigation = useNavigation();
+    const { profile } = useRole();
+    console.log(item)
 
     const [university, setUniversity] = useState();
 
-    const getData =async()=>{
-        try{
+    const getData = async () => {
+        try {
+            setUniversity(null);
             const universitiesRef = collection(db, 'university');
             const querySnapshot = await getDoc(doc(universitiesRef, item.id));
-            const univerityData = {...querySnapshot.data(), id: querySnapshot.id};
-            console.log('univerityData',univerityData);
+            const univerityData = { ...querySnapshot.data(), id: querySnapshot.id };
+            console.log('univerityData', univerityData);
             setUniversity(univerityData);
-        }catch(error){
+
+        } catch (error) {
             console.error('Error fetching universities:', error);
         }
     }
+
+    const deleteFromWishlist = async (item) => {
+        try {
+            await deleteDoc(doc(db, "wishlist", item.docid));
+            console.log('deleted');
+        } catch (error) {
+            console.log('Error adding document: ', error);
+        }
+    }
+
+
 
     useEffect(() => {
         getData();
@@ -30,23 +48,24 @@ const WishlistItem = ({item}) => {
     return (
 
         <View style={styles.cardContainer}>
-                <TouchableOpacity  onPress={() => navigation.navigate('UniversityOverview', { universityName : university,path:'WishList' })}>
+            <TouchableOpacity onPress={() => navigation.navigate('UniversityOverview', { universityName: university, path: 'WishList' })}>
 
 
-        <View>
-            {/* <Text style={styles.universityTitle}>{item.id}</Text> */}
-            <Text style={{color:'black',fontSize:18,fontWeight:'bold'}}>{university?.name}</Text>
-            <Text>{university?.about}</Text>
-            <Text>{university?.overview}</Text>
-            {/* University Bookmark Icon next to the title */}
-            {/* <TouchableOpacity onPress={toggleBookmarkUniversity}>
-                        <Image 
-                        source={bookmarkIconPath} 
-                        style={[styles.bookmarkIcon, isBookmarkedUniversity && styles.bookmarkIconSelected]} 
-                        />
-                        </TouchableOpacity> */}
-        </View>
-                        </TouchableOpacity>
+                <View>
+                    {/* <Text style={styles.universityTitle}>{item.id}</Text> */}
+                    <Text style={{ fontSize: 20, fontWeight: 'bold' }}>{university?.name}</Text>
+                    <Markdown>{university?.about}</Markdown>
+                    <Markdown>
+                        <Text numberOfLines={2}>{university?.overview}</Text>
+                    </Markdown>
+                    
+                </View>
+
+                <TouchableOpacity onPress={() => deleteFromWishlist(item)} style={{ position: 'absolute', top: 0, right: 1 ,backgroundColor:'#1a2d3f',padding:5,borderRadius:50}}>
+                    <Ionicons name="bookmark" size={24} color="white" />
+                </TouchableOpacity>
+                
+            </TouchableOpacity>
         </View>
     )
 }
@@ -62,5 +81,5 @@ const styles = StyleSheet.create({
         marginBottom: 20,
         borderColor: '#BCC6CF',
         // borderWidth: 1,
-      }
+    }
 })

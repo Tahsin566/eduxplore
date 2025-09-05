@@ -4,9 +4,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import srhIcon from '../../Images/srh.png';
 import { use, useEffect, useState } from 'react';
-import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
+import * as Linking from 'expo-linking';
+import Markdown from 'react-native-markdown-display';
 
 
 export default function UniversityOverview({ route }) {
@@ -63,13 +65,13 @@ export default function UniversityOverview({ route }) {
   ]);
 
   // Function to handle website press
-  const handleWebsitePress = () => {
-    Linking.openURL('https://www.srh.de/en/');
+  const handleWebsitePress = (url) => {
+    Linking.openURL(url);
   };
 
   // Function to handle source press
-  const handleSourcePress = () => {
-    Linking.openURL('https://www2.daad.de/deutschland/studienangebote/internationale-programme/en/detail/7801/#tab_overview');
+  const handleSourcePress = (url) => {
+    Linking.openURL(url);
   };
 
   const addToWishlist = async () => {
@@ -78,8 +80,8 @@ export default function UniversityOverview({ route }) {
     const querySnapshot = await getDocs(q);
     setIsMarked(!isMarked)
     if (querySnapshot.docs.length !== 0) {
-      await updateDoc(doc(db, "wishlist", querySnapshot.docs[0].id), { isMarked: !isMarked });
-      console.log('updated');
+      await deleteDoc(doc(db, "wishlist", querySnapshot.docs[0].id));
+      console.log('deleted');
       return;
     }
 
@@ -96,6 +98,7 @@ export default function UniversityOverview({ route }) {
   }
 
   const getMarked = async () => {
+    setIsMarked(false)
     const q = query(collection(db, "wishlist"), where("id", "==", universityName.id), where("email", "==", profile?.email));
     const querySnapshot = await getDocs(q);
 
@@ -117,8 +120,9 @@ export default function UniversityOverview({ route }) {
   }
 
   useEffect(() => {
+    setUniversityData(null);
     getUniversity()
-  },[universityName.name])
+  },[universityName])
 
   useEffect(() => {
     getMarked()
@@ -131,16 +135,16 @@ export default function UniversityOverview({ route }) {
       <View style={styles.card}>
         <View style={styles.header}>
           {path === 'BachelorList' && <TouchableOpacity onPress={() => path === 'BachelorList' && navigation.navigate('BachelorList')}>
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>}
           {path === 'MastersList' && <TouchableOpacity onPress={() => navigation.navigate('MastersList')}>
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>}
           {path === 'WishList' && <TouchableOpacity onPress={() => path === 'WishList' && navigation.navigate('WishList')}>
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>}
-          {path === 'Result' && <TouchableOpacity onPress={() => path === 'Result' && navigation.navigate('Result')}>
-            <Ionicons name="arrow-back" size={24} color="white" />
+          {path === 'Result' && <TouchableOpacity onPress={() => path === 'Result' && navigation.navigate('Search')}>
+            <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>}
           {/* <Text style={styles.title}>Overview {isMarked ? 'Marked' : 'Not Marked'}</Text> */}
           <TouchableOpacity onPress={addToWishlist}>
@@ -149,7 +153,7 @@ export default function UniversityOverview({ route }) {
         </View>
 
         <View style={styles.body}>
-          <Image source={srhIcon} style={styles.logo} />
+          {/* <Image source={srhIcon} style={styles.logo} /> */}
         </View>
 
         <Text style={styles.description}>
@@ -187,88 +191,43 @@ export default function UniversityOverview({ route }) {
       <View style={{ gap: 10 }}>
 
         {tab === 'overview' && <View style={styles.card2}>
-          <Text style={styles.paragraph}>{universityData?.overview}</Text>
+          {/* <Text style={styles.paragraph}>{universityData?.overview}</Text> */}
+          <Markdown>{universityData?.overview}</Markdown>
         </View>}
 
         {tab === 'requirement' && <View style={styles.card2}>
-          <Text style={styles.paragraph}>{universityData?.requirements} 2</Text>
+          <Markdown>{universityData?.requirements}</Markdown>
         </View>}
 
         {tab === 'about' && <View style={styles.card2}>
-          <Text style={styles.paragraph}>{universityData?.about} 3</Text>
+          <Image source={{uri:universityData?.photo}} style={styles.image} />
+          <Markdown>{universityData?.about}</Markdown>
         </View>}
-      </View>
-
-      {/* Additional information */}
-      {/* <View>
-        <View style={styles.block}>
-          <Text style={styles.label}>Additional information on beginning, duration and mode of study</Text>
-          <Text style={styles.value}>{additionalInfo}</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.label}>Application deadline</Text>
-          {applicationDeadlines.map((item, index) => (
-            <Text key={index} style={styles.paragraph}>{item}</Text>
-          ))}
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.label}>Tuition fees per semester in EUR</Text>
-          <Text style={styles.paragraph}>{tuitionFee}</Text>
-        </View>
-
-        <View style={styles.section}>
-          <Text style={styles.label}>Additional information on tuition fees</Text>
-          {additionalTuitionInfo.map((item, index) => (
-            <Text key={index} style={styles.bullet}>• {item}</Text>
-          ))}
-        </View>
-        <View style={styles.section}>
-          <Text style={styles.label}>jointDegree / DoubleDegree programme</Text>
-          {jointDegree.map((item, index) => (
-            <Text key={index} style={styles.bullet}>• {item}</Text>
-          ))}
-        </View>
-        <View style={styles.section}>
-          <Text style={styles.label}>Description / Content</Text>
-          {DescriptionContent.map((item, index) => (
-            <Text key={index} style={styles.bullet}>• {item}</Text>
-          ))}
-        </View>
-
-      </View> */}
-
-
-
-
-      {/* 4th section */}
       <View>
         <View style={styles.contactHeader}>
           <Ionicons name="person-circle" size={50} color="#1abc9c" />
-          <Text style={styles.contactTitle}>SRH Universities</Text>
-          <Text style={styles.subTitle}>Study Advisor</Text>
+          <Text style={styles.contactTitle}>{universityData?.name}</Text>
+          <Text style={styles.subTitle}>{universityData?.designation}</Text>
         </View>
 
         {/* Contact Information */}
-        <Text style={styles.address}>Sonnenallee 221</Text>
-        <Text style={styles.address}>12059 Berlin</Text>
+        <Text style={styles.address}>{universityData?.person}</Text>
+        <Text style={styles.address}>{universityData?.address}</Text>
 
         {/* Buttons for Phone, Email, and Website */}
-        <TouchableOpacity style={styles.button1}>
-          <Text style={styles.buttonText1}>+49 30515650200</Text>
-        </TouchableOpacity>
+        <Text style={styles.buttonText1}>Phone : {universityData?.phone}</Text>
 
-        <TouchableOpacity style={styles.button1}>
-          <Text style={styles.buttonText1}>Email</Text>
-        </TouchableOpacity>
 
-        <TouchableOpacity style={styles.button1} onPress={handleWebsitePress}>
-          <Text style={styles.buttonText1}>Course website</Text>
+        
+      <Text style={styles.buttonText1}>Email : {universityData?.email}</Text>
+
+
+        <TouchableOpacity style={styles.button1} onPress={() => handleWebsitePress(universityData?.website)}>
+          <Text style={styles.websiteBtnText}>Course website</Text>
         </TouchableOpacity>
 
         {role === 'admin' && <TouchableOpacity style={styles.button1} onPress={() => navigation.navigate('UpdateOVerView', { university: universityName })}>
-          <Text style={styles.buttonText1}>Update</Text>
+          <Text style={[{...styles.buttonText1},{fontWeight:'bold',color:'white'}]}>Update</Text>
         </TouchableOpacity>}
 
         {/* Source */}
@@ -279,6 +238,14 @@ export default function UniversityOverview({ route }) {
           </TouchableOpacity>
         </View>
       </View>
+      </View>
+
+    
+
+
+
+
+      {/* 4th section */}
 
     </ScrollView>
   );
@@ -288,8 +255,6 @@ const styles = StyleSheet.create({
   container: {
     paddingBottom: 20,
     backgroundColor: '#f4f4f4',
-    marginLeft: '10',
-    marginRight: '10',
   },
   card: {
     backgroundColor: '#1a2d3f',
@@ -315,6 +280,14 @@ const styles = StyleSheet.create({
     height: 120,
     resizeMode: 'contain',
   },
+  image:{
+    width: '100%',
+    height: 200,
+    resizeMode: 'cover',
+    top: 0,
+    marginTop: 5,
+    
+  },
   description: {
     color: 'white',
     fontSize: 19,
@@ -333,6 +306,11 @@ const styles = StyleSheet.create({
     marginHorizontal: 1,
     paddingVertical: 12,
   },
+  websiteBtnText:{
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
+  },
   buttonText: {
     color: 'black',
     fontWeight: 'bold',
@@ -341,6 +319,7 @@ const styles = StyleSheet.create({
 
   /*Third part */
   card2: {
+    marginTop: 1,
     backgroundColor: '#fff',
     borderRadius: 10,
     overflow: 'hidden',
@@ -403,6 +382,7 @@ const styles = StyleSheet.create({
   contactTitle: {
     color: '#1abc9c',
     fontSize: 24,
+    textAlign: 'center',
     fontWeight: 'bold',
     marginTop: 10,
   },
@@ -416,21 +396,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#333',
     textAlign: 'center',
-    marginVertical: 5,
   },
 
   // Buttons for Phone, Email, and Website
   button1: {
     backgroundColor: '#1abc9c',
     marginBottom: 10,
+    marginHorizontal: 10,
     paddingVertical: 12,
     alignItems: 'center',
     borderRadius: 5,
   },
   buttonText1: {
     fontSize: 16,
-    color: '#fff',
-    fontWeight: 'bold',
+    color: '#000',
+    textAlign: 'center',
   },
 
   // Source Section

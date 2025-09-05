@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState, useLayoutEffect } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, Linking, Image, StyleSheet, Dimensions } from 'react-native';
 
@@ -20,7 +21,7 @@ export default function Appointment({ navigation }) {
       {/* Header with Back Button */}
       <View style={styles.headerRow}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>Appointment</Text>
         <View style={styles.iconPlaceholder} />
@@ -63,7 +64,7 @@ export default function Appointment({ navigation }) {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: '#2C3E50' 
+    backgroundColor: '#1a2d3f' 
   },
   headerRow: { 
     flexDirection: 'row', 
@@ -75,6 +76,7 @@ const styles = StyleSheet.create({
   backButton: {
     width: 36,
     height: 36,
+    paddingHorizontal: 10,
     alignItems: 'center',
     justifyContent: 'center',
   },
