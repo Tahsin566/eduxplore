@@ -1,4 +1,4 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, StatusBar, ActivityIndicator, Alert } from 'react-native'
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, StatusBar, ActivityIndicator, Alert } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import UseWeb from '../../hooks/useWeb';
 import { useAuth, useSignIn, useSSO, useUser } from '@clerk/clerk-expo';
@@ -10,141 +10,122 @@ import { AuthContext, useRole } from '../../auth.context';
 import { FontAwesome5 } from '@expo/vector-icons';
 
 function SignIn({ navigation }) {
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
-  const [email, setEmail] = useState('')
-  const [password, setPassword] = useState('')
+  UseWeb();
 
-
-  UseWeb()
-
-  const googleauth = useSSO({ strategy: 'oauth_google' })
-
-  const { isSignedIn, signOut } = useAuth()
-  const {role} = useRole()
-
-  const { user } = useUser()
-
-  const { setActive ,signIn} = useSignIn()
-
-  const [loading, setLoading] = useState(true)
+  const googleauth = useSSO({ strategy: 'oauth_google' });
+  const { isSignedIn } = useAuth();
+  const { role } = useRole();
+  const { user } = useUser();
+  const { setActive, signIn } = useSignIn();
+  const [loading, setLoading] = useState(true);
 
   const handlegoogleauth = async () => {
-
     try {
-
-        if (!isSignedIn) {
-
-            const googleAuth = await googleauth.startSSOFlow({ strategy: 'oauth_google' })
-
-            if (googleAuth.createdSessionId) {
-                setActive({ session: googleAuth.createdSessionId })
-            }
-            
-        }
-
-
+      if (!isSignedIn) {
+        const googleAuth = await googleauth.startSSOFlow({ strategy: 'oauth_google' });
+        if (googleAuth.createdSessionId) setActive({ session: googleAuth.createdSessionId });
+      }
     } catch (error) {
-
-        console.log(error.errors[0].message)
-
+      console.log(error?.errors?.[0]?.message || error?.message);
     }
-}
+  };
 
-const handleSignIn = async () => {
-
-  if(user){
-    navigation.navigate(role === 'admin' ? 'HomeScreen' : 'Home')
-  }
-
-  try {
-    const result = await signIn.create({password,identifier:email})
-    console.log(result)
-    if(result.status === 'complete'){
-      await setActive({ session: result.createdSessionId })
+  const handleSignIn = async () => {
+    if (user) navigation.navigate(role === 'admin' ? 'HomeScreen' : 'Home');
+    try {
+      const result = await signIn.create({ password, identifier: email });
+      if (result.status === 'complete') await setActive({ session: result.createdSessionId });
+    } catch (error) {
+      console.log(error);
     }
-  } catch (error) {
-    console.log(error)
-  }
-}
+  };
 
-
-
-
-
-
+  // ----- Simple code-drawn logo (kept) -----
+  const Logo = () => (
+    <View style={styles.logoCircleOuter}>
+      <View style={styles.logoCircleInner}>
+        <View style={styles.logoBars}>
+          <View style={[styles.logoBar, { height: 10 }]} />
+          <View style={[styles.logoBar, { height: 18 }]} />
+          <View style={[styles.logoBar, { height: 14 }]} />
+        </View>
+      </View>
+    </View>
+  );
 
   return (
-    <ScrollView  endFillColor={'#1a2d3f'}>
-
+    <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: '#13294B' }}>
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
-        <Text style={styles.header}>Sign in</Text>
 
-        <View style={styles.form}>
+        {/* Logo / Title */}
+        <View style={styles.logoWrap}>
+          <Logo />
+          <Text style={styles.header}>Sign in</Text>
+        </View>
+
+        {/* Card (same layout, colors adjusted) */}
+        <View style={styles.card}>
+          {/* Google */}
+          <TouchableOpacity style={styles.googleBtn} onPress={handlegoogleauth}>
+            <View style={styles.googleIconBox}>
+              <FontAwesome5 name="google" size={18} color="#13294B" />
+            </View>
+            <Text style={styles.googleText}>Sign in with Google</Text>
+          </TouchableOpacity>
+
+          {/* Divider */}
+          <View style={styles.dividerRow}>
+            <View style={styles.divider} />
+            <Text style={styles.orText}>-or-</Text>
+            <View style={styles.divider} />
+          </View>
+
+          {/* Email */}
           <Text style={styles.label}>Email</Text>
           <TextInput
             style={styles.input}
             onChangeText={setEmail}
             placeholder="Enter your email"
-            placeholderTextColor="#999"
+            placeholderTextColor="#94A3B8"
             keyboardType="email-address"
             autoCapitalize="none"
           />
 
+          {/* Password */}
           <Text style={styles.label}>Password</Text>
           <TextInput
             style={styles.input}
             onChangeText={setPassword}
             placeholder="Enter your password"
-            placeholderTextColor="#999"
+            placeholderTextColor="#94A3B8"
             secureTextEntry
           />
 
-          <View style={{ alignItems: 'flex-end' }}>
-            <TouchableOpacity onPress={() => navigation.navigate('forgot')}>
-              <Text style={styles.forgotPassword}>Forgot Password?</Text>
-            </TouchableOpacity>
-          </View>
-
-          {/* <TouchableOpacity
-            style={styles.button}
-            onPress={() => navigation.navigate('Home')}
-          >
-            <Text style={styles.buttonText}>Sign in</Text>
-          </TouchableOpacity> */}
-
-          <Text style={styles.or}>- or -</Text>
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handlegoogleauth}
-          >
-            <FontAwesome5 name="google" size={24} color="#203a43" brand />
-            <Text>{' '}</Text>
-            <Text style={styles.buttonText}>Sign in with Google</Text>
+          {/* Forgot */}
+          <TouchableOpacity onPress={() => navigation.navigate('forgot')} style={{ alignSelf: 'flex-end' }}>
+            <Text style={styles.forgotPassword}>Forgot password</Text>
           </TouchableOpacity>
 
-          <TouchableOpacity onPress={() => navigation.replace('SignUp')}>
+          {/* Primary Sign In (same size/layout; color changed to white) */}
+          <TouchableOpacity style={styles.primaryBtn} onPress={handleSignIn}>
+            <Text style={styles.primaryBtnText}>Sign in</Text>
+          </TouchableOpacity>
+
+          {/* Footer */}
+          <TouchableOpacity onPress={() => navigation.replace('SignUp')} style={{ marginTop: 18 }}>
             <Text style={styles.footerText}>
               Don't Have an Account?
-              <Text style={styles.click} onPress={() => navigation.navigate('SignUp')}> Sign Up</Text>
+              <Text style={styles.click} onPress={() => navigation.navigate('SignUp')}>{' '}Sign Up</Text>
             </Text>
           </TouchableOpacity>
-
-
-
-          <TouchableOpacity
-            style={styles.button}
-            onPress={handleSignIn}
-          >
-            <Text style={styles.buttonText}>Sign in </Text>
-          </TouchableOpacity>
-
         </View>
       </View>
     </ScrollView>
-
-  )
+  );
 }
 
 export default SignIn;
@@ -152,65 +133,92 @@ export default SignIn;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    paddingTop: 50,
-    backgroundColor: '#1a2d3f',
+    paddingTop: 36,
+    paddingHorizontal: 24,
+    backgroundColor: '#13294B', // deep navy from screenshot
     alignItems: 'center',
-    
+    justifyContent: 'flex-start',
   },
-  header: {
-    fontSize: 24,
-    color: '#FFFFFF',
-    fontWeight: '600',
-    textAlign: 'center',
+
+  /* Top */
+  logoWrap: {
+    width: '100%',
+    alignItems: 'center',
+    marginTop: 8,
+    marginBottom: 8,
   },
-  forgotPassword: {
-    paddingTop: 10,
-    color: '#8080FF',
-  },
-  form: {
-    width: '80%',
-    marginTop: 40,
-  },
-  label: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    marginTop: 20,
-    marginBottom: 6,
-  },
-  input: {
+  logoCircleOuter: {
+    width: 72, height: 72, borderRadius: 36,
     backgroundColor: '#FFFFFF',
-    height: 45,
-    borderRadius: 8,
+    alignItems: 'center', justifyContent: 'center',
+    marginBottom: 12,
+    elevation: 2, shadowColor: '#000',
+    shadowOpacity: 0.15, shadowRadius: 6, shadowOffset: { width: 0, height: 2 },
+  },
+  logoCircleInner: {
+    width: 56, height: 56, borderRadius: 28,
+    backgroundColor: '#13294B',
+    alignItems: 'center', justifyContent: 'center',
+  },
+  logoBars: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', gap: 6 },
+  logoBar: { width: 6, borderRadius: 3, backgroundColor: '#FFFFFF' },
+
+  header: { fontSize: 24, color: '#FFFFFF', fontWeight: '700', textAlign: 'center' },
+
+  /* Card (only colors changed) */
+  card: {
+    width: '100%',
+    backgroundColor: '#13294B',
+    borderRadius: 16,
+    padding: 16,
+    marginTop: 16,
+    borderWidth: 0,
+    borderColor: '#13294B',
+  },
+
+  googleBtn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',   // white button
+    borderRadius: 10,
+    height: 48,
     paddingHorizontal: 12,
   },
-  button: {
-    backgroundColor: '#fff',
-    flexDirection: 'row',
-    justifyContent: 'center',
-    borderRadius: 12,
-    paddingVertical: 15,
-    marginTop: 20,
+  googleIconBox: {
+    width: 28, height: 28, borderRadius: 6,
+    backgroundColor: '#FFFFFF',
+    borderWidth: 1, borderColor: '#1E293B',
+    alignItems: 'center', justifyContent: 'center',
+    marginRight: 10,
+  },
+  googleText: { color: '#0F172A', fontSize: 15, fontWeight: '700' },
+
+  dividerRow: { flexDirection: 'row', alignItems: 'center', marginVertical: 16 },
+  divider: { flex: 1, height: 1, backgroundColor: '#274062' },
+  orText: { color: '#FFFFFF', marginHorizontal: 10, fontWeight: '700', fontSize: 12 },
+
+  label: { fontSize: 13, color: '#FFFFFF', marginTop: 6, marginBottom: 6, fontWeight: '700' },
+  input: {
+    backgroundColor: '#FFFFFF',
+    height: 46,
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    color: '#0F172A',
+  },
+
+  forgotPassword: { paddingTop: 8, color: '#53A2FF', fontWeight: '700', fontSize: 12 },
+
+  // Primary sign-in: white button with dark text (same layout as your original)
+  primaryBtn: {
+    backgroundColor: '#FFFFFF',
+    borderRadius: 10,
+    height: 48,
     alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 16,
   },
-  buttonText: {
-    fontSize: 16,
-    fontWeight: '600',
-    color: '#000000',
-    
-  },
-  or: { 
-    color: '#fff', 
-    textAlign: 'center', 
-    marginVertical: 8 
-  },
-  click: {
-    color: '#8080FF',
-    fontSize: 18,
-  },
-  footerText: {
-    fontSize: 14,
-    color: '#FFFFFF',
-    textAlign: 'center',
-    marginTop: 30,
-  },
-})
+  primaryBtnText: { color: '#0F172A', fontSize: 16, fontWeight: '700' },
+
+  click: { color: '#53A2FF', fontSize: 15, fontWeight: '700' },
+  footerText: { fontSize: 14, color: '#FFFFFF', textAlign: 'center', fontWeight: '700' },
+});

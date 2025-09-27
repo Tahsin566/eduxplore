@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, StatusBar } from 'react-native';
 
 export default function EmailVerification({ navigation }) {
   const [otp, setOtp] = useState('');
@@ -14,17 +14,25 @@ export default function EmailVerification({ navigation }) {
 
   return (
     <View style={styles.container}>
-      {/* Back Button */}
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('SignUp')}>
-        <Text style={styles.backText}>←</Text>
-      </TouchableOpacity>
+      <StatusBar barStyle="light-content" />
 
-      {/* Header */}
-      <Text style={styles.header}>Verification</Text>
+      {/* Top row: chevron + centered title */}
+      <View style={styles.topRow}>
+        <TouchableOpacity
+          style={styles.backHit}
+          onPress={() => navigation.navigate('SignUp')}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+        >
+          <Text style={styles.backIcon}>‹</Text>
+        </TouchableOpacity>
+        <Text style={styles.title}>Verification</Text>
+        <View style={{ width: 20 }} />
+      </View>
 
-      {/* OTP Input */}
-      <View style={styles.form}>
+      {/* Body */}
+      <View style={styles.body}>
         <Text style={styles.label}>Enter Your OTP</Text>
+
         <TextInput
           style={styles.input}
           keyboardType="numeric"
@@ -33,89 +41,88 @@ export default function EmailVerification({ navigation }) {
           onChangeText={setOtp}
         />
 
-        {/* Verify Button */}
-        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('PersonalInformation')}>
-               <Text style={styles.buttonText}>Click to Verify</Text>
+        {/* Small centered white button */}
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('PersonalInformation')}
+        >
+          <Text style={styles.buttonText}>Click to Verify</Text>
         </TouchableOpacity>
 
-
-        {/* Info Text */}
-        <Text style={styles.infoText}>
-          The verification code has been sent to the email you provided.{"\n"}
-          If you don't receive the code?
-        </Text>
-
-        {/* Resend */}
-        <TouchableOpacity onPress={() => alert('Resend code clicked')}>
-          <Text style={styles.resendText}>Resend code.</Text>
-        </TouchableOpacity>
+        {/* Helper text block */}
+        <View style={styles.infoWrap}>
+          <Text style={styles.infoText}>
+            The verification code has been sent to the{'\n'}
+            email you provided.{'\n'}
+            If you don't receive the code?
+          </Text>
+          <TouchableOpacity onPress={() => alert('Resend code clicked')}>
+            <Text style={styles.resendText}>Resend code.</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
 }
 
+const NAVY = '#1E2F55';       // deep navy like your screenshot
+const INPUT_BG = '#E9EEF4';   // light input background
+const INFO = '#98A7B8';
+const LINK = '#4DA3FF';
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2C3E50',
-    paddingTop: 60,
+    backgroundColor: NAVY,
+  },
+
+  topRow: {
+    height: 52,
+    flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
   },
-  backButton: {
-    position: 'absolute',
-    top: 57,
-    left: 20,
+  backHit: { width: 20, height: 20, alignItems: 'center', justifyContent: 'center' },
+  backIcon: { color: '#E8EEF5', fontSize: 20, lineHeight: 20 }, // chevron
+  title: { color: '#E8EEF5', fontSize: 18, fontWeight: '700' , },
+
+  body: {
+    paddingHorizontal: 18,
+    paddingTop: 18,
   },
-  backText: {
-    fontSize: 24,
-    color: '#FFFFFF',
-  },
-  header: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#FFFFFF',
-    marginBottom: 30,
-  },
-  form: {
-    width: '80%',
-    alignItems: 'center',
-  },
+
   label: {
     color: '#FFFFFF',
-    fontSize: 14,
+    fontSize: 13,
+    fontWeight: '700',
     marginBottom: 8,
-    alignSelf: 'flex-start',
-    marginTop: 80
   },
+
+  // Light background restored to match the image
   input: {
     width: '100%',
-    backgroundColor: '#FFFFFF',
+    backgroundColor: INPUT_BG,
+    height: 42,
     borderRadius: 6,
-    padding: 10,
-    fontSize: 16,
-    marginBottom: 20,
-    
+    paddingHorizontal: 10,
   },
+
   button: {
+    alignSelf: 'center',
     backgroundColor: '#FFFFFF',
-    paddingVertical: 8,
-    paddingHorizontal: 20,
     borderRadius: 4,
-    marginBottom: 20,
-    marginTop: 20
+    paddingVertical: 6,
+    paddingHorizontal: 12,
+    marginTop: 14,
   },
-  buttonText: {
-    fontWeight: '600',
-    color: '#000000',
+  buttonText: { color: '#0F172A', fontWeight: '700', fontSize: 12 },
+
+  infoWrap: {
+    marginTop: 14,
+    width: '75%',
+    marginLeft: 6,
   },
-  infoText: {
-    color: '#FFFFFF',
-    textAlign: 'center',
-    fontSize: 13,
-  },
-  resendText: {
-    color: '#1E90FF',
-    marginTop: 10,
-    fontSize: 13,
-  },
+  infoText: { color: INFO, fontSize: 11.5, lineHeight: 16 },
+  resendText: { color: LINK, fontSize: 11.5, marginTop: 6, fontWeight: '700' },
 });
