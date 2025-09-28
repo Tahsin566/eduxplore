@@ -33,7 +33,7 @@ export default function AdminRoles({ route }) {
       {/* Header */}
       <View style={styles.edit}><Text style={styles.title}>Admin Roles</Text></View>
       <TouchableOpacity onPress={() => navigation.navigate('ManageAccounts')}>
-        <Ionicons name="arrow-back" size={24} color="#fff" />
+        <Ionicons name="chevron-back" size={24} color="#fff" />
       </TouchableOpacity>
 
       <View style={styles.space}><Text></Text></View>
@@ -84,8 +84,9 @@ export default function AdminRoles({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     paddingHorizontal: 20,
+    marginTop: 35,
   },
   dropdown: {
     position: 'absolute',
@@ -163,7 +164,8 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 6,
-    marginTop: 20,
+    marginTop: 120,
+    backgroundColor:'#638ECC'
   },
   addButtonText: {
     fontWeight: 'bold',

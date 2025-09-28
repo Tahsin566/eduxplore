@@ -1,38 +1,22 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, FlatList, TextInput, TouchableOpacity, StyleSheet, KeyboardAvoidingView, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { ScrollView } from 'react-native-gesture-handler';
 import { useRole } from '../../auth.context';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 
+const AVATAR_COLORS = ['#1C2E5C', '#964b00', '#444cff', '#dedc34', '#3be3da', '#adadff'];
+
 export default function RegisteredListScreen({ route }) {
   const navigation = useNavigation();
+  const topic = route.params.topic;
+  const { role } = useRole();
   const [link, setLink] = useState('');
-
-  const topic = route.params.topic
-
-  console.log('topic',topic)
-  
-
-  const {role} = useRole()
-  
-  // Example emails list
-  // const registeredEmails = ['Email1@example.com', 'Email2@example.com', 'Email3@example.com', 'Email4@example.com'];
-
-  const handleSend = () => {
-    if (link.trim()) {
-      // Handle sending logic
-      console.log(`Sending meet link: ${link}`);
-      setLink('');
-    }
-  };
-
-
+  const [searchTerm, setSearchTerm] = useState('');
   const [registeredEmails, setRegisteredEmails] = useState([]);
 
-  const getRegisteredEmails = async () => {
+const getRegisteredEmails = async () => {
     setRegisteredEmails([]);
     try {
       const q = query(collection(db,"seminars_reg"), where("isRegistered", "==", true), where("topic", "==", topic ));
@@ -49,107 +33,162 @@ export default function RegisteredListScreen({ route }) {
   },[topic])
 
   return (
-    <ScrollView contentContainerStyle={{ flex : 1}} endFillColor={'#2c3e50'}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS==='ios' ? 'padding' : undefined}>
+      <View style={styles.container}>
 
-    <View style={styles.container}>
-      {/* Header with Back Button and Title */}
-      <View style={styles.edit}><Text style={styles.title}>Registered List</Text></View>
-        <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('Seminars') : navigation.navigate('Seminars')} style={styles.backButton}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
-        </TouchableOpacity>
-      {/* Subheading */}
-      <Text style={styles.subheading}>Registered Emails</Text>
+        <View style={styles.headerRow}>
+          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIcon}>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Registered List</Text>
+        </View>
 
-      {/* Emails List */}
-      {registeredEmails.length > 0 ? <View style={styles.listContainer}>
-        {registeredEmails.map((email, index) => (
-          <Text key={index} style={styles.listItem}>
-            {email}
-          </Text>
-        ))}
-      </View>: <Text style={{color: '#fff', fontSize: 16,marginTop: 15}}>No registered emails</Text>}
-
-      {/* Link Input & Send Button */}
-      <View style={styles.linkRow}>
-        <TextInput
-          style={styles.linkInput}
-          placeholder="Paste Meet Link Here"
-          placeholderTextColor="#999"
-          value={link}
-          onChangeText={setLink}
+        <View style={styles.searchBar}>
+          <Ionicons name="search" size={20} color="#6447e6" style={{marginLeft:6, marginRight:4}} />
+          <TextInput
+            value={searchTerm}
+            style={styles.searchInput}
+            placeholder="Search register email"
+            placeholderTextColor="#6447e6"
+            onChangeText={setSearchTerm}
           />
-        <TouchableOpacity style={styles.sendBtn} onPress={handleSend}>
-          <Text style={styles.sendText}>Send</Text>
-        </TouchableOpacity>
+        </View>
+
+        <Text style={styles.subheading}>Registered Emails</Text>
+
+        <FlatList
+          data={registeredEmails}
+          keyExtractor={(item, index) => item+index}
+          renderItem={({item, index}) => (
+            <View style={styles.emailRow}>
+              <View style={[styles.avatar, {backgroundColor: AVATAR_COLORS[index % AVATAR_COLORS.length]}]}>
+                <Ionicons name="person" size={17} color="#fff" />
+              </View>
+              <Text style={styles.emailText}>{item}</Text>
+            </View>
+          )}
+          ListEmptyComponent={<Text style={styles.noEmail}>No registered emails</Text>}
+          contentContainerStyle={{ paddingBottom: 85 }}
+        />
+
+        <View style={styles.linkRow}>
+          <TextInput
+            style={styles.linkInput}
+            placeholder="Paste Meet Link Here"
+            placeholderTextColor="#999"
+            value={link}
+            onChangeText={setLink}
+          />
+          <TouchableOpacity style={styles.sendBtn} onPress={() => setLink('')}>
+            <Text style={styles.sendText}>Send</Text>
+          </TouchableOpacity>
+        </View>
       </View>
-    </View>
-</ScrollView>
+    </KeyboardAvoidingView>
   );
 }
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1, 
-    backgroundColor: '#1a2d3f', 
-    paddingTop: 40, 
-    paddingHorizontal: 20 
+    flex: 1,
+    backgroundColor: '#22325a',
+    paddingHorizontal: 18,
+    paddingTop: 34,
+    paddingBottom: 12,
   },
-  edit:{
-    marginTop: 30,
+  headerRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 19,
   },
-  backButton: {
-    marginRight: 15,
+  headerIcon: {
+    marginRight: 8,
   },
-  title: { 
-    textAlign: 'center',
+  title: {
+    flex: 1,
     color: '#fff',
-    fontSize: 18,
     fontWeight: 'bold',
+    fontSize: 22,
+    textAlign: 'center',
+    marginRight: 32
+  },
+  searchBar: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#f3f4fa',
+    borderRadius: 8,
+    height: 44,
+    paddingRight: 12,
+    marginBottom: 18,
+  },
+  searchInput: {
+    flex: 1,
+    fontSize: 16,
+    color: '#22325a',
+    paddingLeft: 6,
   },
   subheading: { 
-    marginTop: 30,
     color: '#fff', 
+    fontWeight: 'bold',
     fontSize: 16,
+    marginVertical: 12,
   },
-  listContainer: {
-    marginTop: 15,
-    backgroundColor: '#ecf0f1', 
-    borderRadius: 5, 
-    padding: 12, 
-
-  },
-  listItem: { 
-    fontSize: 16, 
-    fontWeight: 'bold', 
-    marginBottom: 10 
-  },
-  linkRow: { 
-    position: 'absolute',
-    bottom: 20,
-    left: 0,
-    right: 0,
-    paddingHorizontal: 20,
-    flexDirection: 'row', 
+  emailRow: {
+    flexDirection: 'row',
     alignItems: 'center',
-    
+    backgroundColor: '#ecf0f1',
+    borderRadius: 6,
+    paddingVertical: 9,
+    paddingHorizontal: 12,
+    marginBottom: 9,
   },
-  linkInput: { 
-    flex: 1, 
-    backgroundColor: '#ecf0f1', 
-    borderRadius: 5, 
-    paddingHorizontal: 10, 
-    height: 40, 
-    fontSize: 14,
+  avatar: {
+    width: 26,
+    height: 26,
+    borderRadius: 13,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 12,
+  },
+  emailText: {
+    fontSize: 15,
+    color: '#283a6a',
+    fontWeight: 'bold',
+  },
+  noEmail: {
+    color: '#fff',
+    fontSize: 16,
+    marginVertical: 12,
+    textAlign: 'center',
+  },
+  linkRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'transparent',
+    position: 'absolute',
+    left: 0, right: 0,
+    bottom: 17,
+    paddingHorizontal: 16,
+  },
+  linkInput: {
+    flex: 1,
+    backgroundColor: '#e6e6ea',
+    borderRadius: 6,
+    height: 38,
+    paddingHorizontal: 12,
+    fontSize: 15,
+    marginRight: 10,
   },
   sendBtn: {
-    backgroundColor: '#1abc9c',
-    paddingHorizontal: 15,
-    paddingVertical: 10,
-    marginLeft: 10,
-    borderRadius: 5,
+    backgroundColor: '#22325a',
+    paddingHorizontal: 14,
+    paddingVertical: 9,
+    borderRadius: 6,
+    alignItems: 'center',
   },
-  sendText: { 
-    color: '#fff', 
-    fontWeight: 'bold' 
+  sendText: {
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 16,
   },
 });

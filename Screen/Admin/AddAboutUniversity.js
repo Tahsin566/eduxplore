@@ -33,7 +33,7 @@ export default function AddAboutUniversity() {
 
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.title}> Add About University</Text>
         </View>
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
 
   // Card section (Used for the first card and content container)
   card: {
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     padding: 15,
   },
   header: {

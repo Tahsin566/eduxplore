@@ -66,9 +66,10 @@ export default function PHDList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     paddingTop: 10,
     paddingHorizontal: 20,
+    marginTop: 35,
   },
   edit:{
     marginTop: '30',

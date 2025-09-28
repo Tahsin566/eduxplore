@@ -41,11 +41,10 @@ export default function BachelorList() {
 
   return (
     <View style={styles.container}>
-      {/* Back Button & Title */}
-      <View style={styles.edit}><Text style={styles.title}>Bachelor List</Text></View>
-        <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
-          <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
+      <View><Text style={styles.title}>Bachelor List</Text></View>
+      <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
+        <Ionicons name="chevron-back" size={24} color="#fff" />
+      </TouchableOpacity>
    
     <View style={styles.space}><Text></Text></View>
 
@@ -94,8 +93,9 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingTop:10,
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     paddingHorizontal: 20,
+    marginTop: 35,
   },
   search:{
     backgroundColor: '#ecf0f1',
@@ -120,16 +120,14 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 5,
     borderBottomRightRadius: 5
   },
-  edit:{
-    marginTop: '30',
-  },
+
   title: {
     position: 'absolute',
     left: 0,
     right: 0,
     textAlign: 'center',
     color: '#fff',
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   space: {

@@ -47,7 +47,7 @@ const [admissionRequirements, setAdmissionRequirements] = useState([
       <View style={styles.card}>
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.title}>Requirement</Text>
           <TouchableOpacity onPress={()=>navigation.navigate('WishList')}>
@@ -152,7 +152,7 @@ const styles = StyleSheet.create({
     marginRight: '10',
   },
   card: {
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     padding: 15,
   },
   header: {
