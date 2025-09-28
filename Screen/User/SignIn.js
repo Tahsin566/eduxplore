@@ -168,12 +168,11 @@ const styles = StyleSheet.create({
   /* Card (only colors changed) */
   card: {
     width: '100%',
-    backgroundColor: '#13294B',
+    backgroundColor: '#1C2E5C',
     borderRadius: 16,
     padding: 16,
     marginTop: 16,
     borderWidth: 0,
-    borderColor: '#13294B',
   },
 
   googleBtn: {

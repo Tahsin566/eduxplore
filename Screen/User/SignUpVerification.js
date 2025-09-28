@@ -65,7 +65,7 @@ export default function EmailVerification({ navigation }) {
   );
 }
 
-const NAVY = '#1E2F55';       // deep navy like your screenshot
+const NAVY = '#1C2E5C';       // deep navy like your screenshot
 const INPUT_BG = '#E9EEF4';   // light input background
 const INFO = '#98A7B8';
 const LINK = '#4DA3FF';

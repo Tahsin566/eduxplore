@@ -204,7 +204,7 @@ export default function LOMChecker({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: '#13294B' },
+  root: { flex: 1, backgroundColor: '#1C2E5C' },
   flex: { flex: 1 },
 
   headerBar: {

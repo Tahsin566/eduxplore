@@ -164,7 +164,7 @@ function PersonalInformation({ navigation }) {
 
 export default PersonalInformation;
 
-const NAVY = '#13294B';
+const NAVY = '#1C2E5C';
 const INPUT_BG = '#FFFFFF';
 
 const styles = StyleSheet.create({

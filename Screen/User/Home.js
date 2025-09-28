@@ -101,7 +101,7 @@ function Feature({ icon, title, subtitle, onPress }) {
 
 /* ---------- styles ---------- */
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#13294B' },
+  container: { flex: 1, backgroundColor: '#1C2E5C' },
 
   // header: centered title + white bell
   headerBar: {

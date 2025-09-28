@@ -487,9 +487,9 @@ export default function Community({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  kav: { flex: 1, backgroundColor: '#13294B' },
+  kav: { flex: 1, backgroundColor: '#1C2E5C' },
 
-  container: { flex: 1, backgroundColor: '#13294B', paddingTop: 20 },
+  container: { flex: 1, backgroundColor: '#1C2E5C', paddingTop: 20 },
 
   headerBar: {
     height: 50, flexDirection: 'row', alignItems: 'center',
@@ -499,10 +499,10 @@ const styles = StyleSheet.create({
   iconText: { color: '#E7EDF3', fontSize: 30 },
   headerTitle: { color: '#E7EDF3', fontSize: 24, fontWeight: '700' },
 
-  searchContainer: { padding: 8, backgroundColor: '#13294B' },
+  searchContainer: { padding: 8, backgroundColor: '#1C2E5C' },
   searchInput: { backgroundColor: '#FFF', borderRadius: 20, paddingLeft: 12, height: 40 },
 
-  messagesContainer: { flex: 1, paddingHorizontal: 12, backgroundColor: '#13294B' },
+  messagesContainer: { flex: 1, paddingHorizontal: 12, backgroundColor: '#1C2E5C' },
   row: { flexDirection: 'row', alignItems: 'flex-end', marginVertical: 6, gap: 8 },
   rowLeft: { justifyContent: 'flex-start' },
   rowRight: { justifyContent: 'flex-end' },

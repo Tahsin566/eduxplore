@@ -146,7 +146,7 @@ export default function VPDCalculator({ navigation }) {
   );
 }
 
-const NAVY = '#13294B';
+const NAVY = '#1C2E5C';
 
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: NAVY },

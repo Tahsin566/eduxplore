@@ -74,7 +74,7 @@ export default function Appointment({ navigation }) {
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: '#13294B' 
+    backgroundColor: '#1C2E5C' 
   },
   headerRow: { 
     flexDirection: 'row', 

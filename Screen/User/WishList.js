@@ -97,11 +97,11 @@ const styles = StyleSheet.create({
   root: {
     flex: 1,
     paddingTop: 25,
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
   },
   canvas: {
     flex: 1,
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     paddingHorizontal: 14,
     paddingBottom: 16,
   },

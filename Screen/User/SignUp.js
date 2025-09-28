@@ -103,7 +103,7 @@ export default SignUp;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#13294B',
+    backgroundColor: '#1C2E5C',
     alignItems: 'center',
     paddingTop: 50,
   },

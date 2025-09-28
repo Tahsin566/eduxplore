@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
       flex: 1,
       paddingTop: 60,
       paddingHorizontal: 20,
-      backgroundColor: '#1a2d3f'
+      backgroundColor: '#1C2E5C'
       
     },
     text:{

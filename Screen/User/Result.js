@@ -117,11 +117,11 @@ function SearchResult({ navigation, route }) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    backgroundColor: '#13294B',
+    backgroundColor: '#1C2E5C',
   },
   canvas: {
     flex: 1,
-    backgroundColor: '#13294B',
+    backgroundColor: '#1C2E5C',
     paddingHorizontal: 14,
     paddingBottom: 16,
   },

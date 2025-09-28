@@ -224,7 +224,7 @@ export default ProfileSettings;
 const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
-    backgroundColor: '#13294B',
+    backgroundColor: '#1C2E5C',
     paddingBottom: 24,
     paddingTop:20
   },

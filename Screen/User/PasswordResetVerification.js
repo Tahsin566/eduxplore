@@ -57,7 +57,7 @@ export default function EmailVerification({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#13294B',
+    backgroundColor: '#1C2E5C',
     paddingTop: 60,
     alignItems: 'center',
   },

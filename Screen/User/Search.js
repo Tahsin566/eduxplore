@@ -197,7 +197,7 @@ export default function FindUniversity({ navigation }) {
   );
 }
 
-const NAVY = '#1a2d3f';
+const NAVY = '#1C2E5C';
 
 const styles = StyleSheet.create({
   root: { flex: 1, paddingTop: 40, backgroundColor: NAVY },

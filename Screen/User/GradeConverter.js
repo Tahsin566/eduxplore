@@ -65,7 +65,7 @@ export default function Menu({ navigation }) {
   );
 }
 
-const NAVY = '#13294B';
+const NAVY = '#1C2E5C';
 const CARD_BG = '#E9EEF3';
 const TILE_BG = '#6C5CE7';
 const CTA_BG = '#4C6EF5';
