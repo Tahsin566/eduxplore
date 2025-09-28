@@ -7,7 +7,7 @@ export default function UniversityList() {
 
   return (
     <View style={styles.container}>
-      {/* Header with drawer toggle */}
+      
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.openDrawer()}>
           <Ionicons name="menu" size={28} color="#fff" />
@@ -29,7 +29,7 @@ export default function UniversityList() {
           style={styles.card}
           onPress={() => navigation.navigate('BachelorList')}
         >
-          <FontAwesome5 name="graduation-cap" size={54} color="#203a43" />
+          <FontAwesome5 name="graduation-cap" size={50} color="#203a43" />
           <Text style={styles.cardText}>Undergraduate Programs</Text>
         </TouchableOpacity>
 
@@ -74,19 +74,19 @@ export default function UniversityList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     paddingHorizontal: 20,
-    paddingTop: 30,
+    marginTop: 35,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 50,
+    marginBottom: 20,
   },
   headerTitle: {
     color: '#fff',
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   titleContainer: {

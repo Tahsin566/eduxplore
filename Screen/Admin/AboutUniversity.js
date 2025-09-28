@@ -42,7 +42,7 @@ export default function AboutUniversity() {
         {/* Back Button & Title */}
         <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.goBack()}>
-            <Ionicons name="arrow-back" size={24} color="white" />
+            <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.title}>About University</Text>
           <TouchableOpacity onPress={()=>navigation.navigate('WishList')}>
@@ -156,7 +156,7 @@ const styles = StyleSheet.create({
 
   // Card section (Used for the first card and content container)
   card: {
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     padding: 15,
   },
   header: {

@@ -1,11 +1,10 @@
-
-
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
 import { collection, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
+import { ScrollView } from 'react-native-gesture-handler';
 
 export default function AdminNotification() {
   const navigation = useNavigation();
@@ -26,15 +25,24 @@ export default function AdminNotification() {
   }, []);
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* Header */}
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.navigate('HomeScreen')} style={styles.backBtn}>
-          <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>Notification</Text>
-        <View style={{ width: 24 }} />
-      </View>
+    <View style={styles.container}>
+
+      <TouchableOpacity 
+        onPress={() => navigation.navigate('HomeScreen')} 
+        style={{ 
+          backgroundColor: '#1C2E5C', 
+          height: 42, 
+          flexDirection: 'row', 
+          alignItems: 'center', 
+          paddingHorizontal: 16,
+        }}
+      >
+        <Ionicons name="chevron-back" size={24} color="#fff" />
+        <Text style={styles.headertitle}>
+          Notification
+        </Text>
+      </TouchableOpacity>
+
 
       {/* Empty state */}
       {notifications.length === 0 && <View style={styles.empty}>
@@ -46,35 +54,28 @@ export default function AdminNotification() {
       </View>}
 
       {/* List of notifications */}
+      <ScrollView>
       {notifications.map((notification, index) => (
         <View key={index} style={styles.notification}>
           <Text>{notification.title}</Text>
           <Text>{notification.message}</Text>
         </View>
       ))}
+    </ScrollView>
 
 
-    </SafeAreaView>
+    </View>
   );
 }
 
-const PURPLE = '#2c3e50';
+const PURPLE = '#1C2E5C';
 const BG = '#F6F7FB';
 
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: BG 
-  },
-  header: {
-    backgroundColor: '#1a2d3f',
-    height: 118,
-    borderBottomLeftRadius: 16,
-    borderBottomRightRadius: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-
+    backgroundColor: BG,
+    marginTop: 35,
   },
   backBtn: {
     width: 40, 
@@ -82,12 +83,13 @@ const styles = StyleSheet.create({
     alignItems: 'center', 
     justifyContent: 'center',
   },
-  headerTitle: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+  headertitle:{ 
+    color: '#fff', 
+    fontSize: 21, 
+    fontWeight: '600', 
+    marginLeft: 102, 
+    marginTop: 5
   },
-
   empty: {
     flex: 1,
     alignItems: 'center',
@@ -112,14 +114,12 @@ const styles = StyleSheet.create({
   },
   notification: {
     backgroundColor: '#fff',
-    borderRadius: 8,
-    padding: 20,
+    padding: 10,
     flexDirection: 'row',
     marginTop: 10,
     marginBottom: 2,
     alignItems: 'center',
     borderWidth: 1,
     marginHorizontal: 5,
-    
   }
 });

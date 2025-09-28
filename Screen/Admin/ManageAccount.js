@@ -1,5 +1,5 @@
 
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity,ScrollView, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -42,20 +42,30 @@ export default function ManageAccountsScreen() {
       <View style={styles.space}><Text></Text></View>
 
       {/* Subheading */}
-      <Text style={styles.subheading}>Users</Text>
+      <Text style={styles.subheading}>Admin</Text>
 
       {/* List */}
-      <View style={styles.listContainer}>
+      <ScrollView style={styles.listContainer}>
         {admins.map((admin, index) => (
-  <TouchableOpacity
-    key={index}
-    onPress={() => navigation.navigate('AdminRoles', { id : admin.id })}
-  >
-    <Text style={styles.listItem}>{admin?.name?.includes('null') ? admin?.name?.split('null')[0] : admin?.name}</Text>
-  </TouchableOpacity>
+        <TouchableOpacity
+          key={index}
+          onPress={() => navigation.navigate('AdminRoles', { id: admin.id })}
+          style={styles.row}
+        >
+          <View style={styles.avatar}>
+            <Ionicons name="person" size={32} color="#fff" />
+          
+          </View>
+          <View style={styles.labelBar}>
+            <Text style={styles.listItem}>
+              {admin?.name?.includes('null') ? admin?.name?.split('null')[0] : admin?.name}
+            </Text>
+          </View>
+        </TouchableOpacity>
+
 ))}
 
-      </View>
+      </ScrollView>
 
       {/* Floating Add Button */}
       {role === 'admin' && <TouchableOpacity
@@ -71,11 +81,9 @@ export default function ManageAccountsScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     paddingHorizontal: 20,
-  },
-  edit:{
-    marginTop: '30',
+    marginTop: 35,
   },
   space: {
     marginTop: '30',
@@ -86,7 +94,7 @@ const styles = StyleSheet.create({
     right: 0,
     textAlign: 'center',
     color: '#fff',
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   subheading: {
@@ -98,13 +106,36 @@ const styles = StyleSheet.create({
     backgroundColor: '#ecf0f1',
     borderRadius: 5,
     padding: 12,
+    marginBottom: 140,
+  },
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  avatar: {
+    backgroundColor: '#3d4d6a',
+    borderRadius: 30,
+    width: 48,
+    height: 48,
+    justifyContent: 'center',
+    alignItems: 'center',
+    marginRight: 10,
+  },
+  labelBar: {
+    backgroundColor: '#3d4d6a',
+    borderRadius: 4,
+    paddingHorizontal: 18,
+    paddingVertical: 8,
+    minWidth: 140,
+    justifyContent: 'center',
   },
   listItem: {
-    fontSize: 16,
+    color: '#fff',
     fontWeight: 'bold',
-    marginBottom: 10,
+    fontSize: 20,
   },
-  fab: {
+    fab: {
     position: 'absolute',
     right: 20,
     bottom: 30,

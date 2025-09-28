@@ -33,7 +33,7 @@ export default function SendNotification() {
 
   return (
     <View style={styles.container}>
-      <View style={styles.edit}><Text style={styles.heading}>Send Notification</Text></View>
+      <View><Text style={styles.heading}>Send Notification</Text></View>
       
         <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home') }>
           <Ionicons name="chevron-back" size={24} color="#fff" />
@@ -53,8 +53,6 @@ export default function SendNotification() {
       />
 
       <Text style={styles.label}>Whom to Send</Text>
-
-      {/* Read-only input mirrors the selection */}
 
       <View>
 
@@ -90,7 +88,7 @@ export default function SendNotification() {
       ))}
 
       <TouchableOpacity onPress={SendNotification} style={styles.sendButton}>
-        <Text style={styles.sendButtonText}>Send</Text>
+        <Text style={styles.sendButtonText}>Send Notification</Text>
       </TouchableOpacity>
     </View>
   );
@@ -99,11 +97,9 @@ export default function SendNotification() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a2d3f',
-    padding: 20
-  },
-  edit:{
-    marginTop: '30',
+    backgroundColor: '#1C2E5C',
+    padding: 20,
+    marginTop: 35,
   },
   space: {
     marginTop: '30',
@@ -114,7 +110,7 @@ const styles = StyleSheet.create({
     right: 0,
     textAlign: 'center',
     color: '#fff',
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
   },
   label: {
@@ -123,7 +119,6 @@ const styles = StyleSheet.create({
     marginBottom: 5,
   },
 
-  // Input baseline (used to match option rows)
   input: {
     height: INPUT_HEIGHT,
     backgroundColor: 'white',
@@ -142,8 +137,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
     color: '#000',
   },
-
-  // Option rows match input size exactly
   radioRow: {
     height: INPUT_HEIGHT,
     width: '100%',
@@ -174,17 +167,19 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     backgroundColor: '#333',
   },
-
   sendButton: {
     backgroundColor: 'white',
     alignSelf: 'center',
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 6,
-    marginTop: 20,
+    marginTop: 70,
+    backgroundColor: '#638ECC'
   },
   sendButtonText: {
     fontWeight: 'bold',
-    color: '#000',
+    color: '#FFF',
+    
   },
 });
+ 

@@ -37,7 +37,7 @@ export default function MastersList() {
   return (
     <View style={styles.container}>
       {/* Back Button & Title */}
-      <View style={styles.edit}><Text style={styles.title}>Master's List</Text></View>
+      <View><Text style={styles.title}>Master's List</Text></View>
         <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
@@ -66,12 +66,10 @@ export default function MastersList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     paddingTop: 10,
     paddingHorizontal: 20,
-  },
-  edit:{
-    marginTop: '30',
+    marginTop: 35,
   },
   title: {
     position: 'absolute',

@@ -395,7 +395,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
   },
   card: {
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     padding: 15,
   },
   checkboxContainer: {

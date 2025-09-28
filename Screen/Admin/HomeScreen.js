@@ -123,9 +123,10 @@ const HomeScreen = () => {
 const styles = StyleSheet.create({
     container: {
     flex: 1,
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
     paddingHorizontal: 24,
     justifyContent: 'flex-start',
+    marginTop: 35,
   },
   greeting: {
     fontSize: 28,

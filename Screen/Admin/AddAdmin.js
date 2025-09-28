@@ -38,9 +38,9 @@ export default function AddAdmin() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.edit}><Text style={styles.title}>Add Admin</Text></View>
+      <View><Text style={styles.title}>Add Admin</Text></View>
         <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="arrow-back" size={24} color="#fff" />
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         
         <View style={styles.space}><Text></Text></View>
@@ -112,12 +112,9 @@ export default function AddAdmin() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2E3A4F',
+    backgroundColor: '#1C2E5C',
     padding: 20,
-    paddingTop: 50,
-  },
-  edit:{
-    marginTop: '30',
+    marginTop: 35,
   },
   space: {
     marginTop: '30',
@@ -182,12 +179,12 @@ const styles = StyleSheet.create({
   },
 
   addButton: {
-    backgroundColor: 'white',
+    backgroundColor: '#638ECC',
     alignSelf: 'center',
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 6,
-    marginTop: 20,
+    marginTop: 76,
   },
   addButtonText: {
     fontWeight: 'bold',
