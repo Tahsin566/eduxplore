@@ -1,176 +1,136 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
-import { View, TouchableOpacity, Animated, Dimensions, Image, Text, ScrollView, StyleSheet} from 'react-native';
-
-const { width } = Dimensions.get('window');
+import React from 'react';
+import { View, TouchableOpacity, Text, StyleSheet, ScrollView } from 'react-native';
+import Footer from '../User/Footer';
 
 export default function Menu({ navigation }) {
-  const [visible, setVisible] = useState(false);
-  const slideAnim = useState(new Animated.Value(-width * 0.75))[0];
-
-  const toggleMenu = () => {
-    if (visible) {
-      Animated.timing(slideAnim, {
-        toValue: -width * 0.75,
-        duration: 300,
-        useNativeDriver: true,
-      }).start(() => setVisible(false));
-    } else {
-      setVisible(true);
-      Animated.timing(slideAnim, {
-        toValue: 0,
-        duration: 300,
-        useNativeDriver: true,
-      }).start();
-    }
-  };
-
-  const menuItems = [
-    { label: 'Home', route: 'Home' },
-    { label: 'Appointment', route: 'Appointment' },
-    { label: 'Find a University', route: 'FindUniversity' },
-    { label: 'Enrollment', route: 'Enrollment' },
-    { label: 'Document Submission', route: 'DocumentSubmission' },
-    { label: 'VPD Calculator', route: 'VPDCalculator' },
-    { label: 'Seminars', route: 'Seminars' },
-    { label: 'LOM Checker', route: 'LOMChecker' },
-    { label: 'ECTS Calculator', route: 'ECTSCalculator' },
-  ];
-
   return (
     <View style={styles.container}>
-      {/* Hamburger Icon */}
-      {/* <TouchableOpacity style={styles.hamburger} onPress={toggleMenu}>
-        <Image
-          source={require('../../Images/Menu.png')}
-          style={styles.icon}
-        />
-      </TouchableOpacity> */}
-
-      {/* Drawer Panel (overlaid when visible) */}
-      {/* {visible && (
-        <Animated.View
-        style={[styles.drawer, { transform: [{ translateX: slideAnim }] }]}
-        >
-        <ScrollView contentContainerStyle={styles.items}>
-        {menuItems.map((item, i) => (
-          <TouchableOpacity
-          key={i}
-          style={styles.item}
-          onPress={() => {
-            toggleMenu();
-            navigation.navigate(item.route);
-            }}
-            >
-            <Text style={styles.arrow}>➜</Text>
-            <Text style={styles.label}>{item.label}</Text>
-            </TouchableOpacity>
-            ))}
-            </ScrollView>
-            </Animated.View>
-            )} */}
-
-      {/* Screen Header */}
+      {/* Header with back chevron and centered title */}
       <View style={styles.headerBar}>
-            <TouchableOpacity onPress={() => navigation.openDrawer()}>
-              <Ionicons name="menu" style={styles.icon} size={28} color="#fff" />
-            </TouchableOpacity>
+        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backBtn}>
+          <Text style={styles.backTxt}>‹</Text>
+        </TouchableOpacity>
         <Text style={styles.headerText}>Grade Converter</Text>
+        <View style={{ width: 24 }} />
       </View>
 
-      {/* Action Buttons */}
-      <View style={styles.buttonsContainer}>
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('VPDCalculator')} // VPD route
-        >
-          <Text style={styles.buttonText}>VPD Calculator</Text>
-        </TouchableOpacity>
+      <ScrollView contentContainerStyle={styles.scroll}>
+        {/* VPD Card */}
+        <View style={styles.card}>
+          <View style={styles.iconTile}>
+            <Ionicons name="calculator" size={24} color="#FFFFFF" />
+          </View>
+          <Text style={styles.cardTitle}>VPD Calculator</Text>
+          <Text style={styles.cardSub}>
+            Calculate your  VPD{'\n'}
+            (Vorprüfungsdokumentation) for{'\n'}
+            German university
+          </Text>
+          <TouchableOpacity
+            style={styles.cta}
+            onPress={() => navigation.navigate('VPDCalculator')}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.ctaText}>Calculate VPD</Text>
+          </TouchableOpacity>
+        </View>
 
-        <TouchableOpacity
-          style={styles.button}
-          onPress={() => navigation.navigate('ECTSCalculator')} // ECTS route
-        >
-          <Text style={styles.buttonText}>ECTS Calculator</Text>
-        </TouchableOpacity>
+        {/* ECTS Card */}
+        <View style={styles.card}>
+          <View style={styles.iconTile}>
+            <Ionicons name="pie-chart" size={24} color="#FFFFFF" />
+          </View>
+          <Text style={styles.cardTitle}>ECTS Calculator</Text>
+          <Text style={styles.cardSub}>
+            Calculate your  VPD{'\n'}
+            (Vorprüfungsdokumentation) for{'\n'}
+            German university
+          </Text>
+          <TouchableOpacity
+            style={styles.cta}
+            onPress={() => navigation.navigate('ECTSCalculator')}
+            activeOpacity={0.85}
+          >
+            <Text style={styles.ctaText}>Calculate ECTS</Text>
+          </TouchableOpacity>
+        </View>
+      </ScrollView>
+
+      {/* Footer nav */}
+      <View style={styles.footerWrap}>
+        <Footer navigation={navigation} />
       </View>
     </View>
   );
 }
 
+const NAVY = '#13294B';
+const CARD_BG = '#E9EEF3';
+const TILE_BG = '#6C5CE7';
+const CTA_BG = '#4C6EF5';
+
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#1a2d3f',
-  },
-  hamburger: {
-    position: 'absolute',
-    top: 40,
-    left: 20,
-    zIndex: 100,
-  },
-  icon: {
-    width: 30,
-    height: 30,
-  },
-  drawer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    width: width * 0.75,
-    height: '100%',
-    backgroundColor: '#2C3E50',
-    paddingTop: 120,
-    paddingHorizontal: 20,
-    zIndex: 99,
-  },
- 
-  items: {
-    paddingBottom: 40,
-  },
-  item: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 18,
-  },
-  arrow: {
-    fontSize: 22,
-    color: '#00E5A1',
-    marginRight: 10,
-  },
-  label: {
-    color: '#fff',
-    fontSize: 20,
-    fontWeight: '500',
-  },
+  container: { flex: 1, backgroundColor: NAVY },
   headerBar: {
     height: 56,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 30, // aligns under status bar and icon
-    zIndex: 1,
+    marginTop: 30,
+    justifyContent: 'space-between',
   },
-  headerText: {
-    color: '#FFFFFF',
-    fontSize: 20,
-    fontWeight: '600',
-    marginLeft: '20%',
+  backBtn: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
+  backTxt: { color: '#FFFFFF', fontSize: 26, lineHeight: 26, marginTop: -2 },
+  headerText: { color: '#FFFFFF', fontSize: 20, fontWeight: '700' },
+
+  scroll: { paddingHorizontal: 16, paddingBottom: 20 },
+
+  card: {
+    backgroundColor: CARD_BG,
+    borderRadius: 10,
+    padding: 16,
+    marginTop: 16,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
+    elevation: 3,
   },
-  buttonsContainer: {
-    marginTop: 100, // gap below header
-    paddingHorizontal: 20,
-  },
-  button: {
-    backgroundColor: '#ECF0F1',
-    borderRadius: 5,
-    paddingVertical: 12,
+  iconTile: {
+    width: 56,
+    height: 56,
+    borderRadius: 12,
+    backgroundColor: TILE_BG,
     alignItems: 'center',
-    marginBottom: 20,
+    justifyContent: 'center',
+    alignSelf: 'center',
+    marginBottom: 10,
   },
-  buttonText: {
-    color: '#000',
-    fontSize: 16,
-    fontWeight: '700',
+  cardTitle: {
+    color: '#0F172A',
+    fontWeight: '800',
+    fontSize: 18,
+    textAlign: 'left',
+    marginTop: 4,
+  },
+  cardSub: {
+    color: '#5B6B7A',
+    fontSize: 12,
+    marginTop: 6,
+    lineHeight: 16,
+  },
+  cta: {
+    alignSelf: 'flex-start',
+    backgroundColor: CTA_BG,
+    marginTop: 12,
+    borderRadius: 8,
+    paddingVertical: 10,
+    paddingHorizontal: 14,
+  },
+  ctaText: { color: '#FFFFFF', fontWeight: '700' },
+
+  footerWrap: {
+    borderTopWidth: 0,
   },
 });

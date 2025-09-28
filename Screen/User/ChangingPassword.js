@@ -13,7 +13,7 @@ const ChangingPassword = ({ navigation }) => {
         style={styles.backButton}
         onPress={() => navigation.navigate('AccountSettings')}
       >
-        <Text style={styles.backText}>←</Text>
+        <Text style={styles.backText}>‹</Text>
       </TouchableOpacity>
 
       {/* Header */}
@@ -71,7 +71,7 @@ const ChangingPassword = ({ navigation }) => {
       {/* Save Button */}
       <TouchableOpacity
         style={styles.saveButton}
-        onPress={() => navigation.navigate('AccountSettings')}
+        onPress={() => navigation.navigate('ProfileButton')}
       >
         <Text style={styles.saveText}>Save</Text>
       </TouchableOpacity>
@@ -84,7 +84,7 @@ export default ChangingPassword;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#13294B',
     paddingHorizontal: 30,
     paddingTop: 60,
   },

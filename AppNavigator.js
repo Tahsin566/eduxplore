@@ -25,6 +25,7 @@ import { createDrawerNavigator } from '@react-navigation/drawer';
 import WishList from './Screen/User/WishList.js';
 import Result from './Screen/User/Result.js';
 import Community from './Screen/User/Community.js';
+import Footer from './Screen/User/Footer.js';
 
 //admin
 import AdminRolesScreen from './Screen/Admin/AdminRolesScreen';
@@ -120,6 +121,7 @@ function DrawerRoutes() {
       <Drawer.Screen name="UpdateAboutUniversity" component={UpdateAboutUniversity} />
       <Drawer.Screen name="ManageAccounts" component={ManageAccount} />
       <Drawer.Screen name="AdminNotification" component={AdminNotification} />
+      <Drawer.Screen name="Footer" component={Footer} />
 
     </Drawer.Navigator>
 

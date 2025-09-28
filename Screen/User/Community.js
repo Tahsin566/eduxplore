@@ -20,7 +20,6 @@ export default function Community({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchActive, setSearchActive] = useState(false);
 
-
   // reply + action modal
   const [replyTo, setReplyTo] = useState(null);     // { id, text, image, email }
   const [actionOpen, setActionOpen] = useState(false);
@@ -39,6 +38,11 @@ export default function Community({ navigation }) {
   // Scroll + composer measurement
   const scrollRef = useRef(null);
   const [composerHeight, setComposerHeight] = useState(58); // default guess
+
+  // --- NEW: map message id -> y position for scrolling to original
+  const itemPositionsRef = useRef(new Map());      // id -> y
+  const rowRefs = useRef(new Map());               // id -> ref
+  const [highlightedId, setHighlightedId] = useState(null);
 
   useEffect(() => {
     const q = query(collection(db, 'chat'), orderBy('time', 'asc'));
@@ -120,10 +124,7 @@ export default function Community({ navigation }) {
   };
 
   const uploadToCloudinary = async () => {
-
-
     if(!file) return
-
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', 'images-expo-app');
@@ -135,18 +136,14 @@ export default function Community({ navigation }) {
       });
 
       const data = await response.json();
-      console.log(data)
-      // console.log(JSON.stringify(data, null, 2));
       return data?.secure_url
-
     } catch (error) {
       console.log('Error uploading image:', error.message);
       return profile?.photo
     }
   };
   
-
-  // Send message (kept simple; DB/auth untouched)
+  // Send message
   const sendMessage = async() => {
     if (!message.trim() && !image) {
       Alert.alert('Please enter a message or pick an image');
@@ -164,9 +161,11 @@ export default function Community({ navigation }) {
         name: profile?.name,
         email: myEmail,
         message: quoted + (message || ''),
-        photo: profile?.photo,
+        photo: profile?.photo,                 // sender's profile image saved on message
         image: await uploadToCloudinary() || '',
         time: new Date(),
+        // --- NEW: store pointer to original message (if any)
+        replyToId: replyTo?.id || null,
       });
     } catch (e) {
       console.log('Error adding document: ', e);
@@ -221,22 +220,41 @@ export default function Community({ navigation }) {
     setActionOpen(false);
   };
 
-  // --------- ONLY CHANGE: avatar resolution (UI only)
+  // Avatars: only use sender profile image
   const resolveAvatar = (msg, isMine) => {
-    // Try any avatar fields that might exist on the message:
-    const fromMsg =
-      msg?.photoURL ||
-      msg?.avatar ||
-      msg?.profileImageUrl ||
-      msg?.profilePhoto ||
-      msg?.photo ||
-      null;
-    if (fromMsg) return fromMsg;
-    // For your own messages, fall back to your current profile image:
-    if (isMine) return user?.imageUrl || user?.imageUrl || null;
-    return null;
+    if (isMine) {
+      return profile?.photo || user?.imageUrl || null;
+    }
+    return msg?.photo || null;
   };
-  // --------------------------------------------------
+
+  // --- NEW: scroll to original replied message + highlight
+  const flashHighlight = (id) => {
+    setHighlightedId(id);
+    setTimeout(() => setHighlightedId(null), 1200);
+  };
+
+  const scrollToOriginal = (replyToId, quoteText) => {
+    if (!scrollRef.current) return;
+
+    // Prefer id
+    if (replyToId && itemPositionsRef.current.has(replyToId)) {
+      const y = itemPositionsRef.current.get(replyToId);
+      scrollRef.current.scrollTo({ y: Math.max(0, y - 12), animated: true });
+      flashHighlight(replyToId);
+      return;
+    }
+
+    // Fallback by quote text (older messages without replyToId)
+    if (quoteText) {
+      const target = messages.find((m) => (m?.message || '').includes(quoteText));
+      if (target && itemPositionsRef.current.has(target.id)) {
+        const y = itemPositionsRef.current.get(target.id);
+        scrollRef.current.scrollTo({ y: Math.max(0, y - 12), animated: true });
+        flashHighlight(target.id);
+      }
+    }
+  };
 
   // Filter messages
   const shownMessages = messages
@@ -267,7 +285,7 @@ export default function Community({ navigation }) {
             onPress={() => (role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home'))}
             style={styles.iconBtn}
           >
-            <Text style={styles.iconText}>←</Text>
+            <Text style={styles.iconText}>‹</Text>
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Community</Text>
           <TouchableOpacity onPress={() => setSearchActive(!searchActive)} style={styles.iconBtn}>
@@ -305,13 +323,20 @@ export default function Community({ navigation }) {
             const name = displayNameOf(msg);
             const { quote, body } = parseReplyParts(msg.message || '');
             const timeStr = formatTime(msg.time);
-            const quoteImage = msg.replyImage || null;
+            const replyToId = msg?.replyToId || null;
 
             const leftUri = !isMine ? resolveAvatar(msg, false) : null;
             const rightUri = isMine ? resolveAvatar(msg, true) : null;
 
             return (
-              <View key={msg.id} style={[styles.row, isMine ? styles.rowRight : styles.rowLeft]}>
+              <View
+                key={msg.id}
+                ref={(node) => node && rowRefs.current.set(msg.id, node)}
+                onLayout={(e) => {
+                  itemPositionsRef.current.set(msg.id, e.nativeEvent.layout.y);
+                }}
+                style={[styles.row, isMine ? styles.rowRight : styles.rowLeft]}
+              >
                 {!isMine && (
                   leftUri ? (
                     <Image source={{ uri: leftUri }} style={styles.avatar} />
@@ -329,6 +354,7 @@ export default function Community({ navigation }) {
                   style={[
                     styles.messageBubble,
                     isMine ? styles.rightBubble : styles.leftBubble,
+                    highlightedId === msg.id && styles.highlightBubble, // highlight if jumped to
                   ]}
                 >
                   {/* Name */}
@@ -336,23 +362,18 @@ export default function Community({ navigation }) {
                     {name}
                   </Text>
 
-                  {/* Quote preview (reply) — supports text and/or image */}
-                  {(quote || quoteImage) ? (
-                    <View style={styles.quoteBox}>
-                      {quoteImage ? (
-                        <TouchableOpacity onPress={() => setViewerUri(quoteImage)} activeOpacity={0.9}>
-                          <Image source={{ uri: quoteImage }} style={styles.quoteThumb} />
-                        </TouchableOpacity>
-                      ) : null}
-                      {!!quote && (
-                        <Text style={styles.quoteText} numberOfLines={2}>
-                          {quote}
-                        </Text>
-                      )}
-                    </View>
+                  {/* Quote preview (tap to jump) */}
+                  {quote ? (
+                    <TouchableOpacity
+                      activeOpacity={0.7}
+                      onPress={() => scrollToOriginal(replyToId, quote)}
+                      style={styles.quoteBox}
+                    >
+                      <Text style={styles.quoteText} numberOfLines={2}>{quote}</Text>
+                    </TouchableOpacity>
                   ) : null}
 
-                  {/* Main Image (tap to open full screen) */}
+                  {/* Image (tap to open full screen) */}
                   {msg.image ? (
                     <TouchableOpacity onPress={() => setViewerUri(msg.image)} activeOpacity={0.9}>
                       <Image source={{ uri: msg.image }} style={styles.messageImage} />
@@ -466,22 +487,22 @@ export default function Community({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  kav: { flex: 1, backgroundColor: '#2C3E50' },
+  kav: { flex: 1, backgroundColor: '#13294B' },
 
-  container: { flex: 1, backgroundColor: '#2C3E50', paddingTop: 20 },
+  container: { flex: 1, backgroundColor: '#13294B', paddingTop: 20 },
 
   headerBar: {
     height: 50, flexDirection: 'row', alignItems: 'center',
     justifyContent: 'space-between', paddingHorizontal: 16
   },
   iconBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
-  iconText: { color: '#E7EDF3', fontSize: 22 },
-  headerTitle: { color: '#E7EDF3', fontSize: 18, fontWeight: '700' },
+  iconText: { color: '#E7EDF3', fontSize: 30 },
+  headerTitle: { color: '#E7EDF3', fontSize: 24, fontWeight: '700' },
 
-  searchContainer: { padding: 8, backgroundColor: '#2C3E50' },
+  searchContainer: { padding: 8, backgroundColor: '#13294B' },
   searchInput: { backgroundColor: '#FFF', borderRadius: 20, paddingLeft: 12, height: 40 },
 
-  messagesContainer: { flex: 1, paddingHorizontal: 12, backgroundColor: '#2C3E50' },
+  messagesContainer: { flex: 1, paddingHorizontal: 12, backgroundColor: '#13294B' },
   row: { flexDirection: 'row', alignItems: 'flex-end', marginVertical: 6, gap: 8 },
   rowLeft: { justifyContent: 'flex-start' },
   rowRight: { justifyContent: 'flex-end' },
@@ -503,17 +524,21 @@ const styles = StyleSheet.create({
   rightBubble: { alignSelf: 'flex-end', backgroundColor: '#DDEAF6' },
   leftBubble: { alignSelf: 'flex-start', backgroundColor: '#E7EDF3' },
 
+  // NEW: flash highlight when jumped to
+  highlightBubble: {
+    borderWidth: 2,
+    borderColor: '#007AFF',
+  },
+
   username: { fontSize: 12, color: '#1F2933', fontWeight: '700', marginBottom: 2 },
   adminName: { color: '#007AFF' },
 
   quoteBox: {
     borderLeftWidth: 3, borderLeftColor: '#5A6B7A',
     backgroundColor: '#f1f5f9', paddingVertical: 4, paddingHorizontal: 6,
-    borderRadius: 6, marginBottom: 6,
-    flexDirection: 'row', alignItems: 'center', gap: 8,
+    borderRadius: 6, marginBottom: 6
   },
-  quoteText: { fontSize: 12, color: '#334155', flexShrink: 1 },
-  quoteThumb: { width: 56, height: 56, borderRadius: 6 },
+  quoteText: { fontSize: 12, color: '#334155' },
 
   messageImage: { width: 140, height: 140, borderRadius: 8, marginBottom: 6 },
   messageText: { fontSize: 16, color: '#000', paddingRight: 44 },
@@ -537,7 +562,7 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#13294B',
     paddingHorizontal: 10,
     paddingTop: 8,
   },

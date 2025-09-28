@@ -1,49 +1,55 @@
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, Alert, StatusBar, KeyboardAvoidingView, Platform, ToastAndroid } from 'react-native';
+import {
+  View,
+  Text,
+  TextInput,
+  TouchableOpacity,
+  StyleSheet,
+  ScrollView,
+  Alert,
+  StatusBar,
+  KeyboardAvoidingView,
+  Platform,
+  ToastAndroid,
+} from 'react-native';
 import * as Clipboard from 'expo-clipboard';
 import Markdown from 'react-native-markdown-display';
 import { Ionicons } from '@expo/vector-icons';
 
-// Read Gemini key from app.json -> expo.extra.GEMINI_API_KEY
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
- 
 
 export default function LOMChecker({ navigation }) {
   const [messages, setMessages] = useState([]); // {id, role: 'user'|'assistant', content}
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(40);
-  const [isTyping, setIsTyping] = useState(false);        // typing flag
-  const [dotCount, setDotCount] = useState(0);            // dots animation
+  const [isTyping, setIsTyping] = useState(false);
+  const [dotCount, setDotCount] = useState(0);
   const scrollRef = useRef(null);
 
+  // auto-scroll on new messages
   useEffect(() => {
     setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 50);
   }, [messages]);
 
-  // Scroll when typing starts/changes
+  // keep scrolled to bottom while typing
   useEffect(() => {
     if (isTyping) {
       setTimeout(() => scrollRef.current?.scrollToEnd({ animated: true }), 50);
     }
   }, [isTyping]);
 
-  // Simple dots animation while typing
+  // dots animation
   useEffect(() => {
     if (!isTyping) return;
-    const t = setInterval(() => {
-      setDotCount((d) => (d + 1) % 4); // 0..3
-    }, 450);
+    const t = setInterval(() => setDotCount((d) => (d + 1) % 4), 450);
     return () => clearInterval(t);
   }, [isTyping]);
 
   const copyToClipboard = async (text) => {
     try {
       await Clipboard.setStringAsync(text);
-      if (Platform.OS === 'android') {
-        ToastAndroid.show('Copied to clipboard', ToastAndroid.SHORT);
-      } else {
-        Alert.alert('Copied to clipboard');
-      }
+      if (Platform.OS === 'android') ToastAndroid.show('Copied to clipboard', ToastAndroid.SHORT);
+      else Alert.alert('Copied to clipboard');
     } catch (e) {
       Alert.alert('Copy failed', e?.message || 'Please try again.');
     }
@@ -55,35 +61,39 @@ export default function LOMChecker({ navigation }) {
       if (!GEMINI_API_KEY) {
         throw new Error('Missing GEMINI_API_KEY. Add it to app.json under expo.extra and restart the app.');
       }
+      setIsTyping(true);
 
-      setIsTyping(true); // start typing
-
-      const history = messages.map(m => ({
+      const history = messages.map((m) => ({
         role: m.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: m.content }]
+        parts: [{ text: m.content }],
       }));
 
       const systemInstruction = {
         role: 'user',
-        parts: [{
-          text: 'You are a helpful assistant that drafts and improves Letters of Motivation (LOM) and Statements of Purpose (SOP). Ask for missing details and keep responses clear.'
-        }]
+        parts: [
+          {
+            text:
+              'You are a helpful assistant that drafts and improves Letters of Motivation (LOM) and Statements of Purpose (SOP). Ask for missing details and keep responses clear.',
+          },
+        ],
       };
 
       const body = {
         contents: [
           systemInstruction,
           ...history,
-          { role: 'user', parts: [{ text: userText }] }
-        ]
+          { role: 'user', parts: [{ text: userText }] },
+        ],
       };
 
-      const endpoint = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' + encodeURIComponent(GEMINI_API_KEY);
+      const endpoint =
+        'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=' +
+        encodeURIComponent(GEMINI_API_KEY);
 
       const res = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(body)
+        body: JSON.stringify(body),
       });
 
       if (!res.ok) {
@@ -94,14 +104,14 @@ export default function LOMChecker({ navigation }) {
       const data = await res.json();
       const reply =
         data?.candidates?.[0]?.content?.parts
-          ?.map(p => (typeof p.text === 'string' ? p.text : ''))
+          ?.map((p) => (typeof p.text === 'string' ? p.text : ''))
           .join('') || '(no reply)';
 
-      setMessages(prev => [...prev, { id: Date.now() + 1, role: 'assistant', content: reply }]);
+      setMessages((prev) => [...prev, { id: Date.now() + 1, role: 'assistant', content: reply }]);
     } catch (e) {
       Alert.alert('Error', e.message || 'Failed to get a response.');
     } finally {
-      setIsTyping(false); // stop typing no matter what
+      setIsTyping(false);
     }
   };
 
@@ -109,15 +119,14 @@ export default function LOMChecker({ navigation }) {
     const text = input.trim();
     if (!text) return;
 
-    setMessages(prev => [...prev, { id: Date.now(), role: 'user', content: text }]);
+    setMessages((prev) => [...prev, { id: Date.now(), role: 'user', content: text }]);
     setInput('');
     setInputHeight(40);
-
     await sendToGemini(text);
   };
 
   return (
-    <ScrollView contentContainerStyle={styles.container}>
+    <View style={styles.root}>
       <StatusBar barStyle="light-content" />
 
       {/* Header */}
@@ -129,14 +138,19 @@ export default function LOMChecker({ navigation }) {
         <View style={styles.iconBtn} />
       </View>
 
-      {/* KeyboardAvoidingView wraps messages + composer (Android only config) */}
-      {/* <KeyboardAvoidingView
+      {/* KAV wraps messages + composer */}
+      <KeyboardAvoidingView
         style={styles.flex}
-        behavior="height"
-        keyboardVerticalOffset={0} */}
-      
-        {/* Messages */}
-        {/* <ScrollView ref={scrollRef} style={styles.messages}> */}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
+      >
+        {/* Messages ScrollView */}
+        <ScrollView
+          ref={scrollRef}
+          style={styles.messages}
+          contentContainerStyle={{ paddingHorizontal: 16, paddingTop: 8, paddingBottom: 12 }}
+          keyboardShouldPersistTaps="handled"
+        >
           {messages.map((m) => (
             <TouchableOpacity
               key={m.id}
@@ -150,22 +164,23 @@ export default function LOMChecker({ navigation }) {
                   m.role === 'user' ? styles.bubbleRight : styles.bubbleLeft,
                 ]}
               >
-                {m.role === 'user' ? <Text style={styles.bubbleText}>{m.content}</Text> : <Markdown style={styles.bubbleText}>{m.content}</Markdown>}
+                {m.role === 'user' ? (
+                  <Text style={styles.bubbleText}>{m.content}</Text>
+                ) : (
+                  <Markdown style={{ body: styles.bubbleText }}>{m.content}</Markdown>
+                )}
               </View>
             </TouchableOpacity>
           ))}
 
-          {/* Typing indicator bubble (left-aligned) */}
           {isTyping && (
             <View style={[styles.bubble, styles.bubbleLeft]}>
-              <Text style={styles.bubbleText}>
-                AI is typing{'.'.repeat(dotCount)}
-              </Text>
+              <Text style={styles.bubbleText}>AI is typing{'.'.repeat(dotCount)}</Text>
             </View>
           )}
-        {/* </ScrollView> */}
+        </ScrollView>
 
-        {/* Composer */}
+        {/* Composer (sticks to bottom, pushed by KAV) */}
         <View style={styles.composerRow}>
           <TextInput
             value={input}
@@ -183,13 +198,15 @@ export default function LOMChecker({ navigation }) {
             <Text style={styles.sendText}>Send</Text>
           </TouchableOpacity>
         </View>
-      {/* </KeyboardAvoidingView> */}
-    </ScrollView>
+      </KeyboardAvoidingView>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: '#1a2d3f',padding: 10 },
+  root: { flex: 1, backgroundColor: '#13294B' },
+  flex: { flex: 1 },
+
   headerBar: {
     height: 56,
     flexDirection: 'row',
@@ -199,10 +216,9 @@ const styles = StyleSheet.create({
     marginTop: 30,
   },
   iconBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
-  iconText: { color: '#E7EDF3', fontSize: 22 },
   headerTitle: { color: '#E7EDF3', fontSize: 18, fontWeight: '700' },
 
-  messages: { flex: 1, paddingHorizontal: 16, paddingTop: 8 },
+  messages: { flex: 1 },
 
   bubble: {
     maxWidth: '78%',
@@ -218,8 +234,6 @@ const styles = StyleSheet.create({
   composerRow: {
     flexDirection: 'row',
     paddingVertical: 10,
-    position: 'absolute',
-    bottom: 0,
     paddingHorizontal: 10,
     backgroundColor: '#1a2d3f',
   },

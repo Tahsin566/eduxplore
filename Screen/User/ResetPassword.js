@@ -24,7 +24,7 @@ const PasswordReset = ({ navigation }) => {
         style={styles.backButton}
         onPress={() => navigation.navigate('ChangingPassword')}
       >
-        <Text style={styles.backText}>←</Text>
+        <Text style={styles.backText}>‹</Text>
       </TouchableOpacity>
 
       <Text style={styles.header}>Password Reset</Text>
@@ -50,7 +50,7 @@ export default PasswordReset;
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#13294B',
     paddingHorizontal: 30,
     paddingTop: 60,
   },

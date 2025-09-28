@@ -1,162 +1,57 @@
-import React from 'react'
-import { useAuth, useSignIn } from '@clerk/clerk-expo'
-import { Text, TextInput, Button, View , StyleSheet, TouchableOpacity} from 'react-native'
+import React, { useState } from 'react';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
-const ChangePasswordFinal = ({ navigation }) => {
+const PasswordReset = ({ navigation }) => {
+  const [email, setEmail] = useState('');
 
-  const { signIn, setActive, isLoaded } = useSignIn()
-  const { signOut } = useAuth()
-  const [email, setEmail] = React.useState('')
-  const [password, setPassword] = React.useState('')
-  const [code, setCode] = React.useState('')
-  const [successfulCreation, setSuccessfulCreation] = React.useState(false)
-  const [error, setError] = React.useState('')
+  const validateEmail = (email) => {
+    const regex = /^\S+@\S+\.\S+$/;
+    return regex.test(email);
+  };
 
-  const onRequestReset = async () => {
-    if (!isLoaded) return
-
-    try {
-      await signIn.create({
-        strategy: "reset_password_email_code",
-        identifier: email,
-      })
-      setSuccessfulCreation(true)
-      setError('')
-    } catch (err) {
-      console.error('error', err.errors[0].longMessage)
-      setError(err.errors[0].longMessage)
+  const handleNext = () => {
+    if (!validateEmail(email)) {
+      Alert.alert('Invalid Email', 'Please enter a valid email address.');
+      return;
     }
-  }
 
-  const onReset = async () => {
-    if (!isLoaded) return
-
-    try {
-      const result = await signIn.attemptSecondFactor({
-        strategy: "reset_password_email_code",
-        code,
-        password,
-      })
-
-      if (result.status === 'complete') {
-        await setActive({ session: result.createdSessionId })
-        // router.replace('/')
-      } else {
-        console.log(result)
-      }
-    } catch (err) {
-      console.error('error', err.errors[0].longMessage)
-      setError(err.errors[0].longMessage)
-    }
-  }
-
-
-  if (successfulCreation) {
-
-    return (
-      <View style={styles.container}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('SignIn')}>
-          <Text style={styles.backText}>←</Text>
-        </TouchableOpacity>
-        <Text style={styles.header}>Reset your password</Text>
-        {error && <Text style={{ color: 'red' }}>{error}</Text>}
-        <TextInput
-        style={styles.inputWrapper}
-          value={code}
-          placeholder="Enter verification code"
-          onChangeText={(code) => setCode(code)}
-        />
-        <TextInput
-        style={styles.inputWrapper}
-          value={password}
-          placeholder="Enter new password"
-          secureTextEntry={true}
-          onChangeText={(password) => setPassword(password)}
-        />
-        <TouchableOpacity style={styles.saveButton} onPress={onReset}>
-          <Text>Reset Password</Text>
-        </TouchableOpacity>
-      </View>
-    )
-  }
+    navigation.navigate('PasswordResetVerification');
+  };
 
   return (
-    // <View style={styles.container}>
-    //   {/* Back Arrow */}
-    //   <TouchableOpacity
-    //     style={styles.backButton}
-    //     onPress={() => navigation.navigate('ResetPassword')}
-    //   >
-    //     <Text style={styles.backText}>←</Text>
-    //   </TouchableOpacity>
-
-    //   {/* Header */}
-    //   <Text style={styles.header}>Change Password</Text>
-
-    //   {/* New Password */}
-    //   <View style={styles.inputWrapper}>
-    //     <TextInput
-    //       style={styles.input}
-    //       placeholder="New Password"
-    //       placeholderTextColor="#000"
-    //       secureTextEntry={!showNew}
-    //     />
-    //     <TouchableOpacity onPress={() => setShowNew(!showNew)}>
-    //       <Text style={styles.eyeEmoji}>{showNew ? '🔐' : '👁️'}</Text>
-    //     </TouchableOpacity>
-    //   </View>
-
-    //   {/* Confirm Password */}
-    //   <View style={styles.inputWrapper}>
-    //     <TextInput
-    //       style={styles.input}
-    //       placeholder="Confirm Password"
-    //       placeholderTextColor="#000"
-    //       secureTextEntry={!showConfirm}
-    //     />
-    //     <TouchableOpacity onPress={() => setShowConfirm(!showConfirm)}>
-    //       <Text style={styles.eyeEmoji}>{showConfirm ? '🙈' : '👁️'}</Text>
-    //     </TouchableOpacity>
-    //   </View>
-
-    //   {/* Save Button */}
-    //   <TouchableOpacity
-    //     style={styles.saveButton}
-    //     onPress={() => navigation.navigate('AccountSettings')}
-    //   >
-    //     <Text style={styles.saveText}>Save</Text>
-    //   </TouchableOpacity>
-    // </View>
     <View style={styles.container}>
-      <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
-        <Text style={styles.backText}>←</Text>
+      <TouchableOpacity
+        style={styles.backButton}
+        onPress={() => navigation.navigate('SignIn')}
+      >
+        <Text style={styles.backText}>‹</Text>
       </TouchableOpacity>
-      <Text style={styles.header}>Change your password</Text>
-      
-      {error && <Text style={{ color: 'red' }}>{error}</Text>}
+
+      <Text style={styles.header}>Password Reset</Text>
+
+      <Text style={styles.label}>Enter Your Email</Text>
       <TextInput
-      style={styles.inputWrapper}
+        style={styles.input}
+        keyboardType="email-address"
+        autoCapitalize="none"
+        onChangeText={setEmail}
         value={email}
-        placeholderTextColor={'#000'}
-        placeholder="Enter your email"
-        onChangeText={(email) => setEmail(email)}
       />
-      <TouchableOpacity style={styles.saveButton} onPress={onRequestReset}>
-        <Text style={styles.saveText}>Send code</Text>
+
+      <TouchableOpacity style={styles.button} onPress={handleNext}>
+        <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
     </View>
   );
 };
 
-export default ChangePasswordFinal;
+export default PasswordReset;
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    color:"#fff",
-    backgroundColor: '#2C3E50',
-    justifyContent: 'center',
-    paddingHorizontal: 20,
+    backgroundColor: '#13294B',
+    paddingHorizontal: 30,
     paddingTop: 60,
   },
   backButton: {
@@ -173,35 +68,32 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#FFFFFF',
     textAlign: 'center',
-    marginBottom: 20,
+    marginBottom: 100,
+    
   },
-  inputWrapper: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  label: {
+    color: '#FFFFFF',
+    fontSize: 13,
+    marginBottom: 10,
+  },
+  input: {
     backgroundColor: '#ECF0F1',
     borderRadius: 4,
     height: 40,
     paddingHorizontal: 10,
-    marginBottom: 20,
-    justifyContent: 'space-between',
-  },
-  input: {
-    flex: 1,
+    marginBottom: 40,
     color: '#000',
   },
-  eyeEmoji: {
-    fontSize: 18,
-    paddingLeft: 10,
-  },
-  saveButton: {
+  button: {
     alignSelf: 'center',
     backgroundColor: '#ECF0F1',
     borderRadius: 4,
     paddingVertical: 6,
     paddingHorizontal: 20,
   },
-  saveText: {
+  buttonText: {
     fontWeight: '600',
     color: '#000',
+    alignSelf: 'center'
   },
 });

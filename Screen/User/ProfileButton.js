@@ -123,9 +123,9 @@ export default function ProfileUpload({ navigation }) {
       </TouchableOpacity>
 
       {/* Account Settings Button */}
-      {/* <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('AccountSettings')}>
-        <Text style={styles.buttonText}>Account Settings</Text>
-      </TouchableOpacity> */}
+      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ChangingPassword')}>
+        <Text style={styles.buttonText}>Change Password</Text>
+      </TouchableOpacity> 
 
       <TouchableOpacity style={styles.button} onPress={signOut}>
         <Text style={[{ ...styles.buttonText }, { color: 'red' }]}>Logout</Text>
@@ -138,7 +138,7 @@ export default function ProfileUpload({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#13294B',
     alignItems: 'center',
     paddingTop: 60,
   },

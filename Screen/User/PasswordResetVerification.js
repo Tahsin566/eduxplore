@@ -16,7 +16,7 @@ export default function EmailVerification({ navigation }) {
     <View style={styles.container}>
       {/* Back Button */}
       <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('ResetPassword')}>
-        <Text style={styles.backText}>←</Text>
+        <Text style={styles.backText}>‹</Text>
       </TouchableOpacity>
 
       {/* Header */}
@@ -57,7 +57,7 @@ export default function EmailVerification({ navigation }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#2C3E50',
+    backgroundColor: '#13294B',
     paddingTop: 60,
     alignItems: 'center',
   },
