@@ -1,4 +1,4 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
@@ -68,10 +68,12 @@ export default function BachelorList() {
         {universities.map((item, index) => (
           item?.name.toLowerCase().includes(searchQuery.toLowerCase()) ?  <View key={index} style={styles.listItem}>
 
-          <TouchableOpacity key={index} onPress={() => handlePress(item)}>
-            <Text style={styles.listItem}>
+          <TouchableOpacity key={index} style={styles.listbutton} onPress={() => handlePress(item)}>
+            <Image style={styles.image} source={{ uri: item?.photo }} />
+            <Text style={styles.listText}>
               {item?.name}
             </Text>
+          {role === 'admin' && <TouchableOpacity style={styles.update} onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })}><Ionicons name='create-outline' size={20} color='#000'/></TouchableOpacity>}
           </TouchableOpacity>
           </View> : item?.name.toLowerCase().includes(searchQuery.toLowerCase()) === false ? <Text style={{color: '#fff'}}>No Universities Found</Text> : null
         ))}
@@ -80,11 +82,7 @@ export default function BachelorList() {
       
 
       {/* Add Floating Button */}
-      {role === 'admin' && <TouchableOpacity style={styles.fab}
-      onPress={() => navigation.navigate('AddOverView')}
-      >
-        <Ionicons name="add" size={28} color="#2c3e50" />
-      </TouchableOpacity>}
+      
     </View>
   );
 }
@@ -92,10 +90,8 @@ export default function BachelorList() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop:10,
     backgroundColor: '#1C2E5C',
     paddingHorizontal: 20,
-    marginTop: 35,
   },
   search:{
     backgroundColor: '#ecf0f1',
@@ -131,7 +127,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   space: {
-    marginTop: '30',
+    marginTop: 30,
   },
   listContainer: {
     borderRadius: 5,
@@ -139,12 +135,32 @@ const styles = StyleSheet.create({
     padding: 12,
   },
   listItem: {
-    fontSize: 16,
     backgroundColor: '#ecf0f1',
-    padding: 8,
+    justifyContent:'center',
     borderRadius: 5,
     fontWeight: 'bold',
-    marginBottom: 8,
+  },
+  listbutton: {
+    height: 100,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    textAlign: 'center',
+    // flexWrap: 'wrap',
+  },
+  listText: {
+    fontSize: 20,
+    width: '65%',
+    color: '#000',
+    overflow:"scroll",
+    fontWeight: 'bold',
+  },
+  image: {
+    width: 50,
+    height: 50,
+    borderRadius: 0,
+    marginRight: 10,
+    resizeMode:'contain'
   },
   fab: {
     position: 'absolute',
@@ -155,4 +171,15 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     elevation: 4,
   },
+  update:{
+    backgroundColor: '#ecf0f1',
+    padding: 12,
+    position: 'absolute',
+    bottom: 30,
+    right: 5,
+    marginHorizontal:"auto",
+    borderRadius: 50,
+    borderWidth: 1,
+    alignItems:'center'
+  }
 });

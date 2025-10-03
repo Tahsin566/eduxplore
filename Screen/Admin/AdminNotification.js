@@ -30,11 +30,13 @@ export default function AdminNotification() {
       <TouchableOpacity 
         onPress={() => navigation.navigate('HomeScreen')} 
         style={{ 
-          backgroundColor: '#1C2E5C', 
-          height: 42, 
+          backgroundColor: '#1C2E5C',  
           flexDirection: 'row', 
           alignItems: 'center', 
           paddingHorizontal: 16,
+          borderBottomWidth: 1,
+          borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+          paddingBottom: 25
         }}
       >
         <Ionicons name="chevron-back" size={24} color="#fff" />
@@ -74,8 +76,7 @@ const BG = '#F6F7FB';
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: BG,
-    marginTop: 35,
+    backgroundColor: '#1C2E5C'
   },
   backBtn: {
     width: 40, 
@@ -88,7 +89,8 @@ const styles = StyleSheet.create({
     fontSize: 21, 
     fontWeight: '600', 
     marginLeft: 102, 
-    marginTop: 5
+    marginTop: 5,
+    
   },
   empty: {
     flex: 1,
@@ -106,7 +108,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#2B2F38',
+    color: '#fff',
   },
   subtitle: {
     fontSize: 13,
@@ -114,12 +116,13 @@ const styles = StyleSheet.create({
   },
   notification: {
     backgroundColor: '#fff',
-    padding: 10,
+    padding: 15,
     flexDirection: 'row',
     marginTop: 10,
     marginBottom: 2,
     alignItems: 'center',
     borderWidth: 1,
-    marginHorizontal: 5,
+    marginHorizontal: 10,
+    borderRadius: 10
   }
 });

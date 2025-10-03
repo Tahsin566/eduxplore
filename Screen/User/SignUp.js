@@ -1,7 +1,7 @@
 import { useSignUp } from '@clerk/clerk-expo';
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StatusBar, StyleSheet } from 'react-native';
-import { ScrollView } from 'react-native-gesture-handler';
+import { View, Text, TextInput, TouchableOpacity, StatusBar, StyleSheet,ScrollView } from 'react-native';
+
 
 function SignUp({ navigation }) {
   const { signUp } = useSignUp();
@@ -10,9 +10,13 @@ function SignUp({ navigation }) {
   const [email, setEmail]       = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [termsAccepted, setTermsAccepted] = useState(false);
+
+  const [pendingVerification, setPendingVerification] = useState(false);
+  const [code, setCode] = useState('');
 
   const handleSignUp = async () => {
+
+
     if (password !== confirmPassword) {
       alert('Passwords do not match');
       return;
@@ -25,14 +29,60 @@ function SignUp({ navigation }) {
         emailAddress: email,
         password,
       });
-      navigation.navigate('SignIn');
+
+
+      const res = await signUp.prepareEmailAddressVerification({ strategy: "email_code" })
+      console.log(res)
+      if(res.status === "complete"){
+        setPendingVerification(true)
+      }
     } catch (error) {
       console.log(error);
     }
   };
 
+  const onVerifyPress = async () => {
+    if (!isLoaded) return
+    try {
+      
+      const res = await signUp.attemptEmailAddressVerification({
+        code,
+      })
+
+      console.log(res)
+      
+
+      if (res.status === 'complete') {
+        await setActive({ session: res.createdSessionId })
+        navigation.replace('Home')
+      } else {
+        
+        console.error(JSON.stringify(res, null, 2))
+      }
+    } catch (err) {
+
+      console.error(JSON.stringify(err, null, 2))
+    }
+  }
+
+   if (pendingVerification) {
+    return (
+      <>
+        <Text>Verify your email</Text>
+        <TextInput
+          value={code}
+          placeholder="Enter your verification code"
+          onChangeText={(code) => setCode(code)}
+        />
+        <TouchableOpacity onPress={onVerifyPress}>
+          <Text>Verify</Text>
+        </TouchableOpacity>
+      </>
+    )
+  }
+
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic" endFillColor="#13294B">
+    <ScrollView contentInsetAdjustmentBehavior="automatic" style={{flexGrow: 1,backgroundColor: '#1C2E5C'}}>
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
 
@@ -82,7 +132,7 @@ function SignUp({ navigation }) {
             </Text>
           </View>
 
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('SignUpVerification')}>
+          <TouchableOpacity style={styles.button} onPress={handleSignUp}>
             <Text style={styles.buttonText}>CREATE ACCOUNT</Text>
           </TouchableOpacity>
 

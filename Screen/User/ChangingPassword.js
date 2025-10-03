@@ -1,3 +1,4 @@
+import { Ionicons } from '@expo/vector-icons';
 import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 
@@ -11,9 +12,9 @@ const ChangingPassword = ({ navigation }) => {
       {/* Back Arrow */}
       <TouchableOpacity
         style={styles.backButton}
-        onPress={() => navigation.navigate('AccountSettings')}
+        onPress={() => navigation.navigate('ProfileButton')}
       >
-        <Text style={styles.backText}>‹</Text>
+        <Ionicons name='chevron-back' size={24} color='#fff' />
       </TouchableOpacity>
 
       {/* Header */}
@@ -86,11 +87,10 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1C2E5C',
     paddingHorizontal: 30,
-    paddingTop: 60,
   },
   backButton: {
     position: 'absolute',
-    top: 57,
+    top: 2,
     left: 20,
   },
   backText: {

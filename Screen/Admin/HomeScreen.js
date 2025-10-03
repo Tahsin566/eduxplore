@@ -9,6 +9,8 @@ import { addDoc, collection, getDoc, getDocs, query, where } from 'firebase/fire
 
 import { db } from '../../firebase.config';
 import { AuthContext, useAuth, useRole } from '../../auth.context';
+import Footer from '../User/Footer';
+import AdminFooter from './adminFooter';
 
 const HomeScreen = () => {
 
@@ -25,20 +27,21 @@ const HomeScreen = () => {
   },[user])
 
   return(
+    <>
     <View style={styles.container}>
 
       <View style={styles.header}>
-        <Pressable onPress={() => navigation.openDrawer()}>
+        {/* <Pressable onPress={() => navigation.openDrawer()}>
           <Ionicons name="menu" size={28} color="#fff" />
-        </Pressable>
+        </Pressable> */}
         <Text style={styles.title}>Home</Text>
         <View style={styles.icons}>
           <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('AdminNotification')  : navigation.navigate('Notification')}>
             <Ionicons name="notifications" size={24} color="#fff" />
           </TouchableOpacity>
-          <TouchableOpacity onPress={() => navigation.navigate('ProfileButton')}>
+          {/* <TouchableOpacity onPress={() => navigation.navigate('ProfileButton')}>
             <Image source={{uri: profile?.photo}} style={styles.profileIcon} />
-          </TouchableOpacity>
+          </TouchableOpacity> */}
         </View>
       </View>
 
@@ -60,7 +63,7 @@ const HomeScreen = () => {
         </View>
         <View>
           <Text style={styles.cardTitle}>University List</Text>
-          <Text style={styles.cardSubtitle}>Bachelor's & master's programs</Text>
+          <Text style={styles.cardSubtitle}>Bachelors,masters and PhD programs</Text>
         </View>
         <Ionicons name="chevron-forward" size={24} color="#babec6" style={styles.chevron} />
       </TouchableOpacity>
@@ -82,7 +85,7 @@ const HomeScreen = () => {
       <TouchableOpacity
         style={styles.card}
         onPress={() => navigation.navigate('CoustomSend')}
-      >
+        >
         <View style={styles.iconNotification}>
           <Ionicons name="notifications" size={32} color="#FFB946" />
         </View>
@@ -108,15 +111,17 @@ const HomeScreen = () => {
       </TouchableOpacity>
 
       {/* Bottom Icon */}
-      <View style={styles.bottomIcon}>
+      {/* <View style={styles.bottomIcon}>
         <TouchableOpacity
                 onPress={() => navigation.navigate('Community')}
                 style={styles.communityIcon}
                 >
                 <Image source={communityIcon} style={styles.communityImage} />
               </TouchableOpacity>
-      </View>
+      </View> */}
     </View>
+      <AdminFooter />
+</>
   );
 }
 
@@ -126,7 +131,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#1C2E5C',
     paddingHorizontal: 24,
     justifyContent: 'flex-start',
-    marginTop: 35,
   },
   greeting: {
     fontSize: 28,
@@ -147,7 +151,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginTop: 30,
     marginBottom: 60,
   },
   title: {

@@ -12,11 +12,11 @@ function Home({ navigation }) {
     if (!profile) navigation.navigate('SignIn');
   }, [profile?.email]);
 
-  const name = profile?.name || 'there';
+  const name = profile?.name?.includes('null') ? profile?.name?.replace('null', '') : profile?.name;
 
   return (
     <View style={styles.container}>
-      <StatusBar barStyle="light-content" />
+      <StatusBar />
 
       {/* Header bar with centered title + previous notification icon */}
       <View style={styles.headerBar}>
@@ -53,6 +53,12 @@ function Home({ navigation }) {
           onPress={() => navigation.navigate('Appointment')}
         />
         <Feature
+          icon={<MaterialCommunityIcons name="school" size={26} color="#fff" />}
+          title="University List"
+          subtitle="Explore programs"
+          onPress={() => navigation.navigate('UniversityList')}
+        />
+        <Feature
           icon={<MaterialCommunityIcons name="office-building" size={26} color="#fff" />}
           title="Find University"
           subtitle="Search & Compare"
@@ -72,7 +78,7 @@ function Home({ navigation }) {
         />
         <Feature
           icon={<MaterialCommunityIcons name="presentation-play" size={26} color="#fff" />}
-          title="Seminar"
+          title="Webinars"
           subtitle="Events & Workshops"
           onPress={() => navigation.navigate('Seminars')}
         />
@@ -110,6 +116,8 @@ const styles = StyleSheet.create({
     marginTop: 16,
     marginHorizontal: 16,
     borderRadius: 2,
+    width: '87%',
+    marginHorizontal:'auto',
     justifyContent: 'center',
   },
   headerTitle: {

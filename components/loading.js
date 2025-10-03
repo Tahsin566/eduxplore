@@ -3,7 +3,7 @@ import React from 'react'
 
 const Loading = () => {
   return (
-    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:'#2C3E50' }}>
+    <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:'#1C2E5C' }}>
       <ActivityIndicator size="large" />
     </View>
   )

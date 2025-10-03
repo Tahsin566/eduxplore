@@ -33,7 +33,7 @@ import BachelorList from './Screen/Admin/BachelorList';
 import MastersList from './Screen/Admin/MastersList';
 import phdList from './Screen/Admin/phdList.js';
 import AddAdmin from './Screen/Admin/AddAdmin';
-import AddSeminar from './Screen/Admin/AddSeminar'
+import AddSeminar from './Screen/Admin/AddWebinar.js'
 import RegisteredList from './Screen/Admin/RegisteredList'
 import UniversityOverview from './Screen/Admin/UniversityOverview'
 import Requirements from './Screen/Admin/Requirements'
@@ -44,12 +44,12 @@ import AddAboutUniversity from './Screen/Admin/AddAboutUniversity'
 import UpdateOVerView from './Screen/Admin/UpdateOVerView'
 import UpdateRequirements from './Screen/Admin/UpdateRequirements'
 import UpdateAboutUniversity from './Screen/Admin/UpdateAboutUniversity'
-import Notification from './Screen/Admin/Notification';
+import Notification from './Screen/User/Notification.js';
 import HomeScreen from './Screen/Admin/HomeScreen';
 import CoustomSend from './Screen/Admin/CoustomSend.js';
 import UniversityList from './Screen/Admin/UniversityList.js';
 import ManageAccount from './Screen/Admin/ManageAccount.js';
-import Seminars from './Screen/Admin/Seminars.js';
+import Seminars from './Screen/Admin/Webinars.js';
 import { MenuScreen } from './components/MenuScreen.js';
 import Loading from './components/loading.js';
 import AdminNotification from './Screen/Admin/AdminNotification.js';

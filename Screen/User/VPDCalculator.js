@@ -34,7 +34,7 @@ export default function VPDCalculator({ navigation }) {
       {/* Top bar like mock: back on left, centered title */}
       <View style={styles.topBar}>
         <TouchableOpacity style={styles.backBtn} onPress={() => navigation.navigate('GradeConverter')}>
-          <Text style={styles.backTxt}>‹</Text>
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>VPD Calculator</Text>
         <View style={{ width: 24 }} />
@@ -151,11 +151,9 @@ const NAVY = '#1C2E5C';
 const styles = StyleSheet.create({
   screen: { flex: 1, backgroundColor: NAVY },
   topBar: {
-    height: 56,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 24,
     justifyContent: 'space-between',
   },
   backBtn: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },

@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { useRole } from '../../auth.context';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
+import * as MailComposer from 'expo-mail-composer';
 
 const AVATAR_COLORS = ['#1C2E5C', '#964b00', '#444cff', '#dedc34', '#3be3da', '#adadff'];
 
@@ -32,12 +33,24 @@ const getRegisteredEmails = async () => {
     getRegisteredEmails();
   },[topic])
 
+
+const sendEmail = async () => {
+  const result = await MailComposer.composeAsync({
+    recipients: registeredEmails,
+    subject: `Link for attending Webinar :${topic}`,
+    body: `Hello user, please click on the link below to join the webinar ${link}`
+  });
+  if(result.status === 'sent'){
+    alert('Email sent successfully');
+  }
+};   
+
   return (
-    <KeyboardAvoidingView style={{ flex: 1 }} behavior={Platform.OS==='ios' ? 'padding' : undefined}>
+    <KeyboardAvoidingView style={{ flex: 1 }} behavior="padding" keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : -300}>
       <View style={styles.container}>
 
         <View style={styles.headerRow}>
-          <TouchableOpacity onPress={() => navigation.goBack()} style={styles.headerIcon}>
+          <TouchableOpacity onPress={() => navigation.navigate('Seminars')} style={styles.headerIcon}>
             <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.title}>Registered List</Text>
@@ -79,7 +92,7 @@ const getRegisteredEmails = async () => {
             value={link}
             onChangeText={setLink}
           />
-          <TouchableOpacity style={styles.sendBtn} onPress={() => setLink('')}>
+          <TouchableOpacity style={styles.sendBtn} onPress={sendEmail}>
             <Text style={styles.sendText}>Send</Text>
           </TouchableOpacity>
         </View>
@@ -93,8 +106,6 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#22325a',
     paddingHorizontal: 18,
-    paddingTop: 34,
-    paddingBottom: 12,
   },
   headerRow: {
     flexDirection: 'row',
@@ -180,14 +191,14 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   sendBtn: {
-    backgroundColor: '#22325a',
+    backgroundColor: '#fff',
     paddingHorizontal: 14,
     paddingVertical: 9,
     borderRadius: 6,
     alignItems: 'center',
   },
   sendText: {
-    color: '#fff',
+    color: '#000',
     fontWeight: 'bold',
     fontSize: 16,
   },

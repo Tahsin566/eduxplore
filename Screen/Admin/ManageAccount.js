@@ -1,5 +1,5 @@
 
-import { View, Text, TouchableOpacity,ScrollView, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity,ScrollView, StyleSheet, Image } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { collection, getDocs, query, where } from 'firebase/firestore';
@@ -35,17 +35,17 @@ export default function ManageAccountsScreen() {
     <View style={styles.container}>
       {/* Header with Drawer */}
         <View style={styles.edit}><Text style={styles.title}>Manage Accounts</Text></View>
-        <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <Ionicons name="menu" size={28} color="#fff" />
+        <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home')}>
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         
       <View style={styles.space}><Text></Text></View>
 
       {/* Subheading */}
-      <Text style={styles.subheading}>Admin</Text>
+      <Text style={styles.subheading}>Admins and user</Text>
 
       {/* List */}
-      <ScrollView style={styles.listContainer}>
+      <ScrollView contentContainerStyle={styles.listContainer}>
         {admins.map((admin, index) => (
         <TouchableOpacity
           key={index}
@@ -53,27 +53,20 @@ export default function ManageAccountsScreen() {
           style={styles.row}
         >
           <View style={styles.avatar}>
-            <Ionicons name="person" size={32} color="#fff" />
+            <Image source={{uri: admin?.photo}} style={styles.avatarImage} />
           
           </View>
           <View style={styles.labelBar}>
             <Text style={styles.listItem}>
               {admin?.name?.includes('null') ? admin?.name?.split('null')[0] : admin?.name}
             </Text>
+          <Text style={styles.listText}>{admin?.role}</Text> 
           </View>
         </TouchableOpacity>
 
 ))}
 
       </ScrollView>
-
-      {/* Floating Add Button */}
-      {role === 'admin' && <TouchableOpacity
-        style={styles.fab}
-        onPress={() => navigation.navigate('AddAdmin')}
-      >
-        <Ionicons name="add" size={28} color="#2c3e50" />
-      </TouchableOpacity>}
     </View>
   );
 }
@@ -82,11 +75,10 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1C2E5C',
-    paddingHorizontal: 20,
-    marginTop: 35,
+    paddingHorizontal: 20
   },
   space: {
-    marginTop: '30',
+    marginTop: 3,
   },
   title: {
     position: 'absolute',
@@ -106,7 +98,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#ecf0f1',
     borderRadius: 5,
     padding: 12,
-    marginBottom: 140,
   },
   row: {
     flexDirection: 'row',
@@ -122,18 +113,27 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     marginRight: 10,
   },
+  avatarImage: {
+    width: 50,
+    height: 50,
+    borderRadius: 25, 
+  },
   labelBar: {
     backgroundColor: '#3d4d6a',
     borderRadius: 4,
     paddingHorizontal: 18,
     paddingVertical: 8,
-    minWidth: 140,
+    width:'80%',
     justifyContent: 'center',
   },
   listItem: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 20,
+  },
+  listText: {
+    color: '#fff',
+    fontSize: 15,
   },
     fab: {
     position: 'absolute',

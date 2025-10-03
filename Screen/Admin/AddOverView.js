@@ -155,10 +155,6 @@ export default function AddOverView() {
         <View style={styles.body}>
           {/*  <Image source={srhIcon} style={styles.logo} /> */}
         </View>
-
-        <Text style={styles.description}>
-          Applied Mechatronic Systems (BEng) {'\n'}SRH Universities. Berlin
-        </Text>
       </View>
 
       {/* Tabs */}
@@ -201,6 +197,7 @@ export default function AddOverView() {
               padding: 10
             }}
             onChangeText={setName}
+            value={name}
             placeholder={`Enter the University Name`}
             placeholderTextColor="#999"
           />
@@ -209,6 +206,7 @@ export default function AddOverView() {
           <TextInput
             style={styles.input}
             multiline
+            value={overView}
             onChangeText={setOverView}
             placeholder={`Enter the Overview`}
             placeholderTextColor="#999"
@@ -223,6 +221,7 @@ export default function AddOverView() {
           <TextInput
             style={styles.input}
             multiline
+            value={requirements}
             onChangeText={setRequirements}
             placeholder={`Enter the Requirements`}
             placeholderTextColor="#999"
@@ -236,6 +235,8 @@ export default function AddOverView() {
           <Text style={styles.label}>Enter the University Photo</Text>
           {image && <Image source={{ uri: image }} style={{ width: '90%', height: 200, resizeMode: 'cover', top: 0 }} />}
           <TouchableOpacity style={styles.uploadButton} onPress={pickImage}>
+            <Ionicons name='cloud-upload-outline' size={24} color='#000' />
+            <View style={{ width: 10 }}></View>
             <Text style={{ color: '#000' }}>Upload Photo</Text>
           </TouchableOpacity>
         </View>
@@ -244,6 +245,7 @@ export default function AddOverView() {
           <TextInput
             style={styles.input}
             multiline
+            value={AboutUniversity}
             onChangeText={setAboutUniversity}
             placeholder={`Enter the About University`}
             placeholderTextColor="#999"
@@ -282,6 +284,7 @@ export default function AddOverView() {
           <TextInput
             style={styles.singleInput}
             multiline
+            value={person}
             onChangeText={setPerson}
             placeholder={`Name`}
             placeholderTextColor="#999"
@@ -289,6 +292,7 @@ export default function AddOverView() {
           <TextInput
             style={styles.singleInput}
             multiline
+            value={designation}
             onChangeText={setDesignation}
             placeholder={`Designation`}
             placeholderTextColor="#999"
@@ -296,6 +300,7 @@ export default function AddOverView() {
           <TextInput
             style={styles.singleInput}
             multiline
+            value={phone}
             onChangeText={setPhone}
             placeholder={`Phone number`}
             placeholderTextColor="#999"
@@ -303,6 +308,7 @@ export default function AddOverView() {
           <TextInput
             style={styles.singleInput}
             multiline
+            value={email}
             onChangeText={setEmail}
             placeholder={`Email`}
             placeholderTextColor="#999"
@@ -310,6 +316,7 @@ export default function AddOverView() {
           <TextInput
             style={styles.singleInput}
             multiline
+            value={address}
             onChangeText={setAddress}
             placeholder={`address`}
             placeholderTextColor="#999"
@@ -317,6 +324,7 @@ export default function AddOverView() {
           <TextInput
             style={styles.singleInput}
             multiline
+            value={ieltsScore}
             onChangeText={setIeltsScore}
             placeholder={`Minimum IELTS Score`}
             placeholderTextColor="#999"
@@ -324,53 +332,13 @@ export default function AddOverView() {
           <TextInput
             style={styles.singleInput}
             multiline
+            value={website}
             onChangeText={setWebsite}
             placeholder={`Official Website link`}
             placeholderTextColor="#999"
           />
         </View>
       </View>}
-
-
-
-
-
-
-
-      {/* .............. 4th part ...............*/}
-
-      <View>
-        {/* <View style={styles.contactHeader}>
-          <Ionicons name="person-circle" size={50} color="#1abc9c" />
-          <Text style={styles.contactTitle}>SRH Universities</Text>
-          <Text style={styles.subTitle}>Study Advisor</Text>
-        </View> */}
-
-        {/* Contact Information */}
-        {/* <Text style={styles.address}>Sonnenallee 221</Text>
-        <Text style={styles.address}>12059 Berlin</Text> */}
-
-        {/* Buttons for Phone, Email, and Website */}
-        {/* <TouchableOpacity style={styles.button1}>
-          <Text style={styles.buttonText1}>+49 30515650200</Text>
-          </TouchableOpacity> */}
-
-        {/* <TouchableOpacity style={styles.button1}>
-          <Text style={styles.buttonText1}>Email</Text>
-          </TouchableOpacity> */}
-
-        {/* <TouchableOpacity style={styles.button1} onPress={handleWebsitePress}>
-          <Text style={styles.buttonText1}>Course website</Text>
-          </TouchableOpacity> */}
-
-        {/* Source */}
-        {/* <View style={styles.sourceSection}>
-          <Text style={styles.sourceText}>Source</Text>
-          <TouchableOpacity onPress={handleSourcePress}>
-          <Text style={styles.sourceLink}>https://www2.daad.de/deutschland/studienangebote/internationale-programme/en/detail/7801/#tab_overview</Text>
-          </TouchableOpacity>
-          </View> */}
-      </View>
 
 
       <TouchableOpacity onPress={addUniversity} style={styles.button1}>
@@ -382,15 +350,16 @@ export default function AddOverView() {
 }
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 400
+    paddingBottom: 50
 
 
   },
   uploadButton: {
     backgroundColor: '#d9d9d9',
     alignItems: 'center',
+    flexDirection: 'row',
+    paddingVertical: 10,
     justifyContent: 'center',
-    paddingVertical: 12,
     paddingHorizontal: 20,
     borderRadius: 8,
   },
@@ -405,7 +374,6 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   header: {
-    marginTop: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

@@ -10,6 +10,7 @@ import { db } from '../../firebase.config';
 import { useUser } from '@clerk/clerk-expo';
 import { useRole } from '../../auth.context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { Ionicons } from '@expo/vector-icons';
 
 export default function Community({ navigation }) {
   const [message, setMessage] = useState('');
@@ -124,7 +125,7 @@ export default function Community({ navigation }) {
   };
 
   const uploadToCloudinary = async () => {
-    if(!file) return
+    if (!file) return
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', 'images-expo-app');
@@ -142,9 +143,9 @@ export default function Community({ navigation }) {
       return profile?.photo
     }
   };
-  
+
   // Send message
-  const sendMessage = async() => {
+  const sendMessage = async () => {
     if (!message.trim() && !image) {
       Alert.alert('Please enter a message or pick an image');
       return;
@@ -153,8 +154,8 @@ export default function Community({ navigation }) {
       replyTo?.text
         ? `↪ Replying to: ${replyTo.text.length > 80 ? replyTo.text.slice(0, 80) + '…' : replyTo.text}\n`
         : replyTo?.image
-        ? `↪ Replying to: Photo\n`
-        : '';
+          ? `↪ Replying to: Photo\n`
+          : '';
 
     try {
       addDoc(collection(db, 'chat'), {
@@ -263,7 +264,7 @@ export default function Community({ navigation }) {
 
   if (loading) {
     return (
-      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#2C3E50' }}>
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#1C2E5C' }}>
         <ActivityIndicator size="large" color="#0000ff" />
       </View>
     );
@@ -275,7 +276,7 @@ export default function Community({ navigation }) {
     <KeyboardAvoidingView
       style={styles.kav}
       behavior="padding"
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 84 : 24}
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 84 : -300}
       enabled
     >
       <View style={styles.container}>
@@ -285,11 +286,11 @@ export default function Community({ navigation }) {
             onPress={() => (role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home'))}
             style={styles.iconBtn}
           >
-            <Text style={styles.iconText}>‹</Text>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Community</Text>
           <TouchableOpacity onPress={() => setSearchActive(!searchActive)} style={styles.iconBtn}>
-            <Text style={styles.iconText}>🔍</Text>
+            <Ionicons name={searchActive ? 'close' : 'search'} size={24} color="#fff" />
           </TouchableOpacity>
         </View>
 
@@ -424,7 +425,7 @@ export default function Community({ navigation }) {
           onLayout={(e) => setComposerHeight(e.nativeEvent.layout.height)}
         >
           <TouchableOpacity onPress={pickImage} style={styles.iconButton}>
-            <Text style={styles.iconText}>📸</Text>
+            <Ionicons name='camera-outline' size={35} color='#f7f7f7' />
           </TouchableOpacity>
           <TextInput
             style={styles.input}
@@ -488,19 +489,17 @@ export default function Community({ navigation }) {
 
 const styles = StyleSheet.create({
   kav: { flex: 1, backgroundColor: '#1C2E5C' },
-
-  container: { flex: 1, backgroundColor: '#1C2E5C', paddingTop: 20 },
-
+  container: { flex: 1, backgroundColor: '#1C2E5C' },
   headerBar: {
-    height: 50, flexDirection: 'row', alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'space-between', paddingHorizontal: 16
   },
-  iconBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
+  iconBtn: { width: 36, alignItems: 'center', justifyContent: 'center' },
   iconText: { color: '#E7EDF3', fontSize: 30 },
   headerTitle: { color: '#E7EDF3', fontSize: 24, fontWeight: '700' },
 
-  searchContainer: { padding: 8, backgroundColor: '#1C2E5C' },
-  searchInput: { backgroundColor: '#FFF', borderRadius: 20, paddingLeft: 12, height: 40 },
+  searchContainer: { paddingHorizontal: 8, backgroundColor: '#1C2E5C' },
+  searchInput: { backgroundColor: '#FFF', borderRadius: 10, paddingLeft: 12, marginTop: 10 },
 
   messagesContainer: { flex: 1, paddingHorizontal: 12, backgroundColor: '#1C2E5C' },
   row: { flexDirection: 'row', alignItems: 'flex-end', marginVertical: 6, gap: 8 },
@@ -562,14 +561,14 @@ const styles = StyleSheet.create({
   inputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#13294B',
+    backgroundColor: '#1C2E5C',
     paddingHorizontal: 10,
     paddingTop: 8,
   },
   iconButton: { marginHorizontal: 8 },
   input: {
     flex: 1, height: 40, backgroundColor: '#FFF',
-    borderRadius: 20, paddingLeft: 12, fontSize: 16
+    borderRadius: 10, paddingLeft: 12, fontSize: 16
   },
   sendButton: {
     backgroundColor: '#007AFF', paddingVertical: 8,

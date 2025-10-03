@@ -80,7 +80,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row', 
     alignItems: 'center', 
     justifyContent: 'space-between', 
-    marginTop: 20, 
     marginBottom: 20 
   },
   backButton: {
@@ -100,10 +99,11 @@ const styles = StyleSheet.create({
   // Scroll content gets bottom padding so last items aren't under the footer
   content: {
     paddingBottom: 110,
+    paddingHorizontal: 8
   },
 
   stepText: { 
-    color: '#FFFFFF', 
+    color: '#FFF', 
     fontSize: 14, 
     marginBottom: 12, 
     lineHeight: 20,
@@ -118,11 +118,12 @@ const styles = StyleSheet.create({
     marginRight:10,
   },
   image: { 
-    width: '100%', 
+    width: '95%', 
     height: 180, 
     borderRadius: 8, 
     marginBottom: 20, 
-    resizeMode: 'contain' 
+    alignSelf: 'center',
+    resizeMode: "stretch" 
   },
   noteLabel: { 
     color: '#FFFFFF', 

@@ -3,41 +3,39 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import { useRole } from '../../auth.context';
 
-export default function Footer() {
+
+export default function AdminFooter() {
   const navigation = useNavigation();
 
-  const goHome = () => navigation.navigate('Home');
-  const goWishlist = () => navigation.navigate('WishList');
+  const {profile} = useRole()
+
+  const goHome = () => navigation.navigate('HomeScreen');
+  const goWishlist = () => navigation.navigate('WishList');      // ensure route name matches your navigator
   const goCommunity = () => navigation.navigate('Community');
-  const goProfile = () => navigation.navigate('ViewProfile');
+  const goProfile = () => navigation.navigate('ViewProfile');  // ensure route name matches
 
   return (
     <View style={styles.container}>
       <NavItem
         label="Home"
         circleBg="#90A4AE"
-        icon={<FontAwesome5 name="home" size={20} color="#3A5166" />}
+        icon={<FontAwesome5 name="home" size={24} color="#3A5166" />}
         onPress={goHome}
       />
-      <NavItem
-        label="Wishlist"
-        circleBg="#FFFFFF"
-        circleBorder="#111"
-        icon={<FontAwesome5 name="bookmark" size={19} color="#111" />}
-        badge="1"
-        onPress={goWishlist}
-      />
+
       <NavItem
         label="Community"
         circleBg="#4C6EF5"
-        icon={<MaterialIcons name="groups" size={22} color="#FFD54F" />}
+        icon={<MaterialIcons name="groups" size={26} color="#FFD54F" />}
         onPress={goCommunity}
       />
+
       <NavItem
         label="Profile"
         circleBg="#3F51B5"
-        icon={<MaterialIcons name="person" size={22} color="#EDEFF8" />}
+        icon={<MaterialIcons name="person" size={26} color="#EDEFF8" />}
         onPress={goProfile}
       />
     </View>
@@ -51,7 +49,7 @@ function NavItem({ label, icon, onPress, circleBg, circleBorder, badge }) {
         style={[
           styles.iconCircle,
           { backgroundColor: circleBg || '#90A4AE' },
-          circleBorder ? { borderWidth: 1.5, borderColor: circleBorder } : null,
+          circleBorder ? { borderWidth: 2, borderColor: circleBorder } : null,
         ]}
       >
         {icon}
@@ -69,18 +67,16 @@ function NavItem({ label, icon, onPress, circleBg, circleBorder, badge }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#5C7898',
-    // border removed
-    paddingVertical: 8,         // reduced height
-    paddingHorizontal: 8,
+    paddingVertical: 8,
     flexDirection: 'row',
     justifyContent: 'space-around',
     alignItems: 'center',
   },
-  item: { alignItems: 'center', minWidth: 62 },
+  item: { alignItems: 'center', minWidth: 70 },
   iconCircle: {
-    width: 40,                  // smaller
-    height: 40,
-    borderRadius: 20,
+    width: 46,
+    height: 46,
+    borderRadius: 23,
     alignItems: 'center',
     justifyContent: 'center',
     position: 'relative',
@@ -96,14 +92,14 @@ const styles = StyleSheet.create({
     height: 16,
     alignItems: 'center',
     justifyContent: 'center',
-    borderWidth: 1.2,
+    borderWidth: 1.5,
     borderColor: '#fff',
   },
   badgeText: { color: '#fff', fontSize: 10, fontWeight: '700' },
   label: {
-    marginTop: 4,               // tighter spacing
+    marginTop: 6,
     color: '#FFFFFF',
     fontWeight: '800',
-    fontSize: 14,               // smaller text
+    fontSize: 16,
   },
 });

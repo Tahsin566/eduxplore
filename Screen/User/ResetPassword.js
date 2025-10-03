@@ -22,7 +22,7 @@ const PasswordReset = ({ navigation }) => {
     <View style={styles.container}>
       <TouchableOpacity
         style={styles.backButton}
-        onPress={() => navigation.navigate('ChangingPassword')}
+        onPress={() => navigation.navigate('ProfileButton')}
       >
         <Text style={styles.backText}>‹</Text>
       </TouchableOpacity>
@@ -57,6 +57,8 @@ const styles = StyleSheet.create({
   backButton: {
     position: 'absolute',
     top: 57,
+    width: 50,
+    height: 50,
     left: 20,
   },
   backText: {

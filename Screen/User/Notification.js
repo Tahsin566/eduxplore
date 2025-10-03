@@ -65,13 +65,15 @@ const BG = '#F6F7FB';
 const styles = StyleSheet.create({
   container: { 
     flex: 1, 
-    backgroundColor: BG 
+    backgroundColor: '#1C2E5C' 
   },
   header: {
-    backgroundColor: '#1a2d3f',
-    height: 118,
+    backgroundColor: '#1C2E5C',
     borderBottomLeftRadius: 16,
     borderBottomRightRadius: 16,
+    borderBottomWidth: 1,
+    borderBottomColor: 'rgba(255, 255, 255, 0.1)',
+    paddingBottom: 25,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -105,7 +107,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 16,
     fontWeight: '700',
-    color: '#2B2F38',
+    color: '#fff',
   },
   subtitle: {
     fontSize: 13,
@@ -120,7 +122,7 @@ const styles = StyleSheet.create({
     marginBottom: 2,
     alignItems: 'center',
     borderWidth: 1,
-    marginHorizontal: 5,
+    marginHorizontal: 10,
     
   }
 });

@@ -26,7 +26,7 @@ const ProfileSettings = ({ navigation }) => {
   };
 
   const isFormChanged = () =>
-    name || appointmentDate || ieltsScore || groupSSC || groupHSC || bachelorSubject || mastersSubject || vpd;
+    name || ieltsScore || groupSSC || groupHSC || bachelorSubject || mastersSubject || vpd;
 
   const handleSave = async () => {
     if (!isFormChanged()) return;
@@ -37,7 +37,6 @@ const ProfileSettings = ({ navigation }) => {
     if (querySnapshot.docs.length !== 0) {
       await updateDoc(doc(db, 'profile', querySnapshot.docs[0].id), {
         name,
-        appointmentDate,
         ieltsScore,
         groupSSC,
         groupHSC,
@@ -46,13 +45,13 @@ const ProfileSettings = ({ navigation }) => {
         vpd,
       });
       console.log('updated');
+      navigation.navigate('ViewProfile');
       return;
     }
 
     try {
       const res = await addDoc(collection(db, 'profile'), {
         name,
-        appointmentDate,
         ieltsScore,
         groupSSC,
         groupHSC,
@@ -62,6 +61,7 @@ const ProfileSettings = ({ navigation }) => {
         email: profile?.email,
       });
       console.log('Inserted document with ID: ', res.id);
+      navigation.navigate('ViewProfile');
     } catch (error) {
       console.log('Error adding document: ', error);
     }
@@ -69,7 +69,6 @@ const ProfileSettings = ({ navigation }) => {
 
   const getProfileData = async () => {
     setName('');
-    setAppointmentDate('');
     setIeltsScore('');
     setGroupSSC('');
     setGroupHSC('');
@@ -98,10 +97,10 @@ const ProfileSettings = ({ navigation }) => {
     <ScrollView contentContainerStyle={styles.container}>
       {/* App bar with centered title */}
       <View style={styles.appbar}>
-        <TouchableOpacity style={styles.appbarSide} onPress={() => navigation.navigate('ProfileButton')}>
-          <Ionicons name="chevron-back" size={22} color="#EAF2FA" />
+        <TouchableOpacity style={styles.appbarSide} onPress={() => navigation.navigate('ViewProfile')}>
+          <Ionicons name="chevron-back" size={24} color="#EAF2FA" />
         </TouchableOpacity>
-        <Text style={styles.appbarTitle}>Profile Setting</Text>
+        <Text style={styles.appbarTitle}>Profile Settings</Text>
         {/* spacer to keep the title centered */}
         <View style={styles.appbarSide} />
       </View>
@@ -118,14 +117,14 @@ const ProfileSettings = ({ navigation }) => {
           placeholderTextColor="#8AA0B3"
         />
 
-        <Text style={styles.label}>Appointment Date</Text>
+        {/* <Text style={styles.label}>Appointment Date</Text>
         <TextInput
           style={styles.input}
           value={appointmentDate}
           onChangeText={setAppointmentDate}
           placeholder="Enter date"
           placeholderTextColor="#8AA0B3"
-        />
+        /> */}
 
         <Text style={styles.label}>IELTS Score</Text>
         <TextInput
@@ -225,22 +224,19 @@ const styles = StyleSheet.create({
   container: {
     flexGrow: 1,
     backgroundColor: '#1C2E5C',
-    paddingBottom: 24,
-    paddingTop:20
+    paddingBottom: 24
   },
 
   /* App bar (dark navy, centered title) */
   appbar: {
-    height: 48,
     paddingHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    marginTop: 8,
+    justifyContent: 'space-between'
 
   },
   appbarSide: { width: 28, alignItems: 'center', justifyContent: 'center' },
-  appbarTitle: { color: '#EAF2FA', fontSize: 16, fontWeight: '700' },
+  appbarTitle: { color: '#EAF2FA', fontSize: 20, fontWeight: '700' },
 
   form: {
     width: '86%',

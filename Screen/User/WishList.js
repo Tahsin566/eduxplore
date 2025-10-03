@@ -96,7 +96,6 @@ function WishList({ navigation }) {
 const styles = StyleSheet.create({
   root: {
     flex: 1,
-    paddingTop: 25,
     backgroundColor: '#1C2E5C',
   },
   canvas: {
@@ -108,17 +107,13 @@ const styles = StyleSheet.create({
 
   // Header
   headerBar: {
-    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 6,
-    marginTop: 8,
     marginBottom: 12,
   },
   iconBtn: {
-    width: 36,
-    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
   },

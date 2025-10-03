@@ -24,7 +24,9 @@ const tokenCache = {
 export default function App() {
   
   return <NavigationContainer>
-    <View style={{paddingTop: 10, backgroundColor: '#1a2d3f',flex: 1}}>
+    <View style={{height: 50, backgroundColor: '#1C2E5C'}}>
+    </View>
+    <View style={{flex: 1, backgroundColor: '#1C2E5C'}}>
 
     
     <ClerkProvider tokenCache={tokenCache}>

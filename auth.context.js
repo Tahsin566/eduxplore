@@ -40,7 +40,7 @@ export const AuthProvider = ({ children }) => {
             name: user.firstName + ' ' + user.lastName || '',
             email: user?.emailAddresses[0]?.emailAddress,
             role: 'user',
-            photo: user.imageUrl || '',
+            photo: user.imageUrl,
         }
 
         try {

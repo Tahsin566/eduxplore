@@ -5,6 +5,8 @@ import { useRole } from '../../auth.context';
 import { useEffect, useState } from 'react';
 import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
+import Footer from '../User/Footer';
+import AdminFooter from './adminFooter';
 
 export default function Seminars() {
   const navigation = useNavigation();
@@ -20,6 +22,8 @@ export default function Seminars() {
   }, []);
 
   const RenderItem = ({ item }) => {
+
+
     const [isRegistered, setIsRegistered] = useState(false);
 
     const handleRegister = async () => {
@@ -54,12 +58,22 @@ export default function Seminars() {
 
     return (
       <View style={styles.card}>
-        <Text style={styles.cardSmallText}>Seminar info</Text>
-        <View style={styles.cardRow}>
-          <Ionicons name="person-circle-outline" size={42} color="#34495e" />
-          <Text style={styles.cardGuest}>{item.guest}</Text>
+        <View>
+
+          <Text style={styles.cardSmallText}>Webinar info</Text>
+
+          <View>
+            <View style={styles.cardRow}>
+              <Ionicons name="person-circle-outline" size={42} color="#34495e" />
+              <Text style={styles.cardGuest}>{item.guest}</Text>
+            </View>
+            <Text style={styles.cardTopic}>{item.topic}</Text>
+          </View>
+
         </View>
-        <Text style={styles.cardTopic}>{item.topic}</Text>
+
+
+        <Text style={styles.cardTime}>{item.date}</Text>
         <Text style={styles.cardTime}>{item.time}</Text>
 
         <View>
@@ -67,8 +81,8 @@ export default function Seminars() {
           <TouchableOpacity onPress={handleRegister} style={[styles.registerButton, isRegistered]}>
             <Text style={styles.registerText}>{isRegistered ? 'Registered' : 'Register'}</Text>
           </TouchableOpacity>
-            
-            {role === 'admin' && (
+
+          {role === 'admin' && (
             <TouchableOpacity
               style={styles.linkButton}
               onPress={() => navigation.navigate('RegisterList', { topic: item?.topic })}
@@ -82,32 +96,37 @@ export default function Seminars() {
   };
 
   return (
-    <View style={styles.container}>
-      <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <Ionicons name="menu" size={28} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.title}>Seminar</Text>
-        <View style={{ width: 28 }} />
+
+    <>
+      <View style={styles.container}>
+        <View style={styles.header}>
+          <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home')}>
+            <Ionicons name="chevron-back" size={24} color="#fff" />
+          </TouchableOpacity>
+          <Text style={styles.title}>Webinar</Text>
+          <View style={{ width: 28 }} />
+        </View>
+
+        <FlatList
+          data={seminars}
+          keyExtractor={(item) => item.id}
+          renderItem={({ item }) => <RenderItem item={item} />}
+          numColumns={2}
+          columnWrapperStyle={styles.row}
+          contentContainerStyle={{ paddingBottom: 140, paddingTop: 20 }}
+          showsVerticalScrollIndicator={false}
+        />
+
+
+        {role === 'admin' && (
+          <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('AddSeminar')}>
+            <Ionicons name="add" size={28} color="#2c3e50" />
+          </TouchableOpacity>
+        )}
       </View>
+      {role === "admin" ? <AdminFooter /> : <Footer />}
+    </>
 
-      <FlatList
-        data={seminars}
-        keyExtractor={(item) => item.id}
-        renderItem={({ item }) => <RenderItem item={item} />}
-        numColumns={2}
-        columnWrapperStyle={styles.row}
-        contentContainerStyle={{ paddingBottom: 140, paddingTop: 20 }}
-        showsVerticalScrollIndicator={false}
-      />
-
-
-      {role === 'admin' && (
-        <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('AddSeminar')}>
-          <Ionicons name="add" size={28} color="#2c3e50" />
-        </TouchableOpacity>
-      )}
-    </View>
   );
 }
 
@@ -118,7 +137,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   header: {
-    marginTop: 40,
     marginBottom: 20,
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -139,6 +157,7 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     paddingVertical: 18,
     paddingHorizontal: 12,
+    justifyContent: 'space-between',
     width: '48%',
   },
   cardSmallText: {

@@ -4,7 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import srhIcon from '../../Images/srh.png';
 import { use, useEffect, useState } from 'react';
-import { addDoc, collection, deleteDoc, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
 import * as Linking from 'expo-linking';
@@ -26,7 +26,7 @@ export default function UniversityOverview({ route }) {
   // console.log(universityName)
 
   const [tab, setTab] = useState('overview');
-  const [isMarked, setIsMarked] = useState(null);
+  const [isMarked, setIsMarked] = useState(false);
 
   const [degree, setDegree] = useState('Bachelor of Engineering');
   const [courseLocation, setCourseLocation] = useState('Berlin');
@@ -78,11 +78,14 @@ export default function UniversityOverview({ route }) {
 
     const q = query(collection(db, "wishlist"), where("id", "==", universityName.id), where("email", "==", profile?.email));
     const querySnapshot = await getDocs(q);
-    setIsMarked(!isMarked)
     if (querySnapshot.docs.length !== 0) {
+      setIsMarked(!isMarked);
       await deleteDoc(doc(db, "wishlist", querySnapshot.docs[0].id));
       console.log('deleted');
       return;
+    }
+    else{
+      setIsMarked(true)
     }
 
     try {
@@ -100,16 +103,20 @@ export default function UniversityOverview({ route }) {
   const getMarked = async () => {
     setIsMarked(false)
     const q = query(collection(db, "wishlist"), where("id", "==", universityName.id), where("email", "==", profile?.email));
-    const querySnapshot = await getDocs(q);
 
-    if(querySnapshot.docs.length !== 0){
-      console.log('single data', querySnapshot.docs[0].data().isMarked)
-      setIsMarked(querySnapshot.docs[0].data().isMarked)
-    }
+    onSnapshot(q, (querySnapshot) => {
 
-    if(querySnapshot.docs.length === 0){
-      setIsMarked(false)
-    }
+      if(querySnapshot.docs.length !== 0){
+        console.log('single data', querySnapshot.docs[0].data().isMarked)
+        setIsMarked(querySnapshot.docs[0].data().isMarked)
+      }
+  
+      if(querySnapshot.docs.length === 0){
+        setIsMarked(false)
+      }
+      
+    })
+
   }
 
   const getUniversity = async () => {
@@ -147,9 +154,9 @@ export default function UniversityOverview({ route }) {
             <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>}
           {/* <Text style={styles.title}>Overview {isMarked ? 'Marked' : 'Not Marked'}</Text> */}
-          <TouchableOpacity onPress={addToWishlist}>
+          {role === 'user' && <TouchableOpacity onPress={addToWishlist}>
             {isMarked === true ? <Ionicons name="bookmark" size={24} color="white" /> : <Ionicons name="bookmark-outline" size={24} color="white" />}
-          </TouchableOpacity>
+          </TouchableOpacity>}
         </View>
 
         <View style={styles.body}>
@@ -188,7 +195,7 @@ export default function UniversityOverview({ route }) {
 
 
       {/* Third Part — Form */}
-      <View style={{ gap: 10 }}>
+      <View style={{ gap: 10 ,justifyContent:'space-between'}}>
 
         {tab === 'overview' && <View style={styles.card2}>
           {/* <Text style={styles.paragraph}>{universityData?.overview}</Text> */}
@@ -203,7 +210,10 @@ export default function UniversityOverview({ route }) {
           <Image source={{uri:universityData?.photo}} style={styles.image} />
           <Markdown>{universityData?.about}</Markdown>
         </View>}
+
       <View>
+
+
         <View style={styles.contactHeader}>
           <Ionicons name="person-circle" size={50} color="#1abc9c" />
           <Text style={styles.contactTitle}>{universityData?.name}</Text>
@@ -230,13 +240,7 @@ export default function UniversityOverview({ route }) {
           <Text style={[{...styles.buttonText1},{fontWeight:'bold',color:'white'}]}>Update</Text>
         </TouchableOpacity>}
 
-        {/* Source */}
-        <View style={styles.sourceSection}>
-          <Text style={styles.sourceText}>Source</Text>
-          <TouchableOpacity onPress={handleSourcePress}>
-            <Text style={styles.sourceLink}>https://www2.daad.de/deutschland/studienangebote/internationale-programme/en/detail/7801/#tab_overview</Text>
-          </TouchableOpacity>
-        </View>
+        
       </View>
       </View>
 
@@ -258,10 +262,9 @@ const styles = StyleSheet.create({
   },
   card: {
     backgroundColor: '#1C2E5C',
-    padding: 15,
+    paddingHorizontal: 15,
   },
   header: {
-    marginTop: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -282,8 +285,8 @@ const styles = StyleSheet.create({
   },
   image:{
     width: '100%',
-    height: 200,
-    resizeMode: 'cover',
+    height: 227,
+    resizeMode: 'contain',
     top: 0,
     marginTop: 5,
     
@@ -320,6 +323,7 @@ const styles = StyleSheet.create({
   /*Third part */
   card2: {
     marginTop: 1,
+    padding: 15,
     backgroundColor: '#fff',
     borderRadius: 10,
     overflow: 'hidden',

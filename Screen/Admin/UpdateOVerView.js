@@ -13,6 +13,7 @@ export default function UpdateOverView({ route }) {
   const navigation = useNavigation();
 
   const university = route.params.university
+  const path = route.params.path
 
   console.log(university.id)
 
@@ -200,9 +201,15 @@ export default function UpdateOverView({ route }) {
       {/* Header */}
       <View style={styles.card}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
+        {path === 'BachelorList' && <TouchableOpacity onPress={() => path === 'BachelorList' && navigation.navigate('BachelorList')}>
             <Ionicons name="chevron-back" size={24} color="white" />
-          </TouchableOpacity>
+          </TouchableOpacity>}
+          {path === 'MastersList' && <TouchableOpacity onPress={() => navigation.navigate('MastersList')}>
+            <Ionicons name="chevron-back" size={24} color="white" />
+          </TouchableOpacity>}
+          {path === 'PhDList' && <TouchableOpacity onPress={() => path === 'WishList' && navigation.navigate('WishList')}>
+            <Ionicons name="chevron-back" size={24} color="white" />
+          </TouchableOpacity>}
           <Text style={styles.title}>Update Overview</Text>
         </View>
 
@@ -210,9 +217,7 @@ export default function UpdateOverView({ route }) {
           {/* <Image source={srhIcon} style={styles.logo} />*/}
         </View>
 
-        <Text style={styles.description}>
-          Applied Mechatronic Systems (BEng) {'\n'}SRH Universities. Berlin
-        </Text>
+        
       </View>
 
       {/* Navigation Tabs */}
@@ -390,15 +395,6 @@ export default function UpdateOverView({ route }) {
         <Text style={styles.buttonText1}>Save changes</Text>
       </TouchableOpacity>
       <View>
-
-        <View style={styles.sourceSection}>
-          <Text style={styles.sourceText}>Source</Text>
-          <TouchableOpacity onPress={handleSourcePress}>
-            <Text style={styles.sourceLink}>
-              https://www2.daad.de/deutschland/studienangebote/internationale-programme/en/detail/7801/#tab_overview
-            </Text>
-          </TouchableOpacity>
-        </View>
       </View>
     </ScrollView >
   );
@@ -406,7 +402,6 @@ export default function UpdateOverView({ route }) {
 
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 400,
     backgroundColor: '#f4f4f4',
   },
   checkboxContainer: {
@@ -421,7 +416,6 @@ const styles = StyleSheet.create({
     padding: 15,
   },
   header: {
-    marginTop: 30,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',

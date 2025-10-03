@@ -61,8 +61,8 @@ const WishlistItem = ({ item }) => {
                     
                 </View>
 
-                <TouchableOpacity onPress={() => deleteFromWishlist(item)} style={{ position: 'absolute', top: 0, right: 1 ,backgroundColor:'#1a2d3f',padding:5,borderRadius:50}}>
-                    <Ionicons name="bookmark" size={24} color="white" />
+                <TouchableOpacity onPress={() => deleteFromWishlist(item)} style={{ position: 'absolute', top: 0, right: 1}}>
+                    <Ionicons name="trash" size={24} color="black" />
                 </TouchableOpacity>
                 
             </TouchableOpacity>

@@ -1,20 +1,26 @@
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons, FontAwesome5 } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
+import AdminFooter from './adminFooter';
+import Footer from '../User/Footer';
+import { useRole } from '../../auth.context';
 
 export default function UniversityList() {
   const navigation = useNavigation();
 
+  const {role} = useRole();
+
   return (
+    <>
     <View style={styles.container}>
       
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => navigation.openDrawer()}>
+        {/* <TouchableOpacity onPress={() => navigation.openDrawer()}>
           <Ionicons name="menu" size={28} color="#fff" />
-        </TouchableOpacity>
-        <Text style={styles.headerTitle}>University Program</Text>
+        </TouchableOpacity> */}
+        {/* <Text style={styles.headerTitle}>University Program</Text> */}
         {/* Placeholder to balance header */}
-        <View style={{ width: 28 }} />
+        
       </View>
 
       {/* Title and subtitle */}
@@ -36,7 +42,7 @@ export default function UniversityList() {
         <TouchableOpacity
           style={styles.card}
           onPress={() => navigation.navigate('MastersList')}
-        >
+          >
           <FontAwesome5 name="brain" size={54} color="#008080" />
           <Text style={styles.cardText}>Graduate Programs</Text>
         </TouchableOpacity>
@@ -44,30 +50,22 @@ export default function UniversityList() {
         <TouchableOpacity
           style={styles.card}
           onPress={() => navigation.navigate('phdList')}
-        >
+          >
           <FontAwesome5 name="microscope" size={54} color="#800080" />
           <Text style={styles.cardText}>PHD Programs</Text>
         </TouchableOpacity>
       </View>
 
-      {/* Footer Navigation */}
-      <View style={styles.footer}>
+      {role === 'admin' && <TouchableOpacity style={styles.fab}
+      onPress={() => navigation.navigate('AddOverView')}
+      >
+        <Ionicons name="add" size={28} color="#2c3e50" />
+      </TouchableOpacity>}
 
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="home-outline" size={24} color="#fff" />
-          <Text style={styles.navText}>Home</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="search-outline" size={24} color="#fff" />
-          <Text style={styles.navText}>Search</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.navItem}>
-          <Ionicons name="person-outline" size={24} color="#fff" />
-          <Text style={styles.navText}>Profile</Text>
-        </TouchableOpacity>
-        
-      </View>
     </View>
+    {/* Footer Navigation */}
+    {role === 'admin' ? <AdminFooter /> : <Footer />}
+</>
   );
 }
 
@@ -76,17 +74,15 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1C2E5C',
     paddingHorizontal: 20,
-    marginTop: 35,
   },
   header: {
-    flexDirection: 'row',
     justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 20,
+    alignItems: 'center'
   },
   headerTitle: {
     color: '#fff',
     fontSize: 22,
+    textAlign: 'center',
     fontWeight: 'bold',
   },
   titleContainer: {
@@ -124,6 +120,15 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#333',
   },
+  fab: {
+    position: 'absolute',
+    right: 20,
+    bottom: 30,
+    backgroundColor: '#ecf0f1',
+    padding: 12,
+    borderRadius: 28,
+    elevation: 4,
+  },
   footer: {
     height: 70,
     flexDirection: 'row',
@@ -140,7 +145,6 @@ const styles = StyleSheet.create({
   },
   navText: {
     color: '#fff',
-    fontSize: 12,
-    marginTop: 4,
+    fontSize: 12
   },
 });

@@ -2,8 +2,8 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, StatusBa
 import { ScrollView } from 'react-native-gesture-handler';
 import UseWeb from '../../hooks/useWeb';
 import { useAuth, useSignIn, useSSO, useUser } from '@clerk/clerk-expo';
-import { useNavigation } from '@react-navigation/native';
-import { useContext, useEffect, useState } from 'react';
+import { useFocusEffect, useNavigation } from '@react-navigation/native';
+import { useCallback, useContext, useEffect, useState } from 'react';
 import { addDoc, collection, getDoc, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { AuthContext, useRole } from '../../auth.context';
@@ -26,7 +26,9 @@ function SignIn({ navigation }) {
     try {
       if (!isSignedIn) {
         const googleAuth = await googleauth.startSSOFlow({ strategy: 'oauth_google' });
-        if (googleAuth.createdSessionId) setActive({ session: googleAuth.createdSessionId });
+        if (googleAuth.createdSessionId) {
+          setActive({ session: googleAuth.createdSessionId });
+        }
       }
     } catch (error) {
       console.log(error?.errors?.[0]?.message || error?.message);
@@ -34,14 +36,20 @@ function SignIn({ navigation }) {
   };
 
   const handleSignIn = async () => {
-    if (user) navigation.navigate(role === 'admin' ? 'HomeScreen' : 'Home');
+    if (user) {
+      navigation.replace(role === 'admin' ? 'HomeScreen' : 'Home');
+      return
+    }
     try {
       const result = await signIn.create({ password, identifier: email });
-      if (result.status === 'complete') await setActive({ session: result.createdSessionId });
+      if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId });
+      }
     } catch (error) {
       console.log(error);
     }
   };
+  
 
   // ----- Simple code-drawn logo (kept) -----
   const Logo = () => (
@@ -69,20 +77,6 @@ function SignIn({ navigation }) {
 
         {/* Card (same layout, colors adjusted) */}
         <View style={styles.card}>
-          {/* Google */}
-          <TouchableOpacity style={styles.googleBtn} onPress={handlegoogleauth}>
-            <View style={styles.googleIconBox}>
-              <FontAwesome5 name="google" size={18} color="#13294B" />
-            </View>
-            <Text style={styles.googleText}>Sign in with Google</Text>
-          </TouchableOpacity>
-
-          {/* Divider */}
-          <View style={styles.dividerRow}>
-            <View style={styles.divider} />
-            <Text style={styles.orText}>-or-</Text>
-            <View style={styles.divider} />
-          </View>
 
           {/* Email */}
           <Text style={styles.label}>Email</Text>
@@ -106,7 +100,7 @@ function SignIn({ navigation }) {
           />
 
           {/* Forgot */}
-          <TouchableOpacity onPress={() => navigation.navigate('forgot')} style={{ alignSelf: 'flex-end' }}>
+          <TouchableOpacity onPress={() => navigation.replace('forgot')} style={{ alignSelf: 'flex-end' }}>
             <Text style={styles.forgotPassword}>Forgot password</Text>
           </TouchableOpacity>
 
@@ -117,6 +111,20 @@ function SignIn({ navigation }) {
 
           {/* Footer */}
           <TouchableOpacity onPress={() => navigation.replace('SignUp')} style={{ marginTop: 18 }}>
+
+          {/* Divider */}
+          <View style={styles.dividerRow}>
+            <View style={styles.divider} />
+            <Text style={styles.orText}>-or-</Text>
+            <View style={styles.divider} />
+          </View>
+          {/* Google */}
+          <TouchableOpacity style={styles.googleBtn} onPress={handlegoogleauth}>
+            <View style={styles.googleIconBox}>
+              <FontAwesome5 name="google" size={18} color="#13294B" />
+            </View>
+            <Text style={styles.googleText}>Sign in with Google</Text>
+          </TouchableOpacity>
             <Text style={styles.footerText}>
               Don't Have an Account?
               <Text style={styles.click} onPress={() => navigation.navigate('SignUp')}>{' '}Sign Up</Text>
@@ -135,7 +143,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingTop: 36,
     paddingHorizontal: 24,
-    backgroundColor: '#13294B', // deep navy from screenshot
+    backgroundColor: '#1C2E5C', // deep navy from screenshot
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
@@ -178,6 +186,7 @@ const styles = StyleSheet.create({
   googleBtn: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: '#FFFFFF',   // white button
     borderRadius: 10,
     height: 48,
@@ -186,7 +195,6 @@ const styles = StyleSheet.create({
   googleIconBox: {
     width: 28, height: 28, borderRadius: 6,
     backgroundColor: '#FFFFFF',
-    borderWidth: 1, borderColor: '#1E293B',
     alignItems: 'center', justifyContent: 'center',
     marginRight: 10,
   },
@@ -219,5 +227,5 @@ const styles = StyleSheet.create({
   primaryBtnText: { color: '#0F172A', fontSize: 16, fontWeight: '700' },
 
   click: { color: '#53A2FF', fontSize: 15, fontWeight: '700' },
-  footerText: { fontSize: 14, color: '#FFFFFF', textAlign: 'center', fontWeight: '700' },
+  footerText: { fontSize: 14, color: '#FFFFFF', textAlign: 'center', fontWeight: '700',marginTop: 16 },
 });

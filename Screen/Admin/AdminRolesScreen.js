@@ -85,8 +85,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1C2E5C',
-    paddingHorizontal: 20,
-    marginTop: 35,
+    paddingHorizontal: 20
   },
   dropdown: {
     position: 'absolute',
@@ -94,7 +93,6 @@ const styles = StyleSheet.create({
     padding: 5
   },
   edit: {
-    marginTop: '30',
   },
   space: {
     marginTop: '30',

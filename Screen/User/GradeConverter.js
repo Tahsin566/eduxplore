@@ -9,7 +9,7 @@ export default function Menu({ navigation }) {
       {/* Header with back chevron and centered title */}
       <View style={styles.headerBar}>
         <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backBtn}>
-          <Text style={styles.backTxt}>‹</Text>
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Grade Converter</Text>
         <View style={{ width: 24 }} />
@@ -73,11 +73,10 @@ const CTA_BG = '#4C6EF5';
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: NAVY },
   headerBar: {
-    height: 56,
+    marginBottom: 16,
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 30,
     justifyContent: 'space-between',
   },
   backBtn: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },

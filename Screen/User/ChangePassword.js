@@ -1,22 +1,93 @@
-import React, { useState } from 'react';
+import { useSignIn } from '@clerk/clerk-expo';
+import { useAuth } from '@clerk/clerk-expo';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 
 const PasswordReset = ({ navigation }) => {
-  const [email, setEmail] = useState('');
+  const { signIn, setActive, isLoaded } = useSignIn()
+  const { signOut } = useAuth()
+  const [email, setEmail] = React.useState('')
+  const [password, setPassword] = React.useState('')
+  const [code, setCode] = React.useState('')
+  const [successfulCreation, setSuccessfulCreation] = React.useState(false)
+  const [error, setError] = React.useState('')
 
-  const validateEmail = (email) => {
-    const regex = /^\S+@\S+\.\S+$/;
-    return regex.test(email);
-  };
+  const onRequestReset = async () => {
+    if (!isLoaded) return
 
-  const handleNext = () => {
-    if (!validateEmail(email)) {
-      Alert.alert('Invalid Email', 'Please enter a valid email address.');
-      return;
+    try {
+      await signIn.create({
+        strategy: "reset_password_email_code",
+        identifier: email,
+      })
+      setSuccessfulCreation(true)
+      setError('')
+    } catch (err) {
+      console.error('error', err.errors[0].longMessage)
+      setError(err.errors[0].longMessage)
+    }
+  }
+
+  const onReset = async () => {
+    if (!isLoaded) return
+
+    if(user){
+      signOut()
     }
 
-    navigation.navigate('PasswordResetVerification');
-  };
+    try {
+      const result = await signIn.attemptSecondFactor({
+        strategy: "reset_password_email_code",
+        code,
+        password,
+      })
+
+      if (result.status === 'complete') {
+        await setActive({ session: result.createdSessionId })
+        // router.replace('/')
+      } else {
+        console.log(result)
+      }
+    } catch (err) {
+      console.error('error', err.errors[0].longMessage)
+      setError(err.errors[0].longMessage)
+    }
+  }
+
+  useEffect(()=>{
+    setSuccessfulCreation(false)
+  },[])
+
+  if (successfulCreation) {
+
+    return (
+      <View style={styles.container}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('SignIn')}>
+          <Text style={styles.backText}>←</Text>
+        </TouchableOpacity>
+        <Text style={styles.header}>Reset your password</Text>
+        {error && <Text style={{ color: 'red' }}>{error}</Text>}
+        <TextInput
+        style={styles.input}
+          value={code}
+          placeholder="Enter verification code"
+          onChangeText={(code) => setCode(code)}
+        />
+        <TextInput
+        style={styles.input}
+          value={password}
+          placeholder="Enter new password"
+          secureTextEntry={true}
+          onChangeText={(password) => setPassword(password)}
+        />
+        <TouchableOpacity style={styles.button} onPress={onReset}>
+          <Text>Reset Password</Text>
+        </TouchableOpacity>
+      </View>
+    )
+  }
+
+
 
   return (
     <View style={styles.container}>
@@ -38,7 +109,7 @@ const PasswordReset = ({ navigation }) => {
         value={email}
       />
 
-      <TouchableOpacity style={styles.button} onPress={handleNext}>
+      <TouchableOpacity style={styles.button} onPress={() => onRequestReset()}>
         <Text style={styles.buttonText}>Next</Text>
       </TouchableOpacity>
     </View>
@@ -51,8 +122,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1C2E5C',
-    paddingHorizontal: 30,
-    paddingTop: 60,
+    paddingHorizontal: 30
   },
   backButton: {
     position: 'absolute',

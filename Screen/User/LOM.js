@@ -126,7 +126,7 @@ export default function LOMChecker({ navigation }) {
   };
 
   return (
-    <View style={styles.root}>
+    <ScrollView contentContainerStyle={styles.root}>
       <StatusBar barStyle="light-content" />
 
       {/* Header */}
@@ -139,11 +139,11 @@ export default function LOMChecker({ navigation }) {
       </View>
 
       {/* KAV wraps messages + composer */}
-      <KeyboardAvoidingView
+      {/* <KeyboardAvoidingView
         style={styles.flex}
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
-      >
+      > */}
         {/* Messages ScrollView */}
         <ScrollView
           ref={scrollRef}
@@ -198,8 +198,8 @@ export default function LOMChecker({ navigation }) {
             <Text style={styles.sendText}>Send</Text>
           </TouchableOpacity>
         </View>
-      </KeyboardAvoidingView>
-    </View>
+      {/* </KeyboardAvoidingView> */}
+    </ScrollView>
   );
 }
 
@@ -208,14 +208,12 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
 
   headerBar: {
-    height: 56,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    paddingHorizontal: 16,
-    marginTop: 30,
+    padding: 16,
   },
-  iconBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
+  iconBtn: { width: 36, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { color: '#E7EDF3', fontSize: 18, fontWeight: '700' },
 
   messages: { flex: 1 },

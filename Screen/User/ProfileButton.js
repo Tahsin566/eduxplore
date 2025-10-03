@@ -102,10 +102,12 @@ export default function ProfileUpload({ navigation }) {
       {/* Profile Picture (Center) */}
       <TouchableOpacity style={styles.profilePicContainer} onPress={pickImage}>
         <Image
-          source={profile?.photo ? { uri: image} : require('../../Images/Profile.png')}
+          source={profile?.photo ? { uri: image || user.imageUrl} : require('../../Images/Profile.png')}
           style={styles.profilePic}
         />
       </TouchableOpacity>
+
+      
       <Text style={styles.name}>{profile?.name?.includes('null') ? profile?.name?.split('null')[0] : profile?.name}</Text>
       <Text style={styles.email}>{profile?.email}</Text>
       {file && <TouchableOpacity style={{backgroundColor: '#ECF0F1',marginBottom: 10,padding: 12,borderRadius: 6}} onPress={uploadProfilePic}>
@@ -123,7 +125,7 @@ export default function ProfileUpload({ navigation }) {
       </TouchableOpacity>
 
       {/* Account Settings Button */}
-      <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ChangingPassword')}>
+      <TouchableOpacity style={styles.button} onPress={() => navigation.replace('forgot')}>
         <Text style={styles.buttonText}>Change Password</Text>
       </TouchableOpacity> 
 
@@ -140,7 +142,7 @@ const styles = StyleSheet.create({
     flex: 1,
     backgroundColor: '#1C2E5C',
     alignItems: 'center',
-    paddingTop: 60,
+
   },
   backButton: {
     position: 'absolute',

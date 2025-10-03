@@ -1,10 +1,11 @@
-import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useEffect, useState } from 'react';
 import { useRole } from '../../auth.context';
+import { Image } from 'react-native';
 
 const data = ['University 1', 'University 2', 'University 3', 'University 4'];
 
@@ -12,6 +13,7 @@ export default function PHDList() {
   const navigation = useNavigation();
 
   const [universities, setUniversities] = useState([]);
+  const [searchQuery, setSearchQuery] = useState('');
 
   const {role} = useRole()
 
@@ -42,23 +44,34 @@ export default function PHDList() {
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <View style={styles.space}><Text></Text></View>
+        
+            <View style={styles.search}>
+              <TextInput
+                value={searchQuery}
+                onChangeText={setSearchQuery}
+                style={styles.searchinput}
+                placeholder="Search"
+                placeholderTextColor="#999"
+              />
+              <TouchableOpacity>
+                <Ionicons style={styles.icon} name="search" size={24} color="#000" />
+              </TouchableOpacity>
+            </View>
       {/* List */}
       <View style={styles.listContainer}>
         {universities.map((item, index) => (
-          <TouchableOpacity key={index} onPress={() => handlePress(item)}>
-            <Text style={styles.listItem}>
-              {item.name}
+          item?.name.toLowerCase().includes(searchQuery.toLowerCase()) ?  <View key={index} style={styles.listItem}>
+
+          <TouchableOpacity key={index} style={styles.listbutton} onPress={() => handlePress(item)}>
+            <Image style={styles.image} source={{ uri: item?.photo }} />
+            <Text style={styles.listText}>
+              {item?.name}
             </Text>
+            {role === 'admin' && <TouchableOpacity style={styles.update} onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })}><Ionicons name='create-outline' size={20} color='#000'/></TouchableOpacity>}
           </TouchableOpacity>
+          </View> : item?.name.toLowerCase().includes(searchQuery.toLowerCase()) || universities.length > 0 === false ? <Text style={{color: '#fff'}}>No Universities Found</Text> : null
         ))}
       </View>
-
-      {/* Add Floating Button */}
-      {role === 'admin' && <TouchableOpacity style={styles.fab}
-      onPress={() => navigation.navigate('AddOverView')}
-      >
-        <Ionicons name="add" size={28} color="#2c3e50" />
-      </TouchableOpacity>}
     </View>
   );
 }
@@ -67,37 +80,76 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1C2E5C',
-    paddingTop: 10,
     paddingHorizontal: 20,
-    marginTop: 35,
   },
-  edit:{
-    marginTop: '30',
+  search:{
+    backgroundColor: '#ecf0f1',
+    borderRadius: 5,
+    marginHorizontal: 10,
+    padding: 8,
+    marginBottom: 10
+    
   },
+  searchinput:{
+    width: '88%',
+  },
+  icon:{
+    position: 'absolute',
+    right: 0,
+    bottom: 0,
+    paddingVertical: 7,
+    paddingHorizontal: 10,
+    zIndex: 100,
+    borderWidth: 1,
+    borderColor: 'rgba(43, 37, 37, 0.2)',
+    borderTopRightRadius: 5,
+    borderBottomRightRadius: 5
+  },
+
   title: {
     position: 'absolute',
     left: 0,
     right: 0,
     textAlign: 'center',
     color: '#fff',
-    fontSize: 18,
+    fontSize: 22,
     fontWeight: 'bold',
   },
-    space: {
+  space: {
     marginTop: '30',
   },
   listContainer: {
-    gap: 10,
     borderRadius: 5,
+    gap: 10,
     padding: 12,
   },
   listItem: {
-    fontSize: 16,
     backgroundColor: '#ecf0f1',
-    padding: 20,
+    justifyContent:'center',
     borderRadius: 5,
     fontWeight: 'bold',
-    marginBottom: 8,
+  },
+  listbutton: {
+    height: 100,
+    paddingHorizontal: 10,
+    flexDirection: 'row',
+    alignItems: 'center',
+    textAlign: 'center',
+    // flexWrap: 'wrap',
+  },
+  listText: {
+    fontSize: 20,
+    width: '86%',
+    color: '#000',
+    overflow:"scroll",
+    fontWeight: 'bold',
+  },
+  image: {
+    width: 50,
+    height: 50,
+    borderRadius: 0,
+    marginRight: 10,
+    resizeMode:'contain'
   },
   fab: {
     position: 'absolute',
@@ -108,4 +160,15 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     elevation: 4,
   },
+  update:{
+    backgroundColor: '#ecf0f1',
+    padding: 12,
+    position: 'absolute',
+    bottom: 30,
+    right: 5,
+    marginHorizontal:"auto",
+    borderRadius: 50,
+    borderWidth: 1,
+    alignItems:'center'
+  }
 });
