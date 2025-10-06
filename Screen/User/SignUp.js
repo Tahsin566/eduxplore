@@ -1,62 +1,125 @@
-import { useSignUp } from '@clerk/clerk-expo';
+import { useSignUp, useUser } from '@clerk/clerk-expo';
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StatusBar, StyleSheet,ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StatusBar, StyleSheet, ScrollView, Alert } from 'react-native';
+import Toast from 'react-native-toast-message';
+import { useRole } from '../../auth.context';
+import { db } from '../../firebase.config';
+import { collection, getDocs, query } from 'firebase/firestore';
 
 
 function SignUp({ navigation }) {
+
+  const { role } = useRole()
+  const {user,isSignedIn} = useUser()
+  const {setActive} = useSignUp()
+
   const { signUp } = useSignUp();
 
+  let usernameError = ''
+  let emailError = ''
+  let passwordError = ''
+  let confirmPasswordError = '';
+
   const [username, setUsername] = useState('');
-  const [email, setEmail]       = useState('');
+  const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState('');
 
-  const handleSignUp = async () => {
+
+  const EnterUserToDb = async () => {
+
+    if (!isSignedIn) return
+
+    const q = query(collection(db, "users"), where("email", "==", user?.emailAddresses[0]?.emailAddress));
+    const querySnapshot = await getDocs(q);
 
 
-    if (password !== confirmPassword) {
-      alert('Passwords do not match');
+    if (querySnapshot.docs.length !== 0) {
+      console.log('User already exists');
       return;
     }
 
+
+
+    const data = {
+      name: user.firstName + ' ' + user.lastName || '',
+      email: user?.emailAddresses[0]?.emailAddress,
+      role: 'user',
+      photo: user.imageUrl,
+    }
+
     try {
-      await signUp.create({
+      const res = await addDoc(collection(db, "users"), data)
+      console.log('Inserted document with ID: ', res.id);
+    } catch (error) {
+      console.log('Error adding document: ', error);
+    }
+
+
+  }
+
+  const handleSignUp = async () => {
+
+    if (!(username && email && password && confirmPassword)) {
+      Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      return
+    }
+
+    if (password !== confirmPassword) {
+
+      Toast.show({ text1: 'Passwords do not match', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      return
+
+
+    }
+
+    try {
+      const res = await signUp.create({
         firstName: username,
         lastName: '',
         emailAddress: email,
         password,
       });
 
-
-      const res = await signUp.prepareEmailAddressVerification({ strategy: "email_code" })
-      console.log(res)
-      if(res.status === "complete"){
-        setPendingVerification(true)
+      if (res.status === "complete") {
+        await setActive({ session: res.createdSessionId });
+        await EnterUserToDb()
+        if (role === 'admin') {
+          navigation.navigate('HomeScreen')
+        } else if (role === 'user') {
+          navigation.navigate('Home')
+        }
       }
+
+
     } catch (error) {
-      console.log(error);
+      Toast.show({ text1: error.message, type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 13 }, autoHide: true, visibilityTime: 1000 })
+
+      if (error.message.includes('Password has been found in an online data breach')) {
+        Toast.show({ text1: 'Password is weak, use a strong password', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 12 }, autoHide: true, visibilityTime: 1000 })
+      }
     }
   };
 
   const onVerifyPress = async () => {
     if (!isLoaded) return
     try {
-      
+
       const res = await signUp.attemptEmailAddressVerification({
         code,
       })
 
       console.log(res)
-      
+
 
       if (res.status === 'complete') {
         await setActive({ session: res.createdSessionId })
         navigation.replace('Home')
       } else {
-        
+
         console.error(JSON.stringify(res, null, 2))
       }
     } catch (err) {
@@ -65,7 +128,7 @@ function SignUp({ navigation }) {
     }
   }
 
-   if (pendingVerification) {
+  if (pendingVerification) {
     return (
       <>
         <Text>Verify your email</Text>
@@ -82,7 +145,7 @@ function SignUp({ navigation }) {
   }
 
   return (
-    <ScrollView contentInsetAdjustmentBehavior="automatic" style={{flexGrow: 1,backgroundColor: '#1C2E5C'}}>
+    <ScrollView contentInsetAdjustmentBehavior="automatic" style={{ flexGrow: 1, backgroundColor: '#1C2E5C' }}>
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
 
@@ -98,6 +161,8 @@ function SignUp({ navigation }) {
             placeholderTextColor="#94A3B8"
           />
 
+          <Text style={{ color: 'red' }}>{usernameError}</Text>
+
           <Text style={styles.label}>EMAIL</Text>
           <TextInput
             style={styles.input}
@@ -108,6 +173,8 @@ function SignUp({ navigation }) {
             autoCapitalize="none"
           />
 
+          <Text style={{ color: 'red' }}>{emailError}</Text>
+
           <Text style={styles.label}>PASSWORD</Text>
           <TextInput
             style={styles.input}
@@ -117,6 +184,8 @@ function SignUp({ navigation }) {
             onChangeText={setPassword}
           />
 
+          <Text style={{ color: 'red' }}>{passwordError}</Text>
+
           <Text style={styles.label}>CONFIRM PASSWORD</Text>
           <TextInput
             style={styles.input}
@@ -125,6 +194,8 @@ function SignUp({ navigation }) {
             secureTextEntry
             onChangeText={setConfirmPassword}
           />
+
+          <Text style={{ color: 'red' }}>{confirmPasswordError}</Text>
 
           <View style={styles.checkbox}>
             <Text style={styles.checkboxLabel}>
@@ -165,7 +236,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
   subtitle: {
-    color: '#2ED573', 
+    color: '#2ED573',
     marginTop: 4,
     fontWeight: '700',
   },

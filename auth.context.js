@@ -1,5 +1,5 @@
 import { useAuth, useUser } from '@clerk/clerk-expo';
-import { useNavigation } from '@react-navigation/native';
+import { StackActions, useNavigation } from '@react-navigation/native';
 import { addDoc, collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import React, { useEffect } from 'react';
 import { db } from './firebase.config';
@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
 
     const navigation = useNavigation()
 
-    const { user } = useUser();
+    const { user,isLoaded } = useUser();
     const [role, setRole] = React.useState();
     const [userId, setUserId] = React.useState();
     const [profile, setProfile] = React.useState();
@@ -58,31 +58,44 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
 
+        if(!isLoaded) return
+
         let unsubscribe=null
 
         if (user) {
+
             EnterUserToDb()
 
             const q = query(collection(db, "users"), where("email", "==", user?.emailAddresses[0]?.emailAddress));
             unsubscribe = onSnapshot(q, (snapshot) => {
+
+                if (snapshot.docs.length === 0) {
+                    // navigation.navigate('SignIn')
+                    return;
+                }
+
                 console.log('changed');
                 const data = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-                setRole(data[0].role);
-                setUserId(data[0].id);
+                setRole(data[0]?.role);
+                setUserId(data[0]?.id);
                 setProfile(data[0]);
                 
-                navigation.navigate(data[0].role === 'user' ? 'Home' : 'HomeScreen')
+                
+                if(data[0] && data[0]?.role === 'admin'){
+                    navigation.dispatch(StackActions.replace('HomeScreen'));
+                }
+                else if(data[0] && data[0]?.role === 'user'){
+                    navigation.dispatch(StackActions.replace('Home'));
+                }
             })
         }
-        else {
-            navigation.navigate('SignIn')
-        }
+        
 
         return () => unsubscribe && unsubscribe
 
     }, [user])
 
-    return <AuthContext.Provider value={{ user, role, userId, profile }}>{children}</AuthContext.Provider>;
+    return <AuthContext.Provider value={{ user, role, userId, profile,EnterUserToDb }}>{children}</AuthContext.Provider>;
 }
 
 export const useRole = () => {

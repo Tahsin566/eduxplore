@@ -139,11 +139,11 @@ export default function LOMChecker({ navigation }) {
       </View>
 
       {/* KAV wraps messages + composer */}
-      {/* <KeyboardAvoidingView
+      <KeyboardAvoidingView
         style={styles.flex}
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 0}
-      > */}
+        behavior="padding"
+        keyboardVerticalOffset={Platform.OS === 'ios' ? 64 : 45}
+      >
         {/* Messages ScrollView */}
         <ScrollView
           ref={scrollRef}
@@ -198,7 +198,7 @@ export default function LOMChecker({ navigation }) {
             <Text style={styles.sendText}>Send</Text>
           </TouchableOpacity>
         </View>
-      {/* </KeyboardAvoidingView> */}
+      </KeyboardAvoidingView>
     </ScrollView>
   );
 }
@@ -233,7 +233,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     paddingVertical: 10,
     paddingHorizontal: 10,
-    backgroundColor: '#1a2d3f',
+    backgroundColor: '#1C2E5C',
   },
   input: {
     flex: 1,

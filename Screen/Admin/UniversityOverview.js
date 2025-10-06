@@ -174,21 +174,21 @@ export default function UniversityOverview({ route }) {
           style={styles.button}
           onPress={() => setTab('overview')}
         >
-          <Text style={styles.buttonText}>OverView</Text>
+          <Text style={[{...styles.buttonText},{color:tab === 'overview' ? 'indigo' : '#000'}]}>OverView</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
           onPress={() => setTab('requirement')}
         >
-          <Text style={styles.buttonText}>Requirement</Text>
+          <Text style={[{...styles.buttonText},{color:tab === 'requirement' ? 'indigo' : '#000'}]}>Requirement</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
           onPress={() => setTab('about')}
         >
-          <Text style={styles.buttonText}>About University</Text>
+          <Text style={[{...styles.buttonText},{color:tab === 'about' ? 'indigo' : '#000'}]}>About University</Text>
         </TouchableOpacity>
       </View>
 
@@ -322,7 +322,6 @@ const styles = StyleSheet.create({
 
   /*Third part */
   card2: {
-    marginTop: 1,
     padding: 15,
     backgroundColor: '#fff',
     borderRadius: 10,

@@ -1,5 +1,5 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Alert,
   ScrollView,
@@ -41,17 +41,15 @@ export default function FindUniversity({ navigation }) {
   const [courseType, setCourseType] = useState(null);
   const [courseLanguage, setCourseLanguage] = useState(null);
   const [intake, setIntake] = useState(null);
-  const [fieldOfStudy, setFieldOfStudy] = useState(null);
   const [ieltsScore, setIeltsScore] = useState(0);
 
   const handleSearchClick = () => {
     navigation.navigate('Result', {
       path: 'search',
       search,
-      courseType,
+      courseType: courseType || 'Bachelor',
       courseLanguage,
       intake,
-      fieldOfStudy,
       ieltsScore,
     });
   };
@@ -59,6 +57,7 @@ export default function FindUniversity({ navigation }) {
   const toggle = (current, value, setter) => {
     setter(current === value ? null : value);
   };
+
 
   return (
     <View style={styles.root}>
@@ -109,7 +108,7 @@ export default function FindUniversity({ navigation }) {
               </View>
               <View style={styles.rowWrap}>
                 <Chip label="Bachelor"  selected={courseType === 'bachelor'} onPress={() => toggle(courseType, 'bachelor', setCourseType)} />
-                <Chip label="Master’s"  selected={courseType === 'masters'}  onPress={() => toggle(courseType, 'masters', setCourseType)} />
+                <Chip label="Master’s"  selected={courseType === 'master'}  onPress={() => toggle(courseType, 'master', setCourseType)} />
                 <Chip label="Diploma"   selected={courseType === 'diploma'}  onPress={() => toggle(courseType, 'diploma', setCourseType)} />
                 <Chip label="PhD"       selected={courseType === 'phd'}      onPress={() => toggle(courseType, 'phd', setCourseType)} />
               </View>
@@ -139,20 +138,6 @@ export default function FindUniversity({ navigation }) {
                 <Chip label="Summer" selected={intake === 'summer'} onPress={() => toggle(intake, 'summer', setIntake)} />
                 <Chip label="Fall"   selected={intake === 'fall'}   onPress={() => toggle(intake, 'fall', setIntake)} />
                 <Chip label="Spring" selected={intake === 'spring'} onPress={() => toggle(intake, 'spring', setIntake)} />
-              </View>
-            </View>
-
-            {/* Field of study */}
-            <View style={styles.section}>
-              <View style={styles.sectionTitleRow}>
-                <Ionicons name="school" size={16} color="#9CC3FF" />
-                <Text style={styles.sectionTitle}>Field of study</Text>
-              </View>
-              <View style={styles.rowWrap}>
-                <Chip label="Agriculture, Forestry and Nutritional Sciences" selected={fieldOfStudy === 'agriculture'} onPress={() => toggle(fieldOfStudy, 'agriculture', setFieldOfStudy)} style={{ minWidth: '100%' }} />
-                <Chip label="Engineering" selected={fieldOfStudy === 'engineering'} onPress={() => toggle(fieldOfStudy, 'engineering', setFieldOfStudy)} style={{ minWidth: '100%' }} />
-                <Chip label="Law, Economics and Social Sciences" selected={fieldOfStudy === 'law'} onPress={() => toggle(fieldOfStudy, 'law', setFieldOfStudy)} style={{ minWidth: '100%' }} />
-                <Chip label="Medicine" selected={fieldOfStudy === 'medicine'} onPress={() => toggle(fieldOfStudy, 'medicine', setFieldOfStudy)} style={{ minWidth: '100%' }} />
               </View>
             </View>
 
@@ -200,16 +185,14 @@ export default function FindUniversity({ navigation }) {
 const NAVY = '#1C2E5C';
 
 const styles = StyleSheet.create({
-  root: { flex: 1, paddingTop: 40, backgroundColor: NAVY },
+  root: { flex: 1, backgroundColor: NAVY },
   canvas: { flex: 1, backgroundColor: NAVY, paddingHorizontal: 14, paddingBottom: 16 },
 
   headerBar: {
-    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     paddingHorizontal: 6,
-    marginTop: 8,
     marginBottom: 12,
   },
   iconBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },

@@ -6,11 +6,13 @@ import { useRole } from '../../auth.context';
 import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import * as MailComposer from 'expo-mail-composer';
+import Toast from 'react-native-toast-message';
 
 const AVATAR_COLORS = ['#1C2E5C', '#964b00', '#444cff', '#dedc34', '#3be3da', '#adadff'];
 
 export default function RegisteredListScreen({ route }) {
   const navigation = useNavigation();
+  const id = route.params.id;
   const topic = route.params.topic;
   const { role } = useRole();
   const [link, setLink] = useState('');
@@ -20,7 +22,7 @@ export default function RegisteredListScreen({ route }) {
 const getRegisteredEmails = async () => {
     setRegisteredEmails([]);
     try {
-      const q = query(collection(db,"seminars_reg"), where("isRegistered", "==", true), where("topic", "==", topic ));
+      const q = query(collection(db,"seminars_reg"), where("isRegistered", "==", true), where("id", "==", id ));
       const querySnapshot = await getDocs(q);
       const emails = querySnapshot.docs.map((doc) => doc.data().email);
       setRegisteredEmails(emails);
@@ -41,7 +43,7 @@ const sendEmail = async () => {
     body: `Hello user, please click on the link below to join the webinar ${link}`
   });
   if(result.status === 'sent'){
-    alert('Email sent successfully');
+    Toast.show({ text1: 'Email sent successfully', type: 'success', topOffset: -10, text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
   }
 };   
 

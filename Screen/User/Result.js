@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, StatusBar } from 'react-native';
 import { db } from '../../firebase.config';
 import Footer from '../User/Footer';
+import { Ionicons } from '@expo/vector-icons';
 
 function SearchResult({ navigation, route }) {
   const data = route.params;
@@ -14,30 +15,42 @@ function SearchResult({ navigation, route }) {
 
   const [university, setUniversity] = useState([]);
 
+  console.log(data)
+
   const getUniversitySearch = async () => {
+
     setUniversity([]);
+
     try {
       let q = null;
 
-      if (data?.search !== '') {
-        q = query(collection(db, 'university'), where('name', '==', data?.search));
-      } else if (data?.ieltsScore) {
-        q = query(collection(db, 'university'), where('ieltsScore', '>=', Number(data?.ieltsScore)));
-      } else if (data?.courseType === 'bachelor') {
-        q = query(collection(db, 'university'), where('hasBachelor', '==', true));
-      } else if (data?.courseType === 'masters') {
-        q = query(collection(db, 'university'), where('hasMaster', '==', true));
-      } else if (data?.courseType === 'phd') {
-        q = query(collection(db, 'university'), where('hasPhd', '==', true));
+      if(data.courseType){
+        q = query(collection(db, 'university'),
+          or(
+            where(
+              `has${data.courseType?.charAt(0)?.toUpperCase() + data.courseType?.slice(1)}`, '==', true
+            ),
+            where('language', '==', data.courseLanguage),
+            where('Intake', '==', data.intake)
+          )
+        
+        );
       }
+
 
       const res = await getDocs(q);
       if (res.docs.length === 0) {
         setUniversity([]);
         return;
       }
-      const uni = res.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      setUniversity(uni);
+      let uni = res.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      const filteredUni = uni.filter((u) => {
+        return data.search ? u.ieltsScore <= parseFloat(data.ieltsScore) && u?.name?.toLowerCase()?.includes(data.search?.toLowerCase()): u.ieltsScore <= parseFloat(data.ieltsScore);
+        
+      })
+      console.log(uni)
+      setUniversity(filteredUni);
+      console.log(filteredUni)
     } catch (error) {
       console.log('');
     }
@@ -58,7 +71,7 @@ function SearchResult({ navigation, route }) {
             style={styles.iconBtn}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
-            <Text style={styles.iconText}>‹</Text>
+            <Ionicons name='chevron-back' size={24} color='white' />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Search Result</Text>
           <View style={styles.iconBtn} />
@@ -68,31 +81,31 @@ function SearchResult({ navigation, route }) {
           contentContainerStyle={[styles.scroll, { paddingBottom: 110 }]} // space for footer
           keyboardShouldPersistTaps="handled"
         >
-          {university.map((u) => (
+          {university.length > 0 ?university.map((u) => (
             <View key={u.id} style={styles.cardContainer}>
               <View style={styles.universityHeader}>
                 <Text style={styles.universityTitle}>
-                  Bachelor's degree. Applied Mechatronic System(BEng).SRH University.Berline
+                  {u?.name}
                 </Text>
               </View>
 
               <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.detailsLabel}>Language : </Text>
+                <Text style={styles.detailsLabel}>Name : </Text>
                 <Text style={styles.detailsValue}>{u?.name}</Text>
               </View>
 
               <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.detailsLabel}>Beginning : </Text>
-                <Text style={styles.detailsValue}>{u?.beginning}</Text>
+                <Text style={styles.detailsLabel}>Language : </Text>
+                <Text style={styles.detailsValue}>{u?.language}Germany</Text>
               </View>
 
               <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.detailsLabel}>Duration : </Text>
+                <Text style={styles.detailsLabel}>Duration : 3 years</Text>
                 <Text style={styles.detailsValue}>{u?.duration}</Text>
               </View>
 
               <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.detailsLabel}>Tuition fees per semester : </Text>
+                <Text style={styles.detailsLabel}>Tuition fees per semester : 107.00 </Text>
                 <Text style={styles.detailsValue}>{u?.tuitionFees}</Text>
               </View>
 
@@ -102,7 +115,7 @@ function SearchResult({ navigation, route }) {
                 <Text style={styles.moreLink}>{'\u2192'} More</Text>
               </TouchableOpacity>
             </View>
-          ))}
+          )):<Text style={{ color: 'white', fontSize: 20, textAlign: 'center', marginTop: 50 }}>No University Found</Text>}
         </ScrollView>
       </View>
 

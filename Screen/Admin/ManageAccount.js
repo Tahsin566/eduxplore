@@ -13,6 +13,7 @@ export default function ManageAccountsScreen() {
 
   const [admins, setAdmins] = useState([]);
   const { role } = useRole();
+  const [roletype, setRoleType] = useState('All');
 
   const getAdmins = async() => {
     try {
@@ -27,9 +28,49 @@ export default function ManageAccountsScreen() {
 
   const navigation = useNavigation();
 
+  const setAll = () => {
+    setRoleType('All');
+    getAdmins();
+  }
+  const setAdmin = async() => {
+    setRoleType('Admin');
+    try {
+      const q = query(collection(db, "users"), where("role", "==", "admin"));
+      const res = await getDocs(q);
+      const data = res.docs.map((doc) => ({...doc.data(), id: doc.id}));
+      setAdmins(data);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
+  const setModerator = async() => {
+    setRoleType('Moderator');
+    try {
+      const q = query(collection(db, "users"), where("role", "==", "moderator"));
+      const res = await getDocs(q);
+      const data = res.docs.map((doc) => ({...doc.data(), id: doc.id}));
+      setAdmins(data);
+    } catch (error) {
+      console.log(error)
+    }
+    
+  }
+  const setUser = async() => {
+    setRoleType('User');
+    try {
+      const q = query(collection(db, "users"), where("role", "==", "user"));
+      const res = await getDocs(q);
+      const data = res.docs.map((doc) => ({...doc.data(), id: doc.id}));
+      setAdmins(data);
+    } catch (error) {
+      console.log(error)
+    }
+  }
+
   useEffect(() => {
     getAdmins();
-  }, [admins]);
+  }, []);
 
   return (
     <View style={styles.container}>
@@ -44,8 +85,23 @@ export default function ManageAccountsScreen() {
       {/* Subheading */}
       <Text style={styles.subheading}>Admins and user</Text>
 
+      <View style={styles.roleTextContainer}>
+        <TouchableOpacity onPress={setAll} style={[{...styles.button},{backgroundColor: roletype === 'All' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}]}>
+          <Text style={styles.text}>All</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={setAdmin} style={[{...styles.button},{backgroundColor: roletype === 'Admin' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}]}>
+          <Text style={styles.text}>Admin</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={setModerator} style={[{...styles.button},{backgroundColor: roletype === 'Moderator' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}]}>
+          <Text style={styles.text}>Moderator</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={setUser} style={[{...styles.button},{backgroundColor: roletype === 'User' ? 'rgba(255, 255, 255, 0.1)' : 'rgba(255, 255, 255, 0.4)'}]}>
+          <Text style={styles.text}>User</Text>
+        </TouchableOpacity>
+      </View>
+
       {/* List */}
-      <ScrollView contentContainerStyle={styles.listContainer}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.listContainer}>
         {admins.map((admin, index) => (
         <TouchableOpacity
           key={index}
@@ -95,7 +151,7 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   listContainer: {
-    backgroundColor: '#ecf0f1',
+    // backgroundColor: '#ecf0f1',
     borderRadius: 5,
     padding: 12,
   },
@@ -144,4 +200,21 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     elevation: 4,
   },
+  roleTextContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between', 
+  },
+  text:{
+    color: '#fff',
+    fontWeight: 'bold',
+    fontSize: 13.1,
+  },
+  button:{
+    backgroundColor: '#1abc9c',
+    marginBottom: 10,
+    padding: 12,
+    width: '23%',
+    alignItems: 'center',
+    borderRadius: 5,
+  }
 });

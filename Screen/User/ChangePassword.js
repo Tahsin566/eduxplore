@@ -2,6 +2,7 @@ import { useSignIn } from '@clerk/clerk-expo';
 import { useAuth } from '@clerk/clerk-expo';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import Toast from 'react-native-toast-message';
 
 const PasswordReset = ({ navigation }) => {
   const { signIn, setActive, isLoaded } = useSignIn()
@@ -15,6 +16,12 @@ const PasswordReset = ({ navigation }) => {
   const onRequestReset = async () => {
     if (!isLoaded) return
 
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    if (!emailRegex.test(email)) {
+      Toast.show({ text1: 'Invalid email', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      return
+    }
+
     try {
       await signIn.create({
         strategy: "reset_password_email_code",
@@ -23,8 +30,7 @@ const PasswordReset = ({ navigation }) => {
       setSuccessfulCreation(true)
       setError('')
     } catch (err) {
-      console.error('error', err.errors[0].longMessage)
-      setError(err.errors[0].longMessage)
+      Toast.show({ text1: 'Error resetting password', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   }
 
@@ -49,8 +55,7 @@ const PasswordReset = ({ navigation }) => {
         console.log(result)
       }
     } catch (err) {
-      console.error('error', err.errors[0].longMessage)
-      setError(err.errors[0].longMessage)
+      Toast.show({ text1: 'Error resetting password', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   }
 

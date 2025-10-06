@@ -34,6 +34,7 @@ import MastersList from './Screen/Admin/MastersList';
 import phdList from './Screen/Admin/phdList.js';
 import AddAdmin from './Screen/Admin/AddAdmin';
 import AddSeminar from './Screen/Admin/AddWebinar.js'
+import UpdateSeminar from './Screen/Admin/UpdateWebinar.js';
 import RegisteredList from './Screen/Admin/RegisteredList'
 import UniversityOverview from './Screen/Admin/UniversityOverview'
 import Requirements from './Screen/Admin/Requirements'
@@ -137,12 +138,13 @@ export default function AppNavigator() {
     }}>
 
 
-      <Stack.Screen name="drawer" component={DrawerRoutes} />
+      <Stack.Screen name="loading" component={Loading} />
+
       <Stack.Screen name="SignIn" component={SignIn} />
+      <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="SignUp" component={SignUp} />
       <Stack.Screen name="SignUpVerification" component={SignUpVerification} />
       <Stack.Screen name="PersonalInformation" component={PersonalInformation} />
-      <Stack.Screen name="Home" component={Home} />
       <Stack.Screen name="ProfileButton" component={ProfileButton} />
       <Stack.Screen name="ProfileSettings" component={ProfileSettings} />
       <Stack.Screen name="AccountSettings" component={AccountSettings} />
@@ -169,6 +171,7 @@ export default function AppNavigator() {
       <Stack.Screen name="phdList" component={PHDList} />
       <Stack.Screen name="AddAdmin" component={AddAdmin} />
       <Stack.Screen name="AddSeminar" component={AddSeminar} />
+      <Stack.Screen name="EditSeminar" component={UpdateSeminar} />
       <Stack.Screen name="RegisterList" component={RegisteredList} />
       <Stack.Screen name="UniversityOverview" component={UniversityOverview} />
       <Stack.Screen name="Requirements" component={Requirements} />

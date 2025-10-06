@@ -8,9 +8,6 @@ import Footer from '../User/Footer';
 function Home({ navigation }) {
   const { role, profile } = useRole();
 
-  useEffect(() => {
-    if (!profile) navigation.navigate('SignIn');
-  }, [profile?.email]);
 
   const name = profile?.name?.includes('null') ? profile?.name?.replace('null', '') : profile?.name;
 

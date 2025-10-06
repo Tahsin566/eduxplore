@@ -5,9 +5,9 @@ import { ClerkProvider, useAuth } from '@clerk/clerk-expo';
 import { useEffect } from 'react';
 import * as SecureStore from 'expo-secure-store';
 import { AuthProvider } from './auth.context';
-import { collection, onSnapshot } from 'firebase/firestore';
-import { db } from './firebase.config';
 import { View } from 'react-native';
+import { StatusBar } from 'expo-status-bar';
+import Toast from 'react-native-toast-message';
 
 
 
@@ -22,18 +22,20 @@ const tokenCache = {
 }
 
 export default function App() {
-  
-  return <NavigationContainer>
-    <View style={{height: 50, backgroundColor: '#1C2E5C'}}>
-    </View>
-    <View style={{flex: 1, backgroundColor: '#1C2E5C'}}>
 
-    
-    <ClerkProvider tokenCache={tokenCache}>
-      <AuthProvider>
-        <AppNavigator />
-      </AuthProvider>
-    </ClerkProvider>
+  return <NavigationContainer>
+    <View style={{ height: 50, backgroundColor: '#1C2E5C' }}>
+      <StatusBar backgroundColor="#1C2E5C" style='light' />
+    </View>
+    <View style={{ flex: 1, backgroundColor: '#1C2E5C' }}>
+
+
+      <ClerkProvider tokenCache={tokenCache}>
+        <AuthProvider>
+          <AppNavigator />
+          <Toast />
+        </AuthProvider>
+      </ClerkProvider>
     </View>
   </NavigationContainer>;
 

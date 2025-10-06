@@ -5,6 +5,7 @@ import { useNavigation } from '@react-navigation/native';
 import { db } from '../../firebase.config';
 import { addDoc, collection } from 'firebase/firestore';
 import { useRole } from '../../auth.context';
+import Toast from 'react-native-toast-message';
 
 const INPUT_HEIGHT = 48;
 
@@ -19,6 +20,19 @@ export default function SendNotification() {
   const [isVisible, setIsVisible] = useState(false);
 
   const SendNotification = async() => {
+
+    const stringRegex = /^[A-Z]+[a-zA-Z0-9 .,]*/;
+
+    if(!(message && recipient)) {
+      Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      return
+    }
+
+    if (!stringRegex.test(message)) {
+      Toast.show({ text1: 'Invalid message', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      return
+    }
+
     try {
       const res = await addDoc(collection(db,"notification"),{
         message,
@@ -26,6 +40,7 @@ export default function SendNotification() {
         time: new Date()  
       })
       console.log('Inserted document with ID: ', res.id);
+      navigation.navigate('AdminNotification')
     } catch (error) {
       console.log('Error adding document: ', error);
     }

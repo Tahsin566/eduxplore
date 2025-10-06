@@ -104,7 +104,7 @@ const HomeScreen = () => {
           <Ionicons name="calendar" size={32} color="#886cff" />
         </View>
         <View>
-          <Text style={styles.cardTitle}>Seminars</Text>
+          <Text style={styles.cardTitle}>Webinars</Text>
           <Text style={styles.cardSubtitle}>View and manage events</Text>
         </View>
         <Ionicons name="chevron-forward" size={24} color="#babec6" style={styles.chevron} />

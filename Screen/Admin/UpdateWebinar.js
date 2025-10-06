@@ -1,15 +1,18 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useRole } from '../../auth.context';
 import { ScrollView } from 'react-native-gesture-handler';
 import { db } from '../../firebase.config';
-import { addDoc, collection } from 'firebase/firestore';
+import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import Toast from 'react-native-toast-message';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
-export default function AddSeminar() {
+export default function UpdateSeminar({ route }) {
+
+  const webinar = route.params?.webinar;
+
   const navigation = useNavigation();
   const { role } = useRole();
 
@@ -33,7 +36,7 @@ export default function AddSeminar() {
     setMode(currentMode);
   };
 
-  const addSeminar = async () => {
+  const updateWebinar = async () => {
 
     if (!topic || !date || !guest || !description) {
       Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
@@ -48,28 +51,29 @@ export default function AddSeminar() {
     }
 
     try {
-      const res = await addDoc(collection(db, "seminars"), {
+      const res = await updateDoc(doc(db, "seminars", route.params?.id), {
         topic,
         time: date.getHours() >= 12 ? date.getHours() - 12 + ':' + date.getMinutes() + ' ' + (date.getHours() >= 12 ? 'PM' : 'AM') : date.getHours() + ':' + date.getMinutes() + ' ' + (date.getHours() >= 12 ? 'PM' : 'AM'),
         date: date.toDateString(),
         guest,
-        registration_status: 'open',
-        status: 'upcoming',
         description
       })
-      console.log('Inserted document with ID: ', res.id);
-
-      const notification = await addDoc(collection(db, "notification"), {
-        message : `A new webinar has been added titled : ${topic}\nVisit the webinar page for more details`,
-        recipient : 'user',
-        time : new Date()
-      })
+      // console.log('Inserted document with ID: ', res.id);
 
       navigation.navigate('Seminars')
     } catch (error) {
       console.log('Error adding document: ', error);
     }
   };
+
+  useEffect(() => {
+    if (webinar) {
+      setTopic(webinar.topic);
+      setGuest(webinar.guest);
+      setDescription(webinar.description);
+    }
+  },[webinar]);
+
   return (
     <ScrollView enabled contentContainerStyle={{ flexGrow: 1 }}>
 
@@ -79,7 +83,7 @@ export default function AddSeminar() {
           <TouchableOpacity onPress={() => navigation.navigate('Seminars')}>
             <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>Add Webinar</Text>
+          <Text style={styles.headerTitle}>Update Webinar</Text>
         </View>
 
         {/* Topic input */}
@@ -121,7 +125,7 @@ export default function AddSeminar() {
 
         {/* Guest Name input */}
         <Text style={styles.label}>Guest Name</Text>
-        <TextInput style={styles.input} onChangeText={setGuest} placeholder="Guest name" />
+        <TextInput style={styles.input} value={guest} onChangeText={setGuest} placeholder="Guest name" />
 
         {/* Description input */}
         <Text style={styles.label}>Description</Text>
@@ -137,8 +141,8 @@ export default function AddSeminar() {
 
         {/* Add Seminar button */}
         {role === 'admin' && (
-          <TouchableOpacity style={styles.addButton} onPress={() => { addSeminar() }}>
-            <Text style={styles.addButtonText}>Add Webinar</Text>
+          <TouchableOpacity style={styles.addButton} onPress={updateWebinar}>
+            <Text style={styles.addButtonText}>Save Changes</Text>
           </TouchableOpacity>
         )}
       </View>

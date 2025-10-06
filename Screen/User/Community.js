@@ -1,11 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView,
-  Image, Alert, ActivityIndicator, Modal, Pressable, KeyboardAvoidingView, Platform
+  Image, Alert, ActivityIndicator, Modal, Pressable, KeyboardAvoidingView, Platform,
+  Keyboard
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Clipboard from 'expo-clipboard';
-import { addDoc, collection, onSnapshot, orderBy, query } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useUser } from '@clerk/clerk-expo';
 import { useRole } from '../../auth.context';
@@ -20,6 +21,7 @@ export default function Community({ navigation }) {
   const [messages, setMessages] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchActive, setSearchActive] = useState(false);
+  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   // reply + action modal
   const [replyTo, setReplyTo] = useState(null);     // { id, text, image, email }
@@ -162,7 +164,7 @@ export default function Community({ navigation }) {
         name: profile?.name,
         email: myEmail,
         message: quoted + (message || ''),
-        photo: profile?.photo,                 // sender's profile image saved on message
+        photo: profile?.photo || user.imageUrl,                 // sender's profile image saved on message
         image: await uploadToCloudinary() || '',
         time: new Date(),
         // --- NEW: store pointer to original message (if any)
@@ -217,8 +219,12 @@ export default function Community({ navigation }) {
       Alert.alert("You can't delete this message.");
       return;
     }
-    setHiddenIds((prev) => new Set(prev).add(selectedMsg.id));
-    setActionOpen(false);
+    try {
+      deleteDoc(doc(db, 'chat', selectedMsg?.id));
+      setActionOpen(false);
+    } catch (error) {
+      console.log('Error adding document: ', error);
+    }
   };
 
   // Avatars: only use sender profile image
@@ -256,7 +262,8 @@ export default function Community({ navigation }) {
       }
     }
   };
-
+  
+  
   // Filter messages
   const shownMessages = messages
     .filter((m) => !hiddenIds.has(m.id))
@@ -272,12 +279,12 @@ export default function Community({ navigation }) {
 
   const bottomInsetPad = insets.bottom > 0 ? 4 : 0;
 
+
   return (
     <KeyboardAvoidingView
       style={styles.kav}
       behavior="padding"
-      keyboardVerticalOffset={Platform.OS === 'ios' ? 84 : -300}
-      enabled
+      keyboardVerticalOffset={Platform.OS  === 'ios' ? 84 : 45 }
     >
       <View style={styles.container}>
         {/* Header */}
@@ -311,7 +318,7 @@ export default function Community({ navigation }) {
         <ScrollView
           ref={scrollRef}
           style={styles.messagesContainer}
-          contentContainerStyle={{ paddingBottom: composerHeight + 8 }}
+          // contentContainerStyle={{ paddingBottom: composerHeight + 8 }}
           onContentSizeChange={() => {
             if (scrollRef.current) scrollRef.current.scrollToEnd({ animated: true });
           }}

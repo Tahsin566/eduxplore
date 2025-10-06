@@ -13,7 +13,7 @@ const ViewProfile = () => {
 
   const navigation = useNavigation();
   const { signOut } = useAuth()
-  const { user } = useUser()
+  const { user,isSignedIn } = useUser()
 
   const { profile, role, userId } = useRole()
 
@@ -97,6 +97,7 @@ const ViewProfile = () => {
 
   useEffect(() => {
 
+
     const q = query(collection(db, "profile"), where("email", "==", profile?.email));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const profile = snapshot.docs.map((doc) => { return { ...doc.data(), id: doc.id } });
@@ -104,7 +105,7 @@ const ViewProfile = () => {
     })
 
     return () => unsubscribe && unsubscribe
-  }, [profile?.email]);
+  }, [profile?.email,isSignedIn,user]);
 
   return (
     <>
@@ -127,10 +128,10 @@ const ViewProfile = () => {
           <Text style={styles.text}>{profile?.name?.includes('null') ? profile?.name.replace('null', '') : profile?.name}</Text>
           <Text style={styles.text}>{profile?.email}</Text>
           <View style={{ height: 10 }}></View>
-          <Text style={styles.additional}>Additional Details</Text>
         </View>
 
-        {userDetails ? <View>
+        {userDetails && role === 'user' ? <View>
+          <Text style={styles.additional}>Additional Details</Text>
           <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Name in Passport : {userDetails?.name}</Text>
           <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>IELTS Score : {userDetails?.ieltsScore} </Text>
           <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Group in SSC : {userDetails?.groupSSC}</Text>
@@ -138,7 +139,7 @@ const ViewProfile = () => {
           <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Bachelor : {userDetails?.bachelorSubject || 'N/A'}</Text>
           <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Master : {userDetails?.mastersSubject || 'N/A'} </Text>
           <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>VPD : {userDetails?.vpd}</Text>
-        </View> : <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>No Additional Details Available</Text>}
+        </View> : <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>{role === 'user' || role === 'moderator' && 'You have not added any additional details'}</Text>}
 
         <View style={styles.buttonContainer}>
 
@@ -149,7 +150,7 @@ const ViewProfile = () => {
           </TouchableOpacity>
 
           {/* Account Settings Button */}
-          <TouchableOpacity style={styles.button} onPress={signOut}>
+          <TouchableOpacity style={styles.button} onPress={() => {signOut(); navigation.replace('SignIn')}}>
             <Text style={[{ ...styles.buttonText }, { color: 'red' }]}>Logout</Text>
           </TouchableOpacity>
         </View>

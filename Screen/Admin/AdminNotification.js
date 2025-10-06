@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-na
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
-import { collection, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { ScrollView } from 'react-native-gesture-handler';
 
@@ -12,12 +12,20 @@ export default function AdminNotification() {
   const [notifications, setNotifications] = useState([]);
 
 
+  const handleDelete = async(id) => {
+    try {
+      await deleteDoc(doc(db, "notification", id));
+      console.log('deleted');
+    } catch (error) {
+      console.log('Error adding document: ', error);
+    }
+  }
 
   useEffect(() => {
 
-    const q = query(collection(db, "notification"), orderBy("time", "desc"),where("recipient","!=","user"));
+    const q = query(collection(db, "notification"), orderBy("time", "desc"));
     const unsubscribe = onSnapshot(q ,(snapshot) => {
-      const notifications = snapshot.docs.map((doc) => doc.data());
+      const notifications = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setNotifications(notifications);
     })
 
@@ -59,8 +67,9 @@ export default function AdminNotification() {
       <ScrollView>
       {notifications.map((notification, index) => (
         <View key={index} style={styles.notification}>
-          <Text>{notification.title}</Text>
-          <Text>{notification.message}</Text>
+          <Text style={{width:'80%'}}>{notification.title}</Text>
+          <Text styleq={{width:'80%'}}>{notification.message}</Text>
+          <TouchableOpacity onPress={() => handleDelete(notification.id)} style={styles.deleteBtn}><Ionicons name='trash' size={24} color="red" /></TouchableOpacity>
         </View>
       ))}
     </ScrollView>
@@ -117,12 +126,27 @@ const styles = StyleSheet.create({
   notification: {
     backgroundColor: '#fff',
     padding: 15,
-    flexDirection: 'row',
     marginTop: 10,
     marginBottom: 2,
-    alignItems: 'center',
     borderWidth: 1,
     marginHorizontal: 10,
     borderRadius: 10
+  },
+  title: {
+    fontSize: 16,
+    fontWeight: '700',
+    color: '#fff',
+  },
+  deleteBtn:{
+    padding:5,
+    backgroundColor:'#fff',
+    position:'absolute',
+    top:-8,
+    right:5,
+    alignItems:'center',
+    elevation:5,
+    borderRadius:10,
+    marginTop:10,
+    marginHorizontal:'auto'
   }
 });

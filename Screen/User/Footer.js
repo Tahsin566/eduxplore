@@ -25,7 +25,7 @@ export default function Footer() {
         circleBg="#FFFFFF"
         circleBorder="#111"
         icon={<FontAwesome5 name="bookmark" size={19} color="#111" />}
-        badge="1"
+        // badge="1"
         onPress={goWishlist}
       />
       <NavItem

@@ -7,6 +7,7 @@ import { addDoc, collection } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import * as ImagePicker from 'expo-image-picker';
 import Checkbox from 'expo-checkbox';
+import Toast from 'react-native-toast-message';
 
 export default function AddOverView() {
 
@@ -101,6 +102,50 @@ export default function AddOverView() {
 
   const addUniversity = async () => {
 
+    if(!(
+      name &&
+      overView &&
+      requirements &&
+      AboutUniversity &&
+      person &&
+      designation &&
+      address &&
+      phone &&
+      file && 
+      email &&
+      website &&
+      ieltsScore
+    )){
+      Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      return
+    }
+
+    const stringRegex = /^[A-Z]+[a-zA-Z0-9 .,]*/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const markDown = /[a-zA-Z0-9 -\.,#\*]/;
+
+    if (!stringRegex.test(name) || !stringRegex.test(person) || !stringRegex.test(designation) || !stringRegex.test(phone)) {
+      Toast.show({ text1: 'Invalid person details', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      return
+    }
+
+    if (!emailRegex.test(email)) {
+      Toast.show({ text1: 'Invalid email', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      return
+    }
+
+    if(!markDown.test(overView) || !markDown.test(requirements) || !markDown.test(AboutUniversity)){
+      Toast.show({ text1: 'Invalid details', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      return
+    }
+
+    if(!Number(ieltsScore)){
+      Toast.show({ text1: 'IELTS score should be a number', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      return
+    }
+
+    
+
     try {
       const res = await addDoc(collection(db, "university"), {
         name,
@@ -160,7 +205,7 @@ export default function AddOverView() {
       {/* Tabs */}
       <View style={styles.main}>
         <TouchableOpacity onPress={() => setTab('overview')} style={styles.button}>
-          <Text style={styles.buttonText}>Overview</Text>
+          <Text style={[{...styles.buttonText}, tab === 'overview' && {color:"indigo"}]}>Overview</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -169,7 +214,7 @@ export default function AddOverView() {
             setTab('requirement');
           }}
         >
-          <Text style={styles.buttonText}>Requirement</Text>
+          <Text style={[{...styles.buttonText}, tab === 'requirement' && {color:"indigo"}]}>Requirement</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -178,7 +223,7 @@ export default function AddOverView() {
             setTab('about');
           }}
         >
-          <Text style={styles.buttonText}>About University</Text>
+          <Text style={[{...styles.buttonText}, tab === 'about' && {color:"indigo"}]}>About University</Text>
         </TouchableOpacity>
       </View>
 

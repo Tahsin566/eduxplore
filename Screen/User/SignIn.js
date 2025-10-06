@@ -8,6 +8,7 @@ import { addDoc, collection, getDoc, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { AuthContext, useRole } from '../../auth.context';
 import { FontAwesome5 } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 
 function SignIn({ navigation }) {
   const [email, setEmail] = useState('');
@@ -17,12 +18,11 @@ function SignIn({ navigation }) {
 
   const googleauth = useSSO({ strategy: 'oauth_google' });
   const { isSignedIn } = useAuth();
-  const { role } = useRole();
-  const { user } = useUser();
   const { setActive, signIn } = useSignIn();
   const [loading, setLoading] = useState(true);
 
   const handlegoogleauth = async () => {
+
     try {
       if (!isSignedIn) {
         const googleAuth = await googleauth.startSSOFlow({ strategy: 'oauth_google' });
@@ -32,25 +32,27 @@ function SignIn({ navigation }) {
       }
     } catch (error) {
       console.log(error?.errors?.[0]?.message || error?.message);
+      Toast.show({ text1: 'Error signing in', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   };
 
   const handleSignIn = async () => {
-    if (user) {
-      navigation.replace(role === 'admin' ? 'HomeScreen' : 'Home');
+
+    if (!email || !password) {
+      Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
+
     try {
       const result = await signIn.create({ password, identifier: email });
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
       }
     } catch (error) {
-      console.log(error);
+      if(error?.errors?.[0]?.longMessage?.includes('Identifier is invalid')) Toast.show({ text1: 'Incorrect email or password', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      else Toast.show({ text1: 'Error signing in', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
-  };
-  
-
+  };  
   // ----- Simple code-drawn logo (kept) -----
   const Logo = () => (
     <View style={styles.logoCircleOuter}>
@@ -63,6 +65,14 @@ function SignIn({ navigation }) {
       </View>
     </View>
   );
+
+  // if(isSignedIn){
+  //   return (
+  //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:'#1C2E5C' }}>
+  //       <ActivityIndicator size="large" color="#fff" />
+  //     </View>
+  //   )
+  // }
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: '#13294B' }}>

@@ -1,14 +1,15 @@
-import { View, Text, TouchableOpacity, StyleSheet, FlatList } from 'react-native';
-import { Ionicons } from '@expo/vector-icons';
+import { View, Text, TouchableOpacity, StyleSheet, FlatList, Alert, Modal } from 'react-native';
+import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useRole } from '../../auth.context';
 import { useEffect, useState } from 'react';
-import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import Footer from '../User/Footer';
 import AdminFooter from './adminFooter';
 
 export default function Seminars() {
+  
   const navigation = useNavigation();
   const { role, profile } = useRole();
   const [seminars, setSeminars] = useState([]);
@@ -36,7 +37,6 @@ export default function Seminars() {
       }
       try {
         const res = await addDoc(collection(db, "seminars_reg"), {
-          topic: item.topic,
           email: profile?.email,
           isRegistered: true,
           id: item.id,
@@ -45,6 +45,48 @@ export default function Seminars() {
       } catch (error) {
         console.log('Error adding document: ', error);
       }
+    };
+
+    const handleMarkAsCompleted = async () => {
+
+      try {
+        await updateDoc(doc(db, "seminars", item.id), {
+          registration_status: item?.registration_status === 'open' ? 'close' : 'open'
+        })
+
+      }
+      catch (error) {
+        console.log('Error adding document: ', error);
+      }
+
+    }
+
+    const handleDelete = async () => {
+      
+      Alert.alert(
+        'Delete Seminar',
+        'Are you sure you want to delete this seminar?',
+        [
+          {
+            text: 'No',
+            style: 'cancel',
+          },
+          {
+            text: 'Yes',
+            onPress: async () => {
+              try {
+                await deleteDoc(doc(db, "seminars", item.id));
+                console.log('deleted');
+              } catch (error) {
+                console.log('Error adding document: ', error);
+              }
+            },
+            style: 'default',
+          },
+        ],
+        { cancelable: false }
+      )
+    
     };
 
     useEffect(() => {
@@ -58,7 +100,13 @@ export default function Seminars() {
 
     return (
       <View style={styles.card}>
+
+        
         <View>
+
+          <TouchableOpacity style={{marginLeft: 'auto'}}>
+            <MaterialCommunityIcons name="pencil-box" size={24} color='#34495e' onPress={() => navigation.navigate('EditSeminar', { id: item.id,webinar : item })} />
+          </TouchableOpacity>
 
           <Text style={styles.cardSmallText}>Webinar info</Text>
 
@@ -76,20 +124,38 @@ export default function Seminars() {
         <Text style={styles.cardTime}>{item.date}</Text>
         <Text style={styles.cardTime}>{item.time}</Text>
 
-        <View>
+        <View style={{ gap: 10 }}>
 
-          <TouchableOpacity onPress={handleRegister} style={[styles.registerButton, isRegistered]}>
+          {/* <Text>{item?.status === 'upcoming' ? 'Upcoming' : 'Completed'}</Text> */}
+
+          {item?.registration_status === 'open' ? <TouchableOpacity onPress={handleRegister} style={[styles.registerButton, isRegistered]}>
             <Text style={styles.registerText}>{isRegistered ? 'Registered' : 'Register'}</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> : <Text>Registration closed</Text>}
+
+          {role === 'admin' && <TouchableOpacity onPress={() => handleMarkAsCompleted(item)} style={[styles.registerButton, isRegistered]}>
+            <Text style={styles.registerText}>{item?.registration_status === 'open' ? 'Close Registration' : 'Open Registration'}</Text>
+          </TouchableOpacity>}
+
+
+          {/* <TouchableOpacity onPress={() => setIsRegisterOpen(!isRegisterOpen)} style={[styles.registerButton, isRegistered]}>
+            <Text style={styles.registerText}>Open</Text>
+          </TouchableOpacity> */}
 
           {role === 'admin' && (
-            <TouchableOpacity
-              style={styles.linkButton}
-              onPress={() => navigation.navigate('RegisterList', { topic: item?.topic })}
-            >
-              <Text style={styles.linkText}>Registered List</Text>
-            </TouchableOpacity>
+            <>
+              <TouchableOpacity
+                style={styles.linkButton}
+                onPress={() => navigation.navigate('RegisterList', { id: item?.id, topic: item?.topic })}
+              >
+                <Text style={styles.linkText}>Registered List</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.deleteButton} onPress={() => handleDelete(item)}>
+                <Text style={styles.deleteText}>Delete Webinar</Text>
+              </TouchableOpacity>
+            </>
           )}
+
+
         </View>
       </View>
     );
@@ -216,4 +282,16 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     elevation: 4,
   },
+  deleteButton: {
+    backgroundColor: '#ecf0f1',
+    padding: 12,
+    borderRadius: 28,
+    elevation: 4,
+  },
+  deleteText: {
+    color: 'red',
+    textAlign: 'center',
+    fontWeight: 'bold',
+    fontSize: 14,
+  }
 });

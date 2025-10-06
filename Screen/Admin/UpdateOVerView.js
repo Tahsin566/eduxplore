@@ -8,6 +8,7 @@ import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
 import * as ImagePicker from 'expo-image-picker';
 import Checkbox from 'expo-checkbox';
+import Toast from 'react-native-toast-message';
 
 export default function UpdateOverView({ route }) {
   const navigation = useNavigation();
@@ -69,6 +70,48 @@ export default function UpdateOverView({ route }) {
     Linking.openURL('https://www2.daad.de/deutschland/studienangebote/internationale-programme/en/detail/7801/#tab_overview');
   };
 
+
+  const regexCheck = (input, name, value) => {
+
+    const stringRegex = /^[A-Z]+[a-zA-Z0-9 .,]*/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    const markDown = /[a-zA-Z0-9 -\.,#\*]/;
+
+    if(!input) return
+
+    if(input === 'overview' || input === 'requirements' || input === 'about') {
+      if (!markDown.test(name)) {
+        Toast.show({ text1: 'Invalid details', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        return
+      }
+    }
+
+    if(input === 'name' || input === 'person' || input === 'designation' || input === 'address') {
+      if (!stringRegex.test(name)) {
+        Toast.show({ text1: 'Invalid person details', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        return
+      }
+    }
+
+    if(input === 'email') {
+      if (!emailRegex.test(name)) {
+        Toast.show({ text1: 'Invalid email', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        return
+      }
+    }
+
+    if(input === 'ieltsScore') {
+      if (!Number(name)) {
+        Toast.show({ text1: 'Invalid IELTS score', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        return
+      }
+    }
+
+    return name ? name : value
+
+    
+  }
+
   const pickImage = async () => {
 
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -125,21 +168,23 @@ export default function UpdateOverView({ route }) {
   const handleUpdate = async () => {
     try {
       await updateDoc(doc(db, 'university', university?.id), {
-        name: name ? name : university?.name,
-        overview: overview ? overview : university?.overview,
-        requirements: requirements ? requirements : university?.requirements,
-        about: about ? about : university?.about,
-        photo: image !== '' ? await uploadToCloudinary() : university?.photo,
-        person: person ? person : university?.person,
-        designation: designation ? designation : university?.designation,
-        address: address ? address : university?.address,
-        phone: phone ? phone : university?.phone,
-        email: email ? email : university?.email,
-        website: website ? website : university?.website,
-        ieltsScore: ieltsScore ? ieltsScore : university?.ieltsScore,
-        hasBachelor:bachelorCheck,
-        hasMaster:masterCheck,
-        hasPhd:phdCheck
+
+        name:regexCheck('name',name,university?.name),
+        overview:regexCheck('overview',overview,university?.overview),
+        requirements:regexCheck('requirements',requirements,university?.requirements),
+        about:regexCheck('about',about,university?.about),
+        photo:image !== '' ? await uploadToCloudinary() : university?.photo,
+        person:regexCheck('person',person,university?.person),
+        designation:regexCheck('designation',designation,university?.designation),
+        address:regexCheck('address',address,university?.address),
+        phone:regexCheck('phone',phone,university?.phone),
+        email:regexCheck('email',email,university?.email),
+        website:regexCheck('website',website,university?.website),
+        ieltsScore:regexCheck('ieltsScore',ieltsScore,university?.ieltsScore),
+        hasBachelor: bachelorCheck,
+        hasMaster: masterCheck,
+        hasPhd: phdCheck
+
       })
       console.log('Document updated');
       navigation.navigate('UniversityList')
@@ -148,18 +193,6 @@ export default function UpdateOverView({ route }) {
     }
   };
 
-  // const getData = async()=>{
-  //   const q = query(collection(db,'university'),where('name','==',university?.name));
-  //   const res = await getDocs(q);
-
-  //   res.docs.map((doc)=>{
-  //     console.log(doc.data());
-  //     setName(doc.data().name);
-  //     setOverview(doc.data().overview);
-  //     setRequirements(doc.data().requirements);
-  //     setAbout(doc.data().about);
-  //   })
-  // }
 
   useEffect(() => {
 
@@ -201,7 +234,7 @@ export default function UpdateOverView({ route }) {
       {/* Header */}
       <View style={styles.card}>
         <View style={styles.header}>
-        {path === 'BachelorList' && <TouchableOpacity onPress={() => path === 'BachelorList' && navigation.navigate('BachelorList')}>
+          {path === 'BachelorList' && <TouchableOpacity onPress={() => path === 'BachelorList' && navigation.navigate('BachelorList')}>
             <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>}
           {path === 'MastersList' && <TouchableOpacity onPress={() => navigation.navigate('MastersList')}>
@@ -217,27 +250,27 @@ export default function UpdateOverView({ route }) {
           {/* <Image source={srhIcon} style={styles.logo} />*/}
         </View>
 
-        
+
       </View>
 
       {/* Navigation Tabs */}
       <View style={styles.main}>
         <TouchableOpacity style={styles.button} onPress={() => setTab('overview')}>
-          <Text style={styles.buttonText}>Overview</Text>
+          <Text style={[{...styles.buttonText},{color:tab === 'overview' ? 'indigo' : '#000'}]}>Overview</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
           onPress={() => setTab('requirements')}
         >
-          <Text style={styles.buttonText}>Requirement</Text>
+          <Text style={[{...styles.buttonText},{color:tab === 'requirements' ? 'indigo' : '#000'}]}>Requirement</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
           onPress={() => setTab('about')}
         >
-          <Text style={styles.buttonText}>About University</Text>
+          <Text style={[{...styles.buttonText},{color:tab === 'about' ? 'indigo' : '#000'}]}>About University</Text>
         </TouchableOpacity>
       </View>
 
@@ -302,7 +335,7 @@ export default function UpdateOverView({ route }) {
           />
         </View>
       </View>}
-      <Text style={[{...styles.label},{marginHorizontal:10}]}>University Degree</Text>
+      <Text style={[{ ...styles.label }, { marginHorizontal: 10 }]}>University Degree</Text>
       <View style={styles.checkboxContainer}>
         <Checkbox
           style={styles.checkbox}

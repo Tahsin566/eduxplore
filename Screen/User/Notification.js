@@ -15,13 +15,10 @@ export default function NotificationScreen() {
 
   const [notifications, setNotifications] = useState([]);
 
-
-
   useEffect(() => {
-
-    const q = query(collection(db, "notification"), orderBy("time", "desc"),where("recipient","!=","admin"));
+    const q = query(collection(db, "notification"), orderBy("time", "desc"));
     onSnapshot(q ,(snapshot) => {
-      const notifications = snapshot.docs.map((doc) => doc.data());
+      const notifications = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setNotifications(notifications);
     })
   }, []);

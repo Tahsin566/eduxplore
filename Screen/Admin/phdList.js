@@ -1,7 +1,7 @@
-import { View, Text, TouchableOpacity, StyleSheet, TextInput } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, TextInput, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useEffect, useState } from 'react';
 import { useRole } from '../../auth.context';
@@ -15,22 +15,51 @@ export default function PHDList() {
   const [universities, setUniversities] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const {role} = useRole()
+  const { role } = useRole()
 
   const handlePress = (item) => {
-    navigation.navigate("UniversityOverview", { universityName: item,path : 'MastersList' });
+    navigation.navigate("UniversityOverview", { universityName: item, path: 'MastersList' });
   };
+
+  const filteredUniversities = universities.filter(item => 
+    item?.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   const getUniversities = async () => {
     try {
       const q = query(collection(db, "university"), where("hasPhd", "==", true));
       const querySnapshot = await getDocs(q);
-      const universitiesData = querySnapshot.docs.map((doc) =>{ return {...doc.data(), id: doc.id}});
+      const universitiesData = querySnapshot.docs.map((doc) => { return { ...doc.data(), id: doc.id } });
       setUniversities(universitiesData);
     } catch (error) {
       console.error('Error fetching universities:', error);
     }
+  }; const deleteUniversityDetails = async (item) => {
+    Alert.alert(
+      'Delete University',
+      'Are you sure you want to delete this university?',
+      [
+        {
+          text: 'No',
+          style: 'cancel',
+        },
+        {
+          text: 'Yes',
+          onPress: async () => {
+            try {
+              await deleteDoc(doc(db, "university", item.id));
+              console.log('deleted');
+            } catch (error) {
+              console.log('Error adding document: ', error);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    )
   };
+
+
 
   useEffect(() => {
     getUniversities();
@@ -40,38 +69,53 @@ export default function PHDList() {
     <View style={styles.container}>
       {/* Back Button & Title */}
       <View style={styles.edit}><Text style={styles.title}>PHD List</Text></View>
-        <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
-          <Ionicons name="chevron-back" size={24} color="#fff" />
+      <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
+        <Ionicons name="chevron-back" size={24} color="#fff" />
+      </TouchableOpacity>
+      <View style={styles.space}><Text></Text></View>
+
+      <View style={styles.search}>
+        <TextInput
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          style={styles.searchinput}
+          placeholder="Search"
+          placeholderTextColor="#999"
+        />
+        <TouchableOpacity>
+          <Ionicons style={styles.icon} name="search" size={24} color="#000" />
         </TouchableOpacity>
-        <View style={styles.space}><Text></Text></View>
-        
-            <View style={styles.search}>
-              <TextInput
-                value={searchQuery}
-                onChangeText={setSearchQuery}
-                style={styles.searchinput}
-                placeholder="Search"
-                placeholderTextColor="#999"
-              />
-              <TouchableOpacity>
-                <Ionicons style={styles.icon} name="search" size={24} color="#000" />
-              </TouchableOpacity>
-            </View>
+      </View>
       {/* List */}
       <View style={styles.listContainer}>
         {universities.map((item, index) => (
-          item?.name.toLowerCase().includes(searchQuery.toLowerCase()) ?  <View key={index} style={styles.listItem}>
+          item?.name.toLowerCase().includes(searchQuery.toLowerCase()) ? <View key={index} style={styles.listItem}>
 
-          <TouchableOpacity key={index} style={styles.listbutton} onPress={() => handlePress(item)}>
-            <Image style={styles.image} source={{ uri: item?.photo }} />
-            <Text style={styles.listText}>
-              {item?.name}
-            </Text>
-            {role === 'admin' && <TouchableOpacity style={styles.update} onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })}><Ionicons name='create-outline' size={20} color='#000'/></TouchableOpacity>}
-          </TouchableOpacity>
-          </View> : item?.name.toLowerCase().includes(searchQuery.toLowerCase()) || universities.length > 0 === false ? <Text style={{color: '#fff'}}>No Universities Found</Text> : null
+            <TouchableOpacity key={index} style={styles.listbutton} onPress={() => handlePress(item)}>
+              <Image style={styles.image} source={{ uri: item?.photo }} />
+              <Text style={styles.listText}>
+                {item?.name}
+              </Text>
+              {/* {role === 'admin' && <TouchableOpacity style={styles.update} onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })}><Ionicons name='create-outline' size={20} color='#000'/></TouchableOpacity>} */}
+            </TouchableOpacity>
+            {role === 'admin' && <View style={styles.buttonContainer}>
+
+              <TouchableOpacity onPress={() => navigation.navigate("UpdateOVerView", { university: item, path: 'BachelorList' })} style={styles.update}>
+                <Text style={styles.text}>Update</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => deleteUniversityDetails(item)} style={styles.delete}>
+                <Text style={styles.text}>Delete</Text>
+              </TouchableOpacity>
+            </View>}
+          </View> : null
         ))}
       </View>
+
+      {filteredUniversities.length === 0 && (
+        <Text style={styles.text}>No results found</Text>
+      )}
+
     </View>
   );
 }
@@ -82,18 +126,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#1C2E5C',
     paddingHorizontal: 20,
   },
-  search:{
+  search: {
     backgroundColor: '#ecf0f1',
     borderRadius: 5,
     marginHorizontal: 10,
     padding: 8,
     marginBottom: 10
-    
+
   },
-  searchinput:{
+  searchinput: {
     width: '88%',
   },
-  icon:{
+  icon: {
     position: 'absolute',
     right: 0,
     bottom: 0,
@@ -125,7 +169,7 @@ const styles = StyleSheet.create({
   },
   listItem: {
     backgroundColor: '#ecf0f1',
-    justifyContent:'center',
+    justifyContent: 'center',
     borderRadius: 5,
     fontWeight: 'bold',
   },
@@ -139,9 +183,9 @@ const styles = StyleSheet.create({
   },
   listText: {
     fontSize: 20,
-    width: '86%',
+    width: '65%',
     color: '#000',
-    overflow:"scroll",
+    overflow: "scroll",
     fontWeight: 'bold',
   },
   image: {
@@ -149,7 +193,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 0,
     marginRight: 10,
-    resizeMode:'contain'
+    resizeMode: 'contain'
   },
   fab: {
     position: 'absolute',
@@ -160,15 +204,40 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     elevation: 4,
   },
-  update:{
+  update: {
     backgroundColor: '#ecf0f1',
     padding: 12,
     position: 'absolute',
     bottom: 30,
     right: 5,
-    marginHorizontal:"auto",
+    marginHorizontal: "auto",
     borderRadius: 50,
     borderWidth: 1,
-    alignItems:'center'
+    alignItems: 'center'
+  },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+  },
+  update: {
+    backgroundColor: '#1C2E5C',
+    borderRadius: 20,
+    marginBottom: 10,
+    padding: 12,
+    width: '40%',
+    alignItems: 'center'
+
+  },
+  delete: {
+    backgroundColor: 'red',
+    borderRadius: 20,
+    marginBottom: 10,
+    padding: 12,
+    width: '40%',
+    alignItems: 'center'
+  },
+  text: {
+    color: '#fff',
+    fontWeight: 'bold'
   }
 });

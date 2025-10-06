@@ -1,8 +1,8 @@
-import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
+import { View, Text, TouchableOpacity, StyleSheet, Image, Alert } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
-import { collection, getDocs, query, where } from 'firebase/firestore';
+import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
 import { TextInput } from 'react-native-gesture-handler';
@@ -16,6 +16,7 @@ export default function BachelorList() {
 
   const [universities, setUniversities] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isFound, setIsFound] = useState(false);
 
 
   const getUniversities = async () => {
@@ -33,11 +34,40 @@ export default function BachelorList() {
     navigation.navigate("UniversityOverview", { universityName: item,path : 'BachelorList' });
   };
 
+  const deleteUniversityDetails = async (item) => {
+    Alert.alert(
+      'Delete University',
+      'Are you sure you want to delete this university?',
+      [
+        {
+          text: 'No',
+          style: "cancel",
+        },
+        {
+          text: 'Yes',
+          onPress: async () => {
+            try {
+              await deleteDoc(doc(db, "university", item.id));
+              console.log('deleted');
+            } catch (error) {
+              console.log('Error adding document: ', error);
+            }
+          },
+        },
+      ],
+      { cancelable: false }
+    )
+  };
+
+  const filteredUniversities = universities.filter(item => 
+    item?.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
   
 
   useEffect(() => {
     getUniversities();
   }, [universities]);
+
 
   return (
     <View style={styles.container}>
@@ -73,13 +103,25 @@ export default function BachelorList() {
             <Text style={styles.listText}>
               {item?.name}
             </Text>
-          {role === 'admin' && <TouchableOpacity style={styles.update} onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })}><Ionicons name='create-outline' size={20} color='#000'/></TouchableOpacity>}
+          {/* {role === 'admin' && <TouchableOpacity style={styles.update} onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })}><Ionicons name='create-outline' size={20} color='#000'/></TouchableOpacity>} */}
           </TouchableOpacity>
-          </View> : item?.name.toLowerCase().includes(searchQuery.toLowerCase()) === false ? <Text style={{color: '#fff'}}>No Universities Found</Text> : null
+          {role === 'admin' && <View style={styles.buttonContainer}>
+
+            <TouchableOpacity onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })} style={styles.update}>
+              <Text style={styles.text}>Update</Text>
+            </TouchableOpacity>
+
+            <TouchableOpacity onPress={() => deleteUniversityDetails(item)} style={styles.delete}>
+              <Text style={styles.text}>Delete</Text>
+            </TouchableOpacity>
+          </View>}
+          </View> : null
         ))}
+      
       </View>
 
-      
+
+      {filteredUniversities.length === 0 && <Text style={{color: '#fff'}}>No Universities Found</Text>}
 
       {/* Add Floating Button */}
       
@@ -148,6 +190,10 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     // flexWrap: 'wrap',
   },
+  buttonContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-around', 
+  },
   listText: {
     fontSize: 20,
     width: '65%',
@@ -172,14 +218,24 @@ const styles = StyleSheet.create({
     elevation: 4,
   },
   update:{
-    backgroundColor: '#ecf0f1',
+    backgroundColor: '#1C2E5C',
+    borderRadius: 20,
+    marginBottom: 10,
     padding: 12,
-    position: 'absolute',
-    bottom: 30,
-    right: 5,
-    marginHorizontal:"auto",
-    borderRadius: 50,
-    borderWidth: 1,
-    alignItems:'center'
+    width: '40%',
+    alignItems: 'center'
+    
+  },
+  delete:{
+    backgroundColor: 'red',
+    borderRadius: 20,
+    marginBottom: 10,
+    padding: 12,
+    width: '40%',
+    alignItems: 'center'
+  },
+  text:{
+    color: '#fff',
+    fontWeight: 'bold'
   }
 });
