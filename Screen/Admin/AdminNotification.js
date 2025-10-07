@@ -5,9 +5,11 @@ import { useEffect, useState } from 'react';
 import { collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { ScrollView } from 'react-native-gesture-handler';
+import { useRole } from '../../auth.context';
 
 export default function AdminNotification() {
   const navigation = useNavigation();
+  const { role } = useRole();
 
   const [notifications, setNotifications] = useState([]);
 
@@ -23,7 +25,7 @@ export default function AdminNotification() {
 
   useEffect(() => {
 
-    const q = query(collection(db, "notification"), orderBy("time", "desc"));
+    const q = query(collection(db, "notification"), orderBy("time", "desc"),where('recipient', '==', 'admin'));
     const unsubscribe = onSnapshot(q ,(snapshot) => {
       const notifications = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setNotifications(notifications);

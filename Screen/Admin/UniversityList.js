@@ -15,9 +15,9 @@ export default function UniversityList() {
     <View style={styles.container}>
       
       <View style={styles.header}>
-        {/* <TouchableOpacity onPress={() => navigation.openDrawer()}>
-          <Ionicons name="menu" size={28} color="#fff" />
-        </TouchableOpacity> */}
+        <TouchableOpacity style={styles.backBtn} onPress={() => role === 'admin' ? navigation.navigate('HomeScreen')  : navigation.navigate('Home')}>
+          <Ionicons name="chevron-back" size={28} color="#fff" />
+        </TouchableOpacity>
         {/* <Text style={styles.headerTitle}>University Program</Text> */}
         {/* Placeholder to balance header */}
         
@@ -77,7 +77,17 @@ const styles = StyleSheet.create({
   },
   header: {
     justifyContent: 'space-between',
-    alignItems: 'center'
+    alignItems: 'center',
+    flexDirection: 'row',
+  },
+  backBtn: {
+    position: 'absolute',
+    left: 0,
+    top: 10,
+    width: 40,
+    height: 40,
+    alignItems: 'center',
+    justifyContent: 'center',
   },
   headerTitle: {
     color: '#fff',

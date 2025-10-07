@@ -84,9 +84,10 @@ export const AuthProvider = ({ children }) => {
                 if(data[0] && data[0]?.role === 'admin'){
                     navigation.dispatch(StackActions.replace('HomeScreen'));
                 }
-                else if(data[0] && data[0]?.role === 'user'){
+                else if(data[0] && data[0]?.role === 'user' || data[0] && data[0]?.role === 'moderator'){
                     navigation.dispatch(StackActions.replace('Home'));
                 }
+            
             })
         }
         

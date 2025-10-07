@@ -21,7 +21,7 @@ export default function UniversityOverview({ route }) {
   const path = route.params.path;
   const [universityData, setUniversityData] = useState();
 
-  const { profile,role } = useRole()
+  const { profile, role } = useRole()
 
   // console.log(universityName)
 
@@ -84,7 +84,7 @@ export default function UniversityOverview({ route }) {
       console.log('deleted');
       return;
     }
-    else{
+    else {
       setIsMarked(true)
     }
 
@@ -106,15 +106,15 @@ export default function UniversityOverview({ route }) {
 
     onSnapshot(q, (querySnapshot) => {
 
-      if(querySnapshot.docs.length !== 0){
+      if (querySnapshot.docs.length !== 0) {
         console.log('single data', querySnapshot.docs[0].data().isMarked)
         setIsMarked(querySnapshot.docs[0].data().isMarked)
       }
-  
-      if(querySnapshot.docs.length === 0){
+
+      if (querySnapshot.docs.length === 0) {
         setIsMarked(false)
       }
-      
+
     })
 
   }
@@ -129,15 +129,17 @@ export default function UniversityOverview({ route }) {
   useEffect(() => {
     setUniversityData(null);
     getUniversity()
-  },[universityName])
+  }, [universityName])
 
   useEffect(() => {
     getMarked()
-  },[universityName.id])
+  }, [universityName.id])
 
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
+
+
       {/* First Section */}
       <View style={styles.card}>
         <View style={styles.header}>
@@ -159,6 +161,8 @@ export default function UniversityOverview({ route }) {
           </TouchableOpacity>}
         </View>
 
+
+
         <View style={styles.body}>
           {/* <Image source={srhIcon} style={styles.logo} /> */}
         </View>
@@ -170,85 +174,84 @@ export default function UniversityOverview({ route }) {
 
       {/* Second Card */}
       <View style={styles.main}>
+
+
         <TouchableOpacity
           style={styles.button}
           onPress={() => setTab('overview')}
         >
-          <Text style={[{...styles.buttonText},{color:tab === 'overview' ? 'indigo' : '#000'}]}>OverView</Text>
+          <Text style={[{ ...styles.buttonText }, { color: tab === 'overview' ? 'indigo' : '#000' }]}>OverView</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
           onPress={() => setTab('requirement')}
         >
-          <Text style={[{...styles.buttonText},{color:tab === 'requirement' ? 'indigo' : '#000'}]}>Requirement</Text>
+          <Text style={[{ ...styles.buttonText }, { color: tab === 'requirement' ? 'indigo' : '#000' }]}>Requirement</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
           style={styles.button}
           onPress={() => setTab('about')}
         >
-          <Text style={[{...styles.buttonText},{color:tab === 'about' ? 'indigo' : '#000'}]}>About University</Text>
+          <Text style={[{ ...styles.buttonText }, { color: tab === 'about' ? 'indigo' : '#000' }]}>About University</Text>
         </TouchableOpacity>
+
+
       </View>
 
 
 
       {/* Third Part — Form */}
-      <View style={{ gap: 10 ,justifyContent:'space-between'}}>
-
-        {tab === 'overview' && <View style={styles.card2}>
-          {/* <Text style={styles.paragraph}>{universityData?.overview}</Text> */}
-          <Markdown>{universityData?.overview}</Markdown>
-        </View>}
-
-        {tab === 'requirement' && <View style={styles.card2}>
-          <Markdown>{universityData?.requirements}</Markdown>
-        </View>}
-
-        {tab === 'about' && <View style={styles.card2}>
-          <Image source={{uri:universityData?.photo}} style={styles.image} />
-          <Markdown>{universityData?.about}</Markdown>
-        </View>}
-
-      <View>
+      <View style={{ justifyContent: 'space-between',minHeight:680 }}>
 
 
-        <View style={styles.contactHeader}>
-          <Ionicons name="person-circle" size={50} color="#1abc9c" />
-          <Text style={styles.contactTitle}>{universityData?.name}</Text>
-          <Text style={styles.subTitle}>{universityData?.designation}</Text>
+        <View>
+
+          {tab === 'overview' && <View style={styles.card2}>
+            {/* <Text style={styles.paragraph}>{universityData?.overview}</Text> */}
+            <Markdown>{universityData?.overview}</Markdown>
+          </View>}
+
+          {tab === 'requirement' && <View style={styles.card2}>
+            <Markdown>{universityData?.requirements}</Markdown>
+          </View>}
+
+          {tab === 'about' && <View style={styles.card2}>
+            <Image source={{ uri: universityData?.photo }} style={styles.image} />
+            <Markdown>{universityData?.about}</Markdown>
+          </View>}
         </View>
 
-        {/* Contact Information */}
-        <Text style={styles.address}>{universityData?.person}</Text>
-        <Text style={styles.address}>{universityData?.address}</Text>
+        <View>
 
-        {/* Buttons for Phone, Email, and Website */}
-        <Text style={styles.buttonText1}>Phone : {universityData?.phone}</Text>
+          <View style={styles.contactHeader}>
+            <Ionicons name="person-circle" size={50} color="#1abc9c" />
+            <Text style={styles.contactTitle}>{universityData?.name}</Text>
+            <Text style={styles.subTitle}>{universityData?.designation}</Text>
+          </View>
+
+          {/* Contact Information */}
+          <Text style={styles.address}>{universityData?.person}</Text>
+          <Text style={styles.address}>{universityData?.address}</Text>
+
+          {/* Buttons for Phone, Email, and Website */}
+          <Text style={styles.buttonText1}>Phone : {universityData?.phone}</Text>
 
 
-        
-      <Text style={styles.buttonText1}>Email : {universityData?.email}</Text>
+
+          <Text style={styles.buttonText1}>Email : {universityData?.email}</Text>
 
 
-        <TouchableOpacity style={styles.button1} onPress={() => handleWebsitePress(universityData?.website)}>
-          <Text style={styles.websiteBtnText}>Course website</Text>
-        </TouchableOpacity>
+          <TouchableOpacity style={styles.button1} onPress={() => handleWebsitePress(universityData?.website)}>
+            <Text style={styles.websiteBtnText}>Course website</Text>
+          </TouchableOpacity>
 
-        {role === 'admin' && <TouchableOpacity style={styles.button1} onPress={() => navigation.navigate('UpdateOVerView', { university: universityName })}>
-          <Text style={[{...styles.buttonText1},{fontWeight:'bold',color:'white'}]}>Update</Text>
-        </TouchableOpacity>}
-
-        
+          {role === 'admin' && <TouchableOpacity style={styles.button1} onPress={() => navigation.navigate('UpdateOVerView', { university: universityName })}>
+            <Text style={[{ ...styles.buttonText1 }, { fontWeight: 'bold', color: 'white' }]}>Update</Text>
+          </TouchableOpacity>}
+        </View>
       </View>
-      </View>
-
-    
-
-
-
-
       {/* 4th section */}
 
     </ScrollView>
@@ -283,13 +286,13 @@ const styles = StyleSheet.create({
     height: 120,
     resizeMode: 'contain',
   },
-  image:{
+  image: {
     width: '100%',
     height: 227,
     resizeMode: 'contain',
     top: 0,
     marginTop: 5,
-    
+
   },
   description: {
     color: 'white',
@@ -309,7 +312,7 @@ const styles = StyleSheet.create({
     marginHorizontal: 1,
     paddingVertical: 12,
   },
-  websiteBtnText:{
+  websiteBtnText: {
     color: '#fff',
     fontWeight: 'bold',
     fontSize: 16,

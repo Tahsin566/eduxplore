@@ -110,6 +110,7 @@ const ViewProfile = () => {
   return (
     <>
       <View style={styles.container}>
+
         <Text style={[{ ...styles.text }, { ...styles.header }]}>User Profile</Text>
         <TouchableOpacity style={styles.backButton} onPress={() => role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home')} >
           <Ionicons name="chevron-back" size={24} color="#fff" />
@@ -139,15 +140,15 @@ const ViewProfile = () => {
           <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Bachelor : {userDetails?.bachelorSubject || 'N/A'}</Text>
           <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Master : {userDetails?.mastersSubject || 'N/A'} </Text>
           <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>VPD : {userDetails?.vpd}</Text>
-        </View> : <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>{role === 'user' || role === 'moderator' && 'You have not added any additional details'}</Text>}
+        </View> : <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>{role === 'user' && 'You have not added any additional details'}</Text>}
 
         <View style={styles.buttonContainer}>
 
 
 
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ProfileSettings')}>
+          {role === 'user' && <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ProfileSettings')}>
             <Text style={styles.buttonText}>Edit Profile</Text>
-          </TouchableOpacity>
+          </TouchableOpacity>}
 
           {/* Account Settings Button */}
           <TouchableOpacity style={styles.button} onPress={() => {signOut(); navigation.replace('SignIn')}}>

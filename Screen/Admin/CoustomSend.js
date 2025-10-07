@@ -87,7 +87,7 @@ export default function SendNotification() {
       </TouchableOpacity>
         </View>
 
-      {isVisible && ['All', 'Admin', 'User'].map((item) => (
+      {isVisible && ['Admin', 'Moderator', 'User'].map((item) => (
         <TouchableOpacity
           key={item}
           style={styles.radioRow}

@@ -104,9 +104,9 @@ export default function Seminars() {
         
         <View>
 
-          <TouchableOpacity style={{marginLeft: 'auto'}}>
+          {role === 'admin' && <TouchableOpacity style={{marginLeft: 'auto'}}>
             <MaterialCommunityIcons name="pencil-box" size={24} color='#34495e' onPress={() => navigation.navigate('EditSeminar', { id: item.id,webinar : item })} />
-          </TouchableOpacity>
+          </TouchableOpacity>}
 
           <Text style={styles.cardSmallText}>Webinar info</Text>
 
