@@ -9,12 +9,13 @@ import { useRole } from '../../auth.context';
 const data = ['University 1', 'University 2', 'University 3', 'University 4'];
 
 export default function MastersList() {
+  
+  const { role } = useRole()
   const navigation = useNavigation();
 
   const [universities, setUniversities] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
 
-  const { role } = useRole()
 
   const handlePress = (item) => {
     navigation.navigate("UniversityOverview", { universityName: item, path: 'MastersList' });

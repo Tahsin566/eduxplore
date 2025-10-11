@@ -35,6 +35,8 @@ function Chip({ label, selected, onPress, style }) {
 }
 
 export default function FindUniversity({ navigation }) {
+
+  
   const [search, setSearch] = useState('');
 
   // single-select per section

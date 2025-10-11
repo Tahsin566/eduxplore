@@ -6,10 +6,11 @@ import { db } from '../../firebase.config';
 import { Ionicons } from '@expo/vector-icons';
 
 const ProfileSettings = ({ navigation }) => {
+
+  
   const { profile } = useRole();
 
   const [name, setName] = useState('');
-  const [appointmentDate, setAppointmentDate] = useState('');
   const [ieltsScore, setIeltsScore] = useState('');
   const [groupSSC, setGroupSSC] = useState('');
   const [groupHSC, setGroupHSC] = useState('');
@@ -79,7 +80,6 @@ const ProfileSettings = ({ navigation }) => {
     const querySnapshot = await getDocs(q);
     if (querySnapshot.docs.length !== 0) {
       setName(querySnapshot.docs[0].data().name);
-      setAppointmentDate(querySnapshot.docs[0].data().appointmentDate);
       setIeltsScore(querySnapshot.docs[0].data().ieltsScore);
       setGroupSSC(querySnapshot.docs[0].data().groupSSC);
       setGroupHSC(querySnapshot.docs[0].data().groupHSC);
@@ -116,15 +116,6 @@ const ProfileSettings = ({ navigation }) => {
           placeholder="Enter your name"
           placeholderTextColor="#8AA0B3"
         />
-
-        {/* <Text style={styles.label}>Appointment Date</Text>
-        <TextInput
-          style={styles.input}
-          value={appointmentDate}
-          onChangeText={setAppointmentDate}
-          placeholder="Enter date"
-          placeholderTextColor="#8AA0B3"
-        /> */}
 
         <Text style={styles.label}>IELTS Score</Text>
         <TextInput

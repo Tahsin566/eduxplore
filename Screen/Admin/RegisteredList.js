@@ -11,10 +11,13 @@ import Toast from 'react-native-toast-message';
 const AVATAR_COLORS = ['#1C2E5C', '#964b00', '#444cff', '#dedc34', '#3be3da', '#adadff'];
 
 export default function RegisteredListScreen({ route }) {
+
   const navigation = useNavigation();
+
   const id = route.params.id;
   const topic = route.params.topic;
-  const { role } = useRole();
+
+  
   const [link, setLink] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [registeredEmails, setRegisteredEmails] = useState([]);

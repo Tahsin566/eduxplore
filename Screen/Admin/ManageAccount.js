@@ -11,8 +11,10 @@ import { useRole } from '../../auth.context';
 
 export default function ManageAccountsScreen() {
 
-  const [admins, setAdmins] = useState([]);
+  
   const { role } = useRole();
+
+  const [admins, setAdmins] = useState([]);
   const [roletype, setRoleType] = useState('All');
 
   const getAdmins = async() => {

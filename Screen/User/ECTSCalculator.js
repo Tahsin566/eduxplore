@@ -4,6 +4,8 @@ import { Ionicons } from '@expo/vector-icons';
 import Footer from '../User/Footer';
 
 export default function ECTSCalculatorScreen({ navigation }) {
+
+  
   const [bdCredit, setBdCredit] = useState('');
   const [ects, setEcts] = useState('');
 

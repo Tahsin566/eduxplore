@@ -14,6 +14,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function Community({ navigation }) {
+  
+  const { user } = useUser();
+  const { role, profile } = useRole();
+
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [image, setImage] = useState(null);
@@ -21,7 +25,6 @@ export default function Community({ navigation }) {
   const [messages, setMessages] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [searchActive, setSearchActive] = useState(false);
-  const [keyboardVisible, setKeyboardVisible] = useState(false);
 
   // reply + action modal
   const [replyTo, setReplyTo] = useState(null);     // { id, text, image, email }
@@ -31,8 +34,6 @@ export default function Community({ navigation }) {
   // UI-only local hide for “delete” without touching DB
   const [hiddenIds, setHiddenIds] = useState(new Set());
 
-  const { user } = useUser();
-  const { role, profile } = useRole();
   const insets = useSafeAreaInsets();
 
   // full-screen image viewer

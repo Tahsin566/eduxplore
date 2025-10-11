@@ -11,14 +11,13 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 export default function UpdateSeminar({ route }) {
 
-  const webinar = route.params?.webinar;
-
-  const navigation = useNavigation();
+  
   const { role } = useRole();
+  const navigation = useNavigation();
+  const webinar = route.params?.webinar;
 
   const [topic, setTopic] = useState('');
   const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState('');
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [guest, setGuest] = useState('');
@@ -51,7 +50,7 @@ export default function UpdateSeminar({ route }) {
     }
 
     try {
-      const res = await updateDoc(doc(db, "seminars", route.params?.id), {
+      await updateDoc(doc(db, "seminars", route.params?.id), {
         topic,
         time: date.getHours() >= 12 ? date.getHours() - 12 + ':' + date.getMinutes() + ' ' + (date.getHours() >= 12 ? 'PM' : 'AM') : date.getHours() + ':' + date.getMinutes() + ' ' + (date.getHours() >= 12 ? 'PM' : 'AM'),
         date: date.toDateString(),

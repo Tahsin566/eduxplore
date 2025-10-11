@@ -11,8 +11,6 @@ import { Ionicons } from '@expo/vector-icons';
 const WishlistItem = ({ item }) => {
 
     const navigation = useNavigation();
-    const { profile } = useRole();
-    console.log(item)
 
     const [university, setUniversity] = useState();
 

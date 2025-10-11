@@ -8,8 +8,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import { useRole } from '../../auth.context';
 
 export default function AdminNotification() {
+
   const navigation = useNavigation();
-  const { role } = useRole();
 
   const [notifications, setNotifications] = useState([]);
 

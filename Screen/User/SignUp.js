@@ -12,13 +12,8 @@ function SignUp({ navigation }) {
   const { role } = useRole()
   const {user,isSignedIn} = useUser()
   const {setActive} = useSignUp()
-
   const { signUp } = useSignUp();
 
-  let usernameError = ''
-  let emailError = ''
-  let passwordError = ''
-  let confirmPasswordError = '';
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -89,7 +84,7 @@ function SignUp({ navigation }) {
         await EnterUserToDb()
         if (role === 'admin') {
           navigation.navigate('HomeScreen')
-        } else if (role === 'user') {
+        } else if (role === 'user' || role === 'moderator') {
           navigation.navigate('Home')
         }
       }

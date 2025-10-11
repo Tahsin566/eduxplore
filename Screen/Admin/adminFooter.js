@@ -7,12 +7,11 @@ import { useRole } from '../../auth.context';
 
 
 export default function AdminFooter() {
+  
+  const {profile} = useRole()
   const navigation = useNavigation();
 
-  const {profile} = useRole()
-
-  const goHome = () => navigation.navigate('HomeScreen');
-  const goWishlist = () => navigation.navigate('WishList');      // ensure route name matches your navigator
+  const goHome = () => navigation.navigate('HomeScreen');     // ensure route name matches your navigator
   const goCommunity = () => navigation.navigate('Community');
   const goProfile = () => navigation.navigate('ViewProfile');  // ensure route name matches
 

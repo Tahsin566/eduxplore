@@ -11,15 +11,14 @@ import { FontAwesome5 } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 
 function SignIn({ navigation }) {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
 
   UseWeb();
-
+  const { setActive, signIn } = useSignIn();
   const googleauth = useSSO({ strategy: 'oauth_google' });
   const { isSignedIn } = useAuth();
-  const { setActive, signIn } = useSignIn();
-  const [loading, setLoading] = useState(true);
+
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
 
   const handlegoogleauth = async () => {
 

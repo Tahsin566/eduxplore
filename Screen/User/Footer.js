@@ -5,6 +5,7 @@ import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 
 export default function Footer() {
+  
   const navigation = useNavigation();
 
   const goHome = () => navigation.navigate('Home');

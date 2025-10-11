@@ -11,31 +11,15 @@ import Checkbox from 'expo-checkbox';
 import Toast from 'react-native-toast-message';
 
 export default function UpdateOverView({ route }) {
+  
   const navigation = useNavigation();
 
   const university = route.params.university
   const path = route.params.path
 
-  console.log(university.id)
 
   const [image, setImage] = useState('');
   const [file, setFile] = useState(null);
-
-  const fields = [
-    'Degree',
-    'Course location',
-    'Teaching language',
-    'Languages',
-    'Full-time / part-time',
-    'Programme duration',
-    'Beginning',
-    'Additional information on beginning, duration and mode of study',
-    'Application deadline',
-    'Tuition fees per semester in EUR',
-    'Additional information on tuition fees',
-    'Joint degree / double degree programme',
-    'Description/content'
-  ];
 
   const [tab, setTab] = useState('overview');
   const [name, setName] = useState('');
@@ -52,23 +36,6 @@ export default function UpdateOverView({ route }) {
   const [bachelorCheck, setBachelorCheck] = useState(false);
   const [masterCheck, setMasterCheck] = useState(false);
   const [phdCheck, setPhdCheck] = useState(false);
-
-  // Contact handlers
-  const handlePhonePress = () => {
-    Linking.openURL('tel:+493051565020');
-  };
-
-  const handleEmailPress = () => {
-    Linking.openURL('mailto:contact@srh-university.com');
-  };
-
-  const handleWebsitePress = () => {
-    Linking.openURL('https://www.srh.de/en/');
-  };
-
-  const handleSourcePress = () => {
-    Linking.openURL('https://www2.daad.de/deutschland/studienangebote/internationale-programme/en/detail/7801/#tab_overview');
-  };
 
 
   const regexCheck = (input, name, value) => {

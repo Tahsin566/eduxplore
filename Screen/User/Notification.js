@@ -9,9 +9,11 @@ import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
 
 export default function NotificationScreen() {
+
+  
+  const { role } = useRole();
   const navigation = useNavigation();
 
-  const { role } = useRole();
 
   const [notifications, setNotifications] = useState([]);
 

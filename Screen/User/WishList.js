@@ -8,8 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 import Footer from '../User/Footer';            // ⬅️ add footer import
 
 function WishList({ navigation }) {
+
   const { profile, role } = useRole();
-  const [loading, setLoading] = useState(true);
   const [wishlist, setWishlist] = useState([]);
 
   const getWishList = async () => {

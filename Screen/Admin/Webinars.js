@@ -10,8 +10,8 @@ import AdminFooter from './adminFooter';
 
 export default function Seminars() {
   
-  const navigation = useNavigation();
   const { role, profile } = useRole();
+  const navigation = useNavigation();
   const [seminars, setSeminars] = useState([]);
 
   useEffect(() => {

@@ -9,7 +9,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Checkbox from 'expo-checkbox';
 import Toast from 'react-native-toast-message';
 
-export default function AddOverView() {
+export default function AddUniDetails() {
 
   const navigation = useNavigation();
 
@@ -30,21 +30,9 @@ export default function AddOverView() {
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
   const [ieltsScore, setIeltsScore] = useState('');
-
   const [tab, setTab] = useState('overview');
 
-  const fields = [
-    'Enter the Overview',
-  ];
-
-  const handleWebsitePress = () => {
-    Linking.openURL('https://www.srh.de/en/');
-  };
-
-  const handleSourcePress = () => {
-    Linking.openURL('https://www2.daad.de/deutschland/studienangebote/internationale-programme/en/detail/7801/#tab_overview');
-  };
-
+  
 
   const pickImage = async () => {
 

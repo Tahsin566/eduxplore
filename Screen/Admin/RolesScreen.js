@@ -2,34 +2,31 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { addDoc, collection } from 'firebase/firestore';
+import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 
 const INPUT_HEIGHT = 48;
 
-export default function AddAdmin() {
+export default function AdminRoles({ route }) {
+
+
   const navigation = useNavigation();
+  
+  const id = route.params.id
 
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [selectedRole, setSelectedRole] = useState('');
-
+  const [selectedRole, setSelectedRole] = useState('Please select');
   const [visible, setVisible] = useState(false);
 
   const roles = ['Moderator (Community)', 'Admin (Full Access)', 'User'];
 
-  const addAdmin = async () => {
+
+  const updateUserPrevilege = async () => {
     try {
-      const res = await addDoc(collection(db, "users"), {
-        name: "Admin",
-        email: email,
+      await updateDoc(doc(db, "users", id), {
         role: selectedRole.split(' ')[0].toLowerCase()
       })
-
-      setEmail('');
-      setPassword('');
-      selectedRole('user');
-      console.log('added document with ID: ', res?.id);
+      console.log('Document updated with ID', id);
+      navigation.navigate('ManageAccounts')
     } catch (error) {
       console.log('Error adding document: ', error);
     }
@@ -38,57 +35,36 @@ export default function AddAdmin() {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View><Text style={styles.title}>Add Admin</Text></View>
-        <TouchableOpacity onPress={() => navigation.goBack()}>
-          <Ionicons name="chevron-back" size={24} color="#fff" />
-        </TouchableOpacity>
-        
-        <View style={styles.space}><Text></Text></View>
+      <View style={styles.edit}><Text style={styles.title}>Admin Roles</Text></View>
+      <TouchableOpacity onPress={() => navigation.navigate('ManageAccounts')}>
+        <Ionicons name="chevron-back" size={24} color="#fff" />
+      </TouchableOpacity>
 
-      {/* Email */}
-      <Text style={styles.label}>Email</Text>
-      <TextInput
-        style={styles.input}
-        value={email}
-        onChangeText={setEmail}
-        placeholder="Enter email"
-        placeholderTextColor="#888"
-      />
+      <View style={styles.space}><Text></Text></View>
 
-      {/* Password */}
-      <Text style={styles.label}>Password</Text>
-      <TextInput
-        style={styles.input}
-        value={password}
-        onChangeText={setPassword}
-        placeholder="Enter password"
-        secureTextEntry
-        placeholderTextColor="#888"
-      />
-
-      {/* Role */}
+      {/* Label */}
       <Text style={styles.label}>Roles</Text>
 
-      {/* Read-only input that mirrors the selection */}
-      <View>
+      {/* Readonly "input" showing current selection */}
+      <View style={styles.inputContainer}>
 
-      <TextInput
-        style={styles.input}
-        value={selectedRole || 'Please select'}
-        editable={false}
+        <TextInput
+          style={styles.input}
+          value={selectedRole}
+          editable={false}
         />
-        <TouchableOpacity style={{ position: 'absolute', right: 5,padding:12}} onPress={() => setVisible(!visible)}>
-          {visible ? (
-            <Ionicons name="chevron-up" size={24} color="#000" />
-          ) : (
-            <Ionicons name="chevron-down" size={24} color="#000" />
-          )}
-        </TouchableOpacity>
-        </View>
 
-      {/* Options — same height/width as input */}
-      {visible && roles.map((role) => (
         <TouchableOpacity
+          style={[{ ...styles.toggleButton }, { position: 'absolute', right: 0, top: 0, padding: 10 }]}
+          onPress={() => setVisible(!visible)}
+        >
+          <Text style={styles.toggleButtonText}>{visible ? <Ionicons name="chevron-up" size={24} color="#000" /> : <Ionicons name="chevron-down" size={24} color="#00" />}</Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Options */}
+      {roles.map((role) => (
+        visible && <TouchableOpacity
           key={role}
           style={styles.radioRow}
           onPress={() => setSelectedRole(role)}
@@ -101,9 +77,9 @@ export default function AddAdmin() {
         </TouchableOpacity>
       ))}
 
-      {/* Add Button */}
-      <TouchableOpacity onPress={addAdmin} style={styles.addButton}>
-        <Text style={styles.addButtonText}>Add</Text>
+      {/* Save button*/}
+      <TouchableOpacity onPress={updateUserPrevilege} style={styles.addButton}>
+        <Text style={styles.addButtonText}>Save Change</Text>
       </TouchableOpacity>
     </View>
   );
@@ -113,8 +89,14 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#1C2E5C',
-    padding: 20,
-    marginTop: 35,
+    paddingHorizontal: 20
+  },
+  dropdown: {
+    position: 'absolute',
+    right: 10,
+    padding: 5
+  },
+  edit: {
   },
   space: {
     marginTop: '30',
@@ -135,22 +117,22 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 
-  // Base input
+  // Input and option rows share the same height and full width
   input: {
     height: INPUT_HEIGHT,
     backgroundColor: 'white',
     borderRadius: 8,
     paddingHorizontal: 12,
     color: '#000',
+    justifyContent: 'center',
   },
 
-  // Option rows match the input size and full width
   radioRow: {
     height: INPUT_HEIGHT,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    alignSelf: 'stretch',         // full width (same as input)
+    alignSelf: 'stretch',
     backgroundColor: '#EEE',
     paddingHorizontal: 12,
     marginTop: 10,
@@ -179,12 +161,13 @@ const styles = StyleSheet.create({
   },
 
   addButton: {
-    backgroundColor: '#638ECC',
+    backgroundColor: 'white',
     alignSelf: 'center',
     paddingVertical: 10,
     paddingHorizontal: 30,
     borderRadius: 6,
-    marginTop: 76,
+    marginTop: 120,
+    backgroundColor:'#638ECC'
   },
   addButtonText: {
     fontWeight: 'bold',

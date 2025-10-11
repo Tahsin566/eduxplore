@@ -13,66 +13,17 @@ import Markdown from 'react-native-markdown-display';
 
 export default function UniversityOverview({ route }) {
 
+  const { profile, role } = useRole()
   const navigation = useNavigation();
 
+
   const universityName = route.params.universityName;
-
-
   const path = route.params.path;
+
+
   const [universityData, setUniversityData] = useState();
-
-  const { profile, role } = useRole()
-
-  // console.log(universityName)
-
   const [tab, setTab] = useState('overview');
   const [isMarked, setIsMarked] = useState(false);
-
-  const [degree, setDegree] = useState('Bachelor of Engineering');
-  const [courseLocation, setCourseLocation] = useState('Berlin');
-  const [teachingLanguage, setTeachingLanguage] = useState('English');
-  const [languages, setLanguages] = useState('The programme is taught in English.');
-  const [fullTimePartTime, setFullTimePartTime] = useState('full-time');
-  const [programmeDuration, setProgrammeDuration] = useState('7 semesters');
-  const [beginning, setBeginning] = useState('Winter and summer semester');
-
-  const [additionalInfo, setAdditionalInfo] = useState('Intake: April & October');
-
-  const [applicationDeadlines, setApplicationDeadlines] = useState([
-    "Non-EU/EEA applicants: Please apply by 1 February (April intake) or 15 August (October intake). We also recommend that you apply early (at least four months before the start of your programme).",
-    "EU/EEA applicants: Please apply by 1 April (April intake) or 1 October (October intake)."
-  ]);
-
-  const [tuitionFee, setTuitionFee] = useState('4,800 EUR');
-
-  const [additionalTuitionInfo, setAdditionalTuitionInfo] = useState([
-    'Non-EU/EEA tuition fees: 4,800 EUR per semester',
-    'EU/EEA (including Switzerland, Western Balkans and Ukraine) tuition fees: 690 EUR per month',
-    'Please note: The monthly/semester tuition fees remain the same for the entire duration of the study programme.'
-  ]);
-  const [jointDegree, setjointDegree] = useState([
-    'No'
-  ]);
-  const [DescriptionContent, setDescriptionContent] = useState([
-    'Our BEng Applied Mechatronic Systems programme combines mechanical engineering',
-    'electrical engineering and computer science. Strengthen your technical expertise,',
-    'design solutions for electromechanical systems and hone your soft skills',
-    'The Bachelors programme in Applied Mechatronic Systems at SRH will allow you to gain',
-    'a clear understanding of the relevant disciplines of mechatronics, including mechanical',
-    'engineering, electrical engineering and computer science. Apart from brushing up necessary',
-    'skills in mathematics, physics, and statistics, you will get to deepen your programming',
-    'intercultural and communication skills.'
-  ]);
-
-  // Function to handle website press
-  const handleWebsitePress = (url) => {
-    Linking.openURL(url);
-  };
-
-  // Function to handle source press
-  const handleSourcePress = (url) => {
-    Linking.openURL(url);
-  };
 
   const addToWishlist = async () => {
 

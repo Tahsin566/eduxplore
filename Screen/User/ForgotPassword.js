@@ -5,8 +5,11 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'reac
 import Toast from 'react-native-toast-message';
 
 const PasswordReset = ({ navigation }) => {
+
   const { signIn, setActive, isLoaded } = useSignIn()
   const { signOut } = useAuth()
+
+  
   const [email, setEmail] = React.useState('')
   const [password, setPassword] = React.useState('')
   const [code, setCode] = React.useState('')

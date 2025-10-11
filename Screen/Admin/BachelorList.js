@@ -10,13 +10,12 @@ import { TextInput } from 'react-native-gesture-handler';
 const data = ['University 1', 'University 2', 'University 3', 'University 4'];
 
 export default function BachelorList() {
-  const navigation = useNavigation();
-
+  
   const {role} = useRole()
+  const navigation = useNavigation();
 
   const [universities, setUniversities] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [isFound, setIsFound] = useState(false);
 
 
   const getUniversities = async () => {

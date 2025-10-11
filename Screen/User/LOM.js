@@ -19,6 +19,8 @@ import { Ionicons } from '@expo/vector-icons';
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 
 export default function LOMChecker({ navigation }) {
+
+  
   const [messages, setMessages] = useState([]); // {id, role: 'user'|'assistant', content}
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(40);

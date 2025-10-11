@@ -6,16 +6,10 @@ import Footer from '../User/Footer';
 import { Ionicons } from '@expo/vector-icons';
 
 function SearchResult({ navigation, route }) {
+
   const data = route.params;
 
-  const [language, setLanguage] = useState('English');
-  const [beginning, setBeginning] = useState('Winter Semester, Summer Semester');
-  const [duration, setDuration] = useState('7 Semester');
-  const [tuitionFees, setTuitionFees] = useState('EUR 4,800');
-
   const [university, setUniversity] = useState([]);
-
-  console.log(data)
 
   const getUniversitySearch = async () => {
 
@@ -48,9 +42,7 @@ function SearchResult({ navigation, route }) {
         return data.search ? u.ieltsScore <= parseFloat(data.ieltsScore) && u?.name?.toLowerCase()?.includes(data.search?.toLowerCase()): u.ieltsScore <= parseFloat(data.ieltsScore);
         
       })
-      console.log(uni)
       setUniversity(filteredUni);
-      console.log(filteredUni)
     } catch (error) {
       console.log('');
     }

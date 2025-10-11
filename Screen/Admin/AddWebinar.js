@@ -10,8 +10,10 @@ import Toast from 'react-native-toast-message';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
 export default function AddSeminar() {
-  const navigation = useNavigation();
+
+  
   const { role } = useRole();
+  const navigation = useNavigation();
 
   const [topic, setTopic] = useState('');
   const [date, setDate] = useState(new Date());

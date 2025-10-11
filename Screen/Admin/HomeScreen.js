@@ -15,10 +15,9 @@ import AdminFooter from './adminFooter';
 const HomeScreen = () => {
 
   const { user } = useUser();
+  const {role,profile} = useRole()
 
   const navigation = useNavigation();
-
-  const {role,profile} = useRole()
 
   const [image, setImage] = useState(profile?.photo);
 

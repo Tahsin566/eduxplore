@@ -11,11 +11,11 @@ import * as ImagePicker from 'expo-image-picker';
 
 const ViewProfile = () => {
 
-  const navigation = useNavigation();
   const { signOut } = useAuth()
   const { user,isSignedIn } = useUser()
-
   const { profile, role, userId } = useRole()
+  const navigation = useNavigation();
+
 
   const [userDetails, setUserDetails] = useState();
   const [image, setImage] = useState(profile?.photo);

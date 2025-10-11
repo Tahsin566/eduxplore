@@ -6,9 +6,10 @@ import Footer from '../User/Footer';
 import { useRole } from '../../auth.context';
 
 export default function UniversityList() {
+  
+  const {role} = useRole();
   const navigation = useNavigation();
 
-  const {role} = useRole();
 
   return (
     <>

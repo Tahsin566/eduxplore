@@ -12,11 +12,10 @@ const INPUT_HEIGHT = 48;
 export default function SendNotification() {
 
   const {role} = useRole()
-
   const navigation = useNavigation();
+
   const [message, setMessage] = useState('');
   const [recipient, setRecipient] = useState(null);
-
   const [isVisible, setIsVisible] = useState(false);
 
   const SendNotification = async() => {
