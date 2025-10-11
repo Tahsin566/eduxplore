@@ -20,11 +20,11 @@ import AdminRolesScreen from './Screen/Admin/RolesScreen.js';
 import BachelorList from './Screen/Admin/BachelorList.js';
 import MastersList from './Screen/Admin/MastersList.js';
 import AddSeminar from './Screen/Admin/AddWebinar.js'
-import UpdateSeminar from './Screen/Admin/UpdateWebinar.js';
+import UpdateWebinar from './Screen/Admin/UpdateWebinar.js';
 import RegisteredList from './Screen/Admin/RegisteredList.js'
-import UniversityOverview from './Screen/Admin/UniversityDetails.js'
-import AddOverView from './Screen/Admin/AddUniDetails.js'
-import UpdateOVerView from './Screen/Admin/UpdateUniDetails.js'
+import UniversityDetails from './Screen/Admin/UniversityDetails.js'
+import AddUniDetails from './Screen/Admin/AddUniDetails.js'
+import UpdateUniDetails from './Screen/Admin/UpdateUniDetails.js'
 import Notification from './Screen/User/Notification.js';
 import HomeScreen from './Screen/Admin/HomeScreen.js';
 import CoustomSend from './Screen/Admin/SendNotification.js';
@@ -72,11 +72,11 @@ export default function AppNavigator() {
       <Stack.Screen name="MastersList" component={MastersList} />
       <Stack.Screen name="phdList" component={PHDList} />
       <Stack.Screen name="AddSeminar" component={AddSeminar} />
-      <Stack.Screen name="EditSeminar" component={UpdateSeminar} />
+      <Stack.Screen name="EditSeminar" component={UpdateWebinar} />
       <Stack.Screen name="RegisterList" component={RegisteredList} />
-      <Stack.Screen name="UniversityOverview" component={UniversityOverview} />
-      <Stack.Screen name="AddOverView" component={AddOverView} />
-      <Stack.Screen name="UpdateOVerView" component={UpdateOVerView} />
+      <Stack.Screen name="UniversityOverview" component={UniversityDetails} />
+      <Stack.Screen name="AddOverView" component={AddUniDetails} />
+      <Stack.Screen name="UpdateOVerView" component={UpdateUniDetails} />
       <Stack.Screen name="Notification" component={Notification} />
       <Stack.Screen name="UniversityList" component={UniversityList} />
       <Stack.Screen name="CoustomSend" component={CoustomSend} />
