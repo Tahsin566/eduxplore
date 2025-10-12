@@ -2,7 +2,7 @@ import { Ionicons } from '@expo/vector-icons';
 import React, { useLayoutEffect } from 'react';
 import { ScrollView, View, Text, TouchableOpacity, Linking, Image, StyleSheet } from 'react-native';
 
-import Footer from '../User/Footer';                 // ⬅️ add footer
+import Footer from '../User/Footer';             
 
 const step1Image = require('../../Images/Appointment1.png');
 const step2Image = require('../../Images/Appointment2.png'); 
@@ -96,7 +96,7 @@ const styles = StyleSheet.create({
     fontWeight: '600' 
   },
 
-  // Scroll content gets bottom padding so last items aren't under the footer
+  
   content: {
     paddingBottom: 110,
     paddingHorizontal: 8
@@ -140,7 +140,6 @@ const styles = StyleSheet.create({
     marginRight:10, 
   },
 
-  // Footer placement
   footerWrap: {
     position: 'absolute',
     left: 0,

@@ -218,7 +218,6 @@ const styles = StyleSheet.create({
     paddingBottom: 24
   },
 
-  /* App bar (dark navy, centered title) */
   appbar: {
     paddingHorizontal: 12,
     flexDirection: 'row',
@@ -252,7 +251,6 @@ const styles = StyleSheet.create({
   },
   inputText: { color: '#1F2937' },
 
-  /* right-aligned compact picker card (like the screenshot) */
   pickerCardRight: {
     alignSelf: 'flex-end',
     backgroundColor: '#FFFFFF',
@@ -267,8 +265,6 @@ const styles = StyleSheet.create({
   },
   option: { paddingVertical: 8, paddingHorizontal: 10 },
   optionText: { color: '#1F2937', fontSize: 12 },
-
-  /* Save button full width like the mock */
   saveBtn: {
     backgroundColor: '#FFFFFF',
     borderRadius: 6,

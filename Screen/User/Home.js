@@ -1,26 +1,21 @@
-// Home.js
 import { View, Text, TouchableOpacity, StatusBar, StyleSheet } from 'react-native';
-import { Ionicons, FontAwesome5, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
+import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
 import { useRole } from '../../auth.context';
-import { useEffect } from 'react';
 import Footer from '../User/Footer';
 
 function Home({ navigation }) {
   const { role, profile } = useRole();
 
-
-  const name = profile?.name?.includes('null') ? profile?.name?.replace('null', '') : profile?.name;
+  const rawName = profile?.name || '';
+  const name = rawName.includes('null') ? rawName.replace('null', '') : rawName;
 
   return (
     <View style={styles.container}>
       <StatusBar />
 
-      {/* Header bar with centered title + previous notification icon */}
+      {/* Header bar with centered title + notification icon */}
       <View style={styles.headerBar}>
-        {/* centered title (absolute so it's always centered) */}
         <Text style={styles.headerTitle}>Eduexplore</Text>
-
-        {/* previous notification icon (white) on the right */}
         <TouchableOpacity
           style={styles.notifBtn}
           onPress={() =>
@@ -43,42 +38,77 @@ function Home({ navigation }) {
 
       {/* Grid */}
       <View style={styles.grid}>
-        <Feature
-          icon={<MaterialCommunityIcons name="calendar-clock" size={26} color="#fff" />}
-          title="Appointment"
-          subtitle="Schedule meeting"
+        <TouchableOpacity
+          style={styles.feature}
+          activeOpacity={0.85}
           onPress={() => navigation.navigate('Appointment')}
-        />
-        <Feature
-          icon={<MaterialCommunityIcons name="school" size={26} color="#fff" />}
-          title="University List"
-          subtitle="Explore programs"
+        >
+          <View style={styles.featureCircle}>
+            <MaterialCommunityIcons name="calendar-clock" size={26} color="#fff" />
+          </View>
+          <Text style={styles.featureTitle}>Appointment</Text>
+          <Text style={styles.featureSubtitle}>Schedule meeting</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.feature}
+          activeOpacity={0.85}
           onPress={() => navigation.navigate('UniversityList')}
-        />
-        <Feature
-          icon={<MaterialCommunityIcons name="office-building" size={26} color="#fff" />}
-          title="Find University"
-          subtitle="Search & Compare"
+        >
+          <View style={styles.featureCircle}>
+            <MaterialCommunityIcons name="school" size={26} color="#fff" />
+          </View>
+          <Text style={styles.featureTitle}>University List</Text>
+          <Text style={styles.featureSubtitle}>Explore programs</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.feature}
+          activeOpacity={0.85}
           onPress={() => navigation.navigate('Search')}
-        />
-        <Feature
-          icon={<MaterialIcons name="calculate" size={26} color="#fff" />}
-          title="Grade Converter"
-          subtitle="Calculator CGPA"
+        >
+          <View style={styles.featureCircle}>
+            <MaterialCommunityIcons name="office-building" size={26} color="#fff" />
+          </View>
+          <Text style={styles.featureTitle}>Find University</Text>
+          <Text style={styles.featureSubtitle}>Search & Compare</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.feature}
+          activeOpacity={0.85}
           onPress={() => navigation.navigate('GradeConverter')}
-        />
-        <Feature
-          icon={<MaterialCommunityIcons name="file-check" size={26} color="#fff" />}
-          title="LOM Checker"
-          subtitle="Review your letter"
+        >
+          <View style={styles.featureCircle}>
+            <MaterialIcons name="calculate" size={26} color="#fff" />
+          </View>
+          <Text style={styles.featureTitle}>Grade Converter</Text>
+          <Text style={styles.featureSubtitle}>Calculator CGPA</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.feature}
+          activeOpacity={0.85}
           onPress={() => navigation.navigate('LOM')}
-        />
-        <Feature
-          icon={<MaterialCommunityIcons name="presentation-play" size={26} color="#fff" />}
-          title="Webinars"
-          subtitle="Events & Workshops"
+        >
+          <View style={styles.featureCircle}>
+            <MaterialCommunityIcons name="file-check" size={26} color="#fff" />
+          </View>
+          <Text style={styles.featureTitle}>LOM Checker</Text>
+          <Text style={styles.featureSubtitle}>Review your letter</Text>
+        </TouchableOpacity>
+
+        <TouchableOpacity
+          style={styles.feature}
+          activeOpacity={0.85}
           onPress={() => navigation.navigate('Seminars')}
-        />
+        >
+          <View style={styles.featureCircle}>
+            <MaterialCommunityIcons name="presentation-play" size={26} color="#fff" />
+          </View>
+          <Text style={styles.featureTitle}>Webinars</Text>
+          <Text style={styles.featureSubtitle}>Events & Workshops</Text>
+        </TouchableOpacity>
       </View>
 
       {/* Footer */}
@@ -91,30 +121,16 @@ function Home({ navigation }) {
 
 export default Home;
 
-/* ---------- helper ---------- */
-function Feature({ icon, title, subtitle, onPress }) {
-  return (
-    <TouchableOpacity style={styles.feature} onPress={onPress} activeOpacity={0.85}>
-      <View style={styles.featureCircle}>{icon}</View>
-      <Text style={styles.featureTitle}>{title}</Text>
-      <Text style={styles.featureSubtitle}>{subtitle}</Text>
-    </TouchableOpacity>
-  );
-}
-
-/* ---------- styles ---------- */
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#1C2E5C' },
 
-  // header: centered title + white bell
   headerBar: {
     height: 60,
     backgroundColor: '#234B6C',
     marginTop: 16,
-    marginHorizontal: 16,
-    borderRadius: 2,
     width: '87%',
-    marginHorizontal:'auto',
+    alignSelf: 'center',          // simple centering (beginner-friendly)
+    borderRadius: 2,
     justifyContent: 'center',
   },
   headerTitle: {
@@ -134,7 +150,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  // welcome card
   welcomeCard: {
     backgroundColor: '#3867E7',
     marginTop: 18,
@@ -146,13 +161,12 @@ const styles = StyleSheet.create({
   welcomeTitle: { color: '#FFFFFF', fontSize: 16, fontWeight: '800', marginBottom: 6 },
   welcomeBody: { color: '#E7EEFF', fontSize: 12, lineHeight: 18 },
 
-  // grid
   grid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: 18,
     marginTop: 18,
-    paddingBottom: 90, // room for footer
+    paddingBottom: 90,
   },
   feature: { width: '50%', paddingVertical: 14, alignItems: 'center' },
   featureCircle: {
@@ -167,6 +181,5 @@ const styles = StyleSheet.create({
   featureTitle: { color: '#FFFFFF', fontWeight: '700', fontSize: 13 },
   featureSubtitle: { color: '#BFD1E6', fontSize: 10, marginTop: 2, textAlign: 'center' },
 
-  // footer
   footerWrap: { position: 'absolute', left: 0, right: 0, bottom: 0 },
 });

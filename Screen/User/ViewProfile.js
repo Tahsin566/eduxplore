@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { useRole } from '../../auth.context'
-import { collection, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore'
+import { collection, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore'
 import { db } from '../../firebase.config'
 import { useAuth, useUser } from '@clerk/clerk-expo'
 import { useNavigation } from '@react-navigation/native'
@@ -16,13 +16,11 @@ const ViewProfile = () => {
   const { profile, role, userId } = useRole()
   const navigation = useNavigation();
 
-
   const [userDetails, setUserDetails] = useState();
   const [image, setImage] = useState(profile?.photo);
   const [file, setFile] = useState();
 
   const pickImage = async () => {
-
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissionResult.granted) {
       alert('Permission to access media library is required!');
@@ -48,8 +46,6 @@ const ViewProfile = () => {
   };
 
   const uploadToCloudinary = async () => {
-
-
     if (!file) return
 
     const formData = new FormData();
@@ -64,7 +60,6 @@ const ViewProfile = () => {
 
       const data = await response.json();
       console.log(data)
-      // console.log(JSON.stringify(data, null, 2));
       return data?.secure_url
 
     } catch (error) {
@@ -73,31 +68,27 @@ const ViewProfile = () => {
     }
   };
 
-
   const uploadProfilePic = async () => {
     const imageUrl = await uploadToCloudinary();
 
     if (!imageUrl) return
-
     try {
       await updateDoc(doc(db, "users", userId), {
         photo: imageUrl
       })
       setFile()
       console.log('Document updated');
-    } catch (error) {
+    } 
+    catch (error) {
       console.log('Error adding document: ', error);
     }
   }
-
 
   useEffect(() => {
     setImage(profile?.photo)
   }, [profile?.photo])
 
   useEffect(() => {
-
-
     const q = query(collection(db, "profile"), where("email", "==", profile?.email));
     const unsubscribe = onSnapshot(q, (snapshot) => {
       const profile = snapshot.docs.map((doc) => { return { ...doc.data(), id: doc.id } });
@@ -144,8 +135,6 @@ const ViewProfile = () => {
 
         <View style={styles.buttonContainer}>
 
-
-
           {role === 'user' && <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ProfileSettings')}>
             <Text style={styles.buttonText}>Edit Profile</Text>
           </TouchableOpacity>}
@@ -155,9 +144,7 @@ const ViewProfile = () => {
             <Text style={[{ ...styles.buttonText }, { color: 'red' }]}>Logout</Text>
           </TouchableOpacity>
         </View>
-
       </View>
-
     </>
   )
 }

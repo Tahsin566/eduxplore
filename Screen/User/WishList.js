@@ -5,7 +5,7 @@ import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
 import WishlistItem from './WishlistItem';
 import { Ionicons } from '@expo/vector-icons';
-import Footer from '../User/Footer';            // ⬅️ add footer import
+import Footer from '../User/Footer';  
 
 function WishList({ navigation }) {
 
@@ -93,6 +93,7 @@ function WishList({ navigation }) {
   );
 }
 
+export default WishList;
 const styles = StyleSheet.create({
   root: {
     flex: 1,
@@ -105,7 +106,6 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
 
-  // Header
   headerBar: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -123,12 +123,9 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  // Main content
   scroll: {
-    paddingBottom: 110,   // ⬅️ room for footer so content isn't covered
+    paddingBottom: 110,   
   },
-
-  // (kept original card styles in case they're used in WishlistItem)
   cardContainer: {
     backgroundColor: '#FFFFFF',
     borderRadius: 8,
@@ -166,7 +163,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 
-  // Footer placement
   footerWrap: {
     position: 'absolute',
     left: 0,
@@ -175,4 +171,4 @@ const styles = StyleSheet.create({
   },
 });
 
-export default WishList;
+

@@ -8,11 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 function SearchResult({ navigation, route }) {
 
   const data = route.params;
-
   const [university, setUniversity] = useState([]);
-
   const getUniversitySearch = async () => {
-
     setUniversity([]);
 
     try {
@@ -30,7 +27,6 @@ function SearchResult({ navigation, route }) {
         
         );
       }
-
 
       const res = await getDocs(q);
       if (res.docs.length === 0) {
@@ -131,7 +127,6 @@ const styles = StyleSheet.create({
     paddingBottom: 16,
   },
 
-  // Header
   headerBar: {
     height: 48,
     flexDirection: 'row',
@@ -157,7 +152,6 @@ const styles = StyleSheet.create({
     fontWeight: '700',
   },
 
-  // Main content
   scroll: {
     paddingBottom: 24,
   },

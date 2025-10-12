@@ -1,5 +1,3 @@
-// Footer.js
-import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -26,7 +24,6 @@ export default function Footer() {
         circleBg="#FFFFFF"
         circleBorder="#111"
         icon={<FontAwesome5 name="bookmark" size={19} color="#111" />}
-        // badge="1"
         onPress={goWishlist}
       />
       <NavItem
@@ -70,8 +67,7 @@ function NavItem({ label, icon, onPress, circleBg, circleBorder, badge }) {
 const styles = StyleSheet.create({
   container: {
     backgroundColor: '#5C7898',
-    // border removed
-    paddingVertical: 8,         // reduced height
+    paddingVertical: 8,         
     paddingHorizontal: 8,
     flexDirection: 'row',
     justifyContent: 'space-around',
@@ -79,7 +75,7 @@ const styles = StyleSheet.create({
   },
   item: { alignItems: 'center', minWidth: 62 },
   iconCircle: {
-    width: 40,                  // smaller
+    width: 40,                  
     height: 40,
     borderRadius: 20,
     alignItems: 'center',
@@ -102,9 +98,9 @@ const styles = StyleSheet.create({
   },
   badgeText: { color: '#fff', fontSize: 10, fontWeight: '700' },
   label: {
-    marginTop: 4,               // tighter spacing
+    marginTop: 4,             
     color: '#FFFFFF',
     fontWeight: '800',
-    fontSize: 14,               // smaller text
+    fontSize: 14,              
   },
 });

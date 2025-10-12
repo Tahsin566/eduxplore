@@ -53,7 +53,6 @@ const PasswordReset = ({ navigation }) => {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId })
-        // router.replace('/')
       } else {
         console.log(result)
       }

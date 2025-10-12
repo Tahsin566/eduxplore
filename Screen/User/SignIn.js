@@ -51,8 +51,7 @@ function SignIn({ navigation }) {
       if(error?.errors?.[0]?.longMessage?.includes('Identifier is invalid')) Toast.show({ text1: 'Incorrect email or password', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       else Toast.show({ text1: 'Error signing in', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
-  };  
-  // ----- Simple code-drawn logo (kept) -----
+  };
   const Logo = () => (
     <View style={styles.logoCircleOuter}>
       <View style={styles.logoCircleInner}>
@@ -64,14 +63,6 @@ function SignIn({ navigation }) {
       </View>
     </View>
   );
-
-  // if(isSignedIn){
-  //   return (
-  //     <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center',backgroundColor:'#1C2E5C' }}>
-  //       <ActivityIndicator size="large" color="#fff" />
-  //     </View>
-  //   )
-  // }
 
   return (
     <ScrollView contentContainerStyle={{ flexGrow: 1, backgroundColor: '#13294B' }}>
@@ -152,7 +143,7 @@ const styles = StyleSheet.create({
     flexGrow: 1,
     paddingTop: 36,
     paddingHorizontal: 24,
-    backgroundColor: '#1C2E5C', // deep navy from screenshot
+    backgroundColor: '#1C2E5C',
     alignItems: 'center',
     justifyContent: 'flex-start',
   },
@@ -182,7 +173,6 @@ const styles = StyleSheet.create({
 
   header: { fontSize: 24, color: '#FFFFFF', fontWeight: '700', textAlign: 'center' },
 
-  /* Card (only colors changed) */
   card: {
     width: '100%',
     backgroundColor: '#1C2E5C',
@@ -196,7 +186,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
-    backgroundColor: '#FFFFFF',   // white button
+    backgroundColor: '#FFFFFF',
     borderRadius: 10,
     height: 48,
     paddingHorizontal: 12,
@@ -223,8 +213,6 @@ const styles = StyleSheet.create({
   },
 
   forgotPassword: { paddingTop: 8, color: '#53A2FF', fontWeight: '700', fontSize: 12 },
-
-  // Primary sign-in: white button with dark text (same layout as your original)
   primaryBtn: {
     backgroundColor: '#FFFFFF',
     borderRadius: 10,

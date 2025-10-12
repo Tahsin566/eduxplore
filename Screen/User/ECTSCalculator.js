@@ -5,7 +5,6 @@ import Footer from '../User/Footer';
 
 export default function ECTSCalculatorScreen({ navigation }) {
 
-  
   const [bdCredit, setBdCredit] = useState('');
   const [ects, setEcts] = useState('');
 
@@ -85,15 +84,11 @@ export default function ECTSCalculatorScreen({ navigation }) {
   );
 }
 
-const NAVY = '#1C2E5C';
-const CARD_BG = '#E9EEF3';
-const TILE_BG = '#6C5CE7';
-const CTA_BG = '#4C6EF5';
 
 const styles = StyleSheet.create({
   screen: {
     flex: 1,
-    backgroundColor: NAVY,
+    backgroundColor: '#1C2E5C',
   },
 
   topBar: {
@@ -113,7 +108,7 @@ const styles = StyleSheet.create({
   },
 
   card: {
-    backgroundColor: CARD_BG,
+    backgroundColor: '#E9EEF3',
     borderRadius: 10,
     padding: 16,
     marginTop: 10,
@@ -128,7 +123,7 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 12,
     alignSelf: 'center',
-    backgroundColor: TILE_BG,
+    backgroundColor: '#6C5CE7',
     alignItems: 'center',
     justifyContent: 'center',
     marginBottom: 10,
@@ -163,7 +158,7 @@ const styles = StyleSheet.create({
   calcBtn: {
     alignSelf: 'center',
     marginTop: 12,
-    backgroundColor: CTA_BG,
+    backgroundColor: '#4C6EF5',
     borderRadius: 6,
     height: 36,
     paddingHorizontal: 16,

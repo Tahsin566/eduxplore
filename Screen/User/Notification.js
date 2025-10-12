@@ -1,5 +1,3 @@
-
-
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
@@ -10,15 +8,11 @@ import { useRole } from '../../auth.context';
 
 export default function NotificationScreen() {
 
-  
   const { role } = useRole();
   const navigation = useNavigation();
-
-
   const [notifications, setNotifications] = useState([]);
 
   useEffect(() => {
-
     let q = null
 
     if(role === 'moderator'){
@@ -28,7 +22,6 @@ export default function NotificationScreen() {
       q = query(collection(db, "notification"), orderBy("time", "desc"),where('recipient', '==', 'user'));
     }
 
-    
     onSnapshot(q ,(snapshot) => {
       const notifications = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setNotifications(notifications);
@@ -62,7 +55,6 @@ export default function NotificationScreen() {
           <Text>{notification.message}</Text>
         </View>
       ))}
-
 
     </SafeAreaView>
   );

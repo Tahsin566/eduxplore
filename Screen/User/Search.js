@@ -1,19 +1,8 @@
 import { Ionicons } from '@expo/vector-icons';
-import React, { useEffect, useState } from 'react';
-import {
-  Alert,
-  ScrollView,
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  StatusBar,
-  KeyboardAvoidingView,
-  Platform,
-} from 'react-native';
+import React, { useState } from 'react';
+import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, StatusBar, KeyboardAvoidingView, Platform } from 'react-native';
 import Slider from '@react-native-community/slider';
-import Footer from '../User/Footer'; // ⬅️ footer
+import Footer from '../User/Footer';
 
 /* Small chip button */
 function Chip({ label, selected, onPress, style }) {
@@ -36,10 +25,7 @@ function Chip({ label, selected, onPress, style }) {
 
 export default function FindUniversity({ navigation }) {
 
-  
   const [search, setSearch] = useState('');
-
-  // single-select per section
   const [courseType, setCourseType] = useState(null);
   const [courseLanguage, setCourseLanguage] = useState(null);
   const [intake, setIntake] = useState(null);
@@ -59,7 +45,6 @@ export default function FindUniversity({ navigation }) {
   const toggle = (current, value, setter) => {
     setter(current === value ? null : value);
   };
-
 
   return (
     <View style={styles.root}>
@@ -201,8 +186,6 @@ const styles = StyleSheet.create({
   headerTitle: { color: '#E7EDF3', fontSize: 18, fontWeight: '700' },
 
   scroll: { paddingBottom: 24 },
-
-  /* Search */
   searchWrap: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -249,8 +232,6 @@ const styles = StyleSheet.create({
     minWidth: 180,
   },
   searchButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 15, textAlign: 'center' },
-
-  /* Footer holder */
   footerWrap: {
     position: 'absolute',
     left: 0,

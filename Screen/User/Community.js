@@ -1,8 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react';
 import {
   View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView,
-  Image, Alert, ActivityIndicator, Modal, Pressable, KeyboardAvoidingView, Platform,
-  Keyboard
+  Image, Alert, ActivityIndicator, Modal, Pressable, KeyboardAvoidingView, Platform
 } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Clipboard from 'expo-clipboard';
@@ -14,10 +13,12 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
 export default function Community({ navigation }) {
-  
+
+  // auth / role
   const { user } = useUser();
   const { role, profile } = useRole();
 
+  // basic states
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [image, setImage] = useState(null);
@@ -34,64 +35,84 @@ export default function Community({ navigation }) {
   // UI-only local hide for “delete” without touching DB
   const [hiddenIds, setHiddenIds] = useState(new Set());
 
+  // safe area
   const insets = useSafeAreaInsets();
 
   // full-screen image viewer
   const [viewerUri, setViewerUri] = useState(null);
 
-  // Scroll + composer measurement
+  // scroll
   const scrollRef = useRef(null);
-  const [composerHeight, setComposerHeight] = useState(58); // default guess
 
-  // --- NEW: map message id -> y position for scrolling to original
-  const itemPositionsRef = useRef(new Map());      // id -> y
-  const rowRefs = useRef(new Map());               // id -> ref
+  // simple composer height calc (kept same behavior)
+  const [composerHeight, setComposerHeight] = useState(58);
+
+  // --- keep jump-to-original but make it beginner-style (use plain objects instead of Map)
+  const positionsRef = useRef({}); // { [id]: y }
   const [highlightedId, setHighlightedId] = useState(null);
 
+  // subscribe to chat
   useEffect(() => {
     const q = query(collection(db, 'chat'), orderBy('time', 'asc'));
     const unsub = onSnapshot(q, (snapshot) => {
       if (!snapshot) return;
       const chats = [];
-      snapshot.docs.forEach((doc) => {
-        chats.push({ ...doc.data(), id: doc.id });
+      snapshot.docs.forEach((d) => {
+        const data = d.data();
+        chats.push({ ...data, id: d.id });
       });
       setMessages(chats);
       setLoading(false);
 
-      // scroll to bottom on new messages
+      // auto-scroll to bottom on new content
       setTimeout(() => {
-        if (scrollRef.current) scrollRef.current.scrollToEnd({ animated: true });
+        if (scrollRef.current) {
+          scrollRef.current.scrollToEnd({ animated: true });
+        }
       }, 50);
     });
-    return () => unsub && unsub();
+    return () => {
+      if (unsub) unsub();
+    };
   }, []);
 
   const myEmail = user?.emailAddresses?.[0]?.emailAddress;
 
-  const displayNameOf = (msg) =>
-    (msg?.name && String(msg.name).trim()) ||
-    (msg?.email ? msg.email.split('@')[0] : 'User');
+  function displayNameOf(msg) {
+    if (msg && msg.name && String(msg.name).trim()) {
+      return String(msg.name).trim();
+    }
+    if (msg && msg.email) {
+      const parts = msg.email.split('@');
+      return parts[0] || 'User';
+    }
+    return 'User';
+  }
 
-  const formatTime = (t) => {
+  function formatTime(t) {
     try {
-      let d;
       if (!t) return '';
-      if (t.seconds) d = new Date(t.seconds * 1000);
-      else d = new Date(t);
+      let d;
+      if (t.seconds) {
+        d = new Date(t.seconds * 1000);
+      } else {
+        d = new Date(t);
+      }
       if (isNaN(d.getTime())) return '';
       let hr = d.getHours();
       const min = String(d.getMinutes()).padStart(2, '0');
       const ampm = hr >= 12 ? 'PM' : 'AM';
       hr = hr % 12 || 12;
-      return `${hr}:${min} ${ampm}`;
-    } catch { return ''; }
-  };
+      return hr + ':' + min + ' ' + ampm;
+    } catch (e) {
+      return '';
+    }
+  }
 
-  const parseReplyParts = (text) => {
+  function parseReplyParts(text) {
     if (!text) return { quote: null, body: '' };
     const prefix = '↪ Replying to: ';
-    if (text.startsWith(prefix)) {
+    if (text.indexOf(prefix) === 0) {
       const nl = text.indexOf('\n');
       const head = nl !== -1 ? text.slice(0, nl) : text;
       const body = nl !== -1 ? text.slice(nl + 1) : '';
@@ -99,15 +120,17 @@ export default function Community({ navigation }) {
       return { quote, body };
     }
     return { quote: null, body: text };
-  };
+  }
 
-  const canDelete = (msg) => role === 'admin' || msg?.email === myEmail;
+  function canDelete(msg) {
+    return role === 'admin' || (msg && msg.email === myEmail);
+  }
 
-  // Image picker
+  // pick image (basic)
   const pickImage = async () => {
-    const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permissionResult.granted) {
-      alert('Permission to access media library is required!');
+    const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
+    if (!perm.granted) {
+      Alert.alert('Permission to access media library is required!');
       return;
     }
     const result = await ImagePicker.launchImageLibraryAsync({
@@ -117,59 +140,59 @@ export default function Community({ navigation }) {
       quality: 1,
     });
     if (!result.canceled) {
-      const newFile = {
+      const f = {
         uri: result.assets[0].uri,
         type: result.assets[0].mimeType,
         name: result.assets[0].fileName
-      }
+      };
       setImage(result.assets[0].uri);
-      setFile(newFile);
+      setFile(f);
     }
   };
 
+  // upload (kept same)
   const uploadToCloudinary = async () => {
-    if (!file) return
+    if (!file) return;
     const formData = new FormData();
     formData.append('file', file);
     formData.append('upload_preset', 'images-expo-app');
-
     try {
       const response = await fetch('https://api.cloudinary.com/v1_1/dkmdyo7bm/image/upload', {
         method: 'POST',
         body: formData
       });
-
       const data = await response.json();
-      return data?.secure_url
-    } catch (error) {
-      console.log('Error uploading image:', error.message);
-      return profile?.photo
+      return data && data.secure_url ? data.secure_url : '';
+    } catch (err) {
+      console.log('Error uploading image:', err.message);
+      return profile?.photo;
     }
   };
 
-  // Send message
+  // send (kept same)
   const sendMessage = async () => {
-    if (!message.trim() && !image) {
+    if ((!message || !message.trim()) && !image) {
       Alert.alert('Please enter a message or pick an image');
       return;
     }
-    const quoted =
-      replyTo?.text
-        ? `↪ Replying to: ${replyTo.text.length > 80 ? replyTo.text.slice(0, 80) + '…' : replyTo.text}\n`
-        : replyTo?.image
-          ? `↪ Replying to: Photo\n`
-          : '';
+
+    let quoted = '';
+    if (replyTo && replyTo.text) {
+      const t = replyTo.text.length > 80 ? replyTo.text.slice(0, 80) + '…' : replyTo.text;
+      quoted = '↪ Replying to: ' + t + '\n';
+    } else if (replyTo && replyTo.image) {
+      quoted = '↪ Replying to: Photo\n';
+    }
 
     try {
       addDoc(collection(db, 'chat'), {
         name: profile?.name,
         email: myEmail,
         message: quoted + (message || ''),
-        photo: profile?.photo || user.imageUrl,                 // sender's profile image saved on message
-        image: await uploadToCloudinary() || '',
+        photo: profile?.photo || user.imageUrl,
+        image: (await uploadToCloudinary()) || '',
         time: new Date(),
-        // --- NEW: store pointer to original message (if any)
-        replyToId: replyTo?.id || null,
+        replyToId: replyTo ? (replyTo.id || null) : null,
       });
     } catch (e) {
       console.log('Error adding document: ', e);
@@ -181,11 +204,13 @@ export default function Community({ navigation }) {
     setFile(null);
 
     requestAnimationFrame(() => {
-      if (scrollRef.current) scrollRef.current.scrollToEnd({ animated: true });
+      if (scrollRef.current) {
+        scrollRef.current.scrollToEnd({ animated: true });
+      }
     });
   };
 
-  // Long-press actions (UI only)
+  // actions
   const onLongPressMessage = (msg) => {
     setSelectedMsg(msg);
     setActionOpen(true);
@@ -197,13 +222,13 @@ export default function Community({ navigation }) {
       id: selectedMsg.id,
       text: selectedMsg.message || '',
       image: selectedMsg.image || null,
-      email: selectedMsg.email || '',
+      email: selectedMsg.email || ''
     });
     setActionOpen(false);
   };
 
   const handleCopy = async () => {
-    if (!selectedMsg?.message) {
+    if (!selectedMsg || !selectedMsg.message) {
       Alert.alert('Nothing to copy');
       return;
     }
@@ -212,7 +237,6 @@ export default function Community({ navigation }) {
     Alert.alert('Copied to clipboard');
   };
 
-  // UI-only delete
   const handleDeleteLocal = () => {
     if (!selectedMsg) return;
     if (!canDelete(selectedMsg)) {
@@ -221,54 +245,59 @@ export default function Community({ navigation }) {
       return;
     }
     try {
-      deleteDoc(doc(db, 'chat', selectedMsg?.id));
+      deleteDoc(doc(db, 'chat', selectedMsg.id));
       setActionOpen(false);
-    } catch (error) {
-      console.log('Error adding document: ', error);
+    } catch (err) {
+      console.log('Error adding document: ', err);
     }
   };
 
-  // Avatars: only use sender profile image
-  const resolveAvatar = (msg, isMine) => {
+  // avatar (kept same)
+  function resolveAvatar(msg, isMine) {
     if (isMine) {
       return profile?.photo || user?.imageUrl || null;
     }
-    return msg?.photo || null;
-  };
+    return msg && msg.photo ? msg.photo : null;
+  }
 
-  // --- NEW: scroll to original replied message + highlight
-  const flashHighlight = (id) => {
+  // simple highlight timer
+  function flashHighlight(id) {
     setHighlightedId(id);
-    setTimeout(() => setHighlightedId(null), 1200);
-  };
+    setTimeout(() => {
+      setHighlightedId(null);
+    }, 1200);
+  }
 
-  const scrollToOriginal = (replyToId, quoteText) => {
+  // jump to original (beginner style: plain object lookups)
+  function scrollToOriginal(replyToId, quoteText) {
     if (!scrollRef.current) return;
 
-    // Prefer id
-    if (replyToId && itemPositionsRef.current.has(replyToId)) {
-      const y = itemPositionsRef.current.get(replyToId);
-      scrollRef.current.scrollTo({ y: Math.max(0, y - 12), animated: true });
+    if (replyToId && positionsRef.current && positionsRef.current[replyToId] !== undefined) {
+      const y = positionsRef.current[replyToId];
+      const targetY = y > 12 ? y - 12 : 0;
+      scrollRef.current.scrollTo({ y: targetY, animated: true });
       flashHighlight(replyToId);
       return;
     }
 
-    // Fallback by quote text (older messages without replyToId)
     if (quoteText) {
-      const target = messages.find((m) => (m?.message || '').includes(quoteText));
-      if (target && itemPositionsRef.current.has(target.id)) {
-        const y = itemPositionsRef.current.get(target.id);
-        scrollRef.current.scrollTo({ y: Math.max(0, y - 12), animated: true });
+      const target = messages.find((m) => {
+        const mm = (m && m.message) ? m.message : '';
+        return mm.indexOf(quoteText) !== -1;
+      });
+      if (target && positionsRef.current[target.id] !== undefined) {
+        const y = positionsRef.current[target.id];
+        const targetY = y > 12 ? y - 12 : 0;
+        scrollRef.current.scrollTo({ y: targetY, animated: true });
         flashHighlight(target.id);
       }
     }
-  };
-  
-  
-  // Filter messages
+  }
+
+  // filter (kept same behavior)
   const shownMessages = messages
     .filter((m) => !hiddenIds.has(m.id))
-    .filter((m) => (m.message || '').toLowerCase().includes(searchQuery.toLowerCase()));
+    .filter((m) => ((m && m.message) ? m.message : '').toLowerCase().includes(searchQuery.toLowerCase()));
 
   if (loading) {
     return (
@@ -280,14 +309,14 @@ export default function Community({ navigation }) {
 
   const bottomInsetPad = insets.bottom > 0 ? 4 : 0;
 
-
   return (
     <KeyboardAvoidingView
       style={styles.kav}
       behavior="padding"
-      keyboardVerticalOffset={Platform.OS  === 'ios' ? 84 : 45 }
+      keyboardVerticalOffset={Platform.OS === 'ios' ? 84 : 45}
     >
       <View style={styles.container}>
+
         {/* Header */}
         <View style={styles.headerBar}>
           <TouchableOpacity
@@ -303,7 +332,7 @@ export default function Community({ navigation }) {
         </View>
 
         {/* Search */}
-        {searchActive && (
+        {searchActive ? (
           <View style={styles.searchContainer}>
             <TextInput
               style={styles.searchInput}
@@ -313,26 +342,29 @@ export default function Community({ navigation }) {
               onChangeText={setSearchQuery}
             />
           </View>
-        )}
+        ) : null}
 
         {/* Messages */}
         <ScrollView
           ref={scrollRef}
           style={styles.messagesContainer}
-          // contentContainerStyle={{ paddingBottom: composerHeight + 8 }}
           onContentSizeChange={() => {
-            if (scrollRef.current) scrollRef.current.scrollToEnd({ animated: true });
+            if (scrollRef.current) {
+              scrollRef.current.scrollToEnd({ animated: true });
+            }
           }}
           keyboardShouldPersistTaps="handled"
           keyboardDismissMode="interactive"
         >
           {shownMessages.map((msg) => {
-            const isMine = msg?.email === myEmail;
-            const isAdminSender = msg?.role === 'admin' || (isMine && role === 'admin');
+            const isMine = msg && msg.email === myEmail;
+            const isAdminSender = (msg && msg.role === 'admin') || (isMine && role === 'admin');
             const name = displayNameOf(msg);
-            const { quote, body } = parseReplyParts(msg.message || '');
+            const parsed = parseReplyParts((msg && msg.message) ? msg.message : '');
+            const quote = parsed.quote;
+            const body = parsed.body;
             const timeStr = formatTime(msg.time);
-            const replyToId = msg?.replyToId || null;
+            const replyToId = msg && msg.replyToId ? msg.replyToId : null;
 
             const leftUri = !isMine ? resolveAvatar(msg, false) : null;
             const rightUri = isMine ? resolveAvatar(msg, true) : null;
@@ -340,21 +372,25 @@ export default function Community({ navigation }) {
             return (
               <View
                 key={msg.id}
-                ref={(node) => node && rowRefs.current.set(msg.id, node)}
                 onLayout={(e) => {
-                  itemPositionsRef.current.set(msg.id, e.nativeEvent.layout.y);
+                  const y = e.nativeEvent.layout.y;
+                  const dict = positionsRef.current || {};
+                  dict[msg.id] = y;
+                  positionsRef.current = dict;
                 }}
                 style={[styles.row, isMine ? styles.rowRight : styles.rowLeft]}
               >
-                {!isMine && (
+                {!isMine ? (
                   leftUri ? (
                     <Image source={{ uri: leftUri }} style={styles.avatar} />
                   ) : (
                     <View style={styles.avatarFallback}>
-                      <Text style={styles.avatarLetter}>{(name?.[0] || 'U').toUpperCase()}</Text>
+                      <Text style={styles.avatarLetter}>
+                        {(name && name[0] ? name[0] : 'U').toUpperCase()}
+                      </Text>
                     </View>
                   )
-                )}
+                ) : null}
 
                 <TouchableOpacity
                   activeOpacity={0.8}
@@ -363,15 +399,15 @@ export default function Community({ navigation }) {
                   style={[
                     styles.messageBubble,
                     isMine ? styles.rightBubble : styles.leftBubble,
-                    highlightedId === msg.id && styles.highlightBubble, // highlight if jumped to
+                    highlightedId === msg.id ? styles.highlightBubble : null
                   ]}
                 >
                   {/* Name */}
-                  <Text style={[styles.username, isAdminSender && styles.adminName]} numberOfLines={1}>
+                  <Text style={[styles.username, isAdminSender ? styles.adminName : null]} numberOfLines={1}>
                     {name}
                   </Text>
 
-                  {/* Quote preview (tap to jump) */}
+                  {/* Quote preview */}
                   {quote ? (
                     <TouchableOpacity
                       activeOpacity={0.7}
@@ -382,36 +418,38 @@ export default function Community({ navigation }) {
                     </TouchableOpacity>
                   ) : null}
 
-                  {/* Image (tap to open full screen) */}
-                  {msg.image ? (
+                  {/* Image */}
+                  {msg && msg.image ? (
                     <TouchableOpacity onPress={() => setViewerUri(msg.image)} activeOpacity={0.9}>
                       <Image source={{ uri: msg.image }} style={styles.messageImage} />
                     </TouchableOpacity>
                   ) : null}
 
                   {/* Body */}
-                  {!!body && <Text style={styles.messageText}>{body}</Text>}
+                  {body ? <Text style={styles.messageText}>{body}</Text> : null}
 
-                  {/* Time bottom-right */}
+                  {/* Time */}
                   <Text style={styles.timeText}>{timeStr}</Text>
                 </TouchableOpacity>
 
-                {isMine && (
+                {isMine ? (
                   rightUri ? (
                     <Image source={{ uri: rightUri }} style={styles.avatar} />
                   ) : (
                     <View style={styles.avatarFallback}>
-                      <Text style={styles.avatarLetter}>{(name?.[0] || 'U').toUpperCase()}</Text>
+                      <Text style={styles.avatarLetter}>
+                        {(name && name[0] ? name[0] : 'U').toUpperCase()}
+                      </Text>
                     </View>
                   )
-                )}
+                ) : null}
               </View>
             );
           })}
         </ScrollView>
 
-        {/* Reply banner (shows tiny image if replying to an image; UI-only) */}
-        {replyTo && (
+        {/* Reply banner */}
+        {replyTo ? (
           <View style={styles.replyBanner}>
             {replyTo.image ? (
               <TouchableOpacity onPress={() => setViewerUri(replyTo.image)} activeOpacity={0.9}>
@@ -419,13 +457,13 @@ export default function Community({ navigation }) {
               </TouchableOpacity>
             ) : null}
             <Text style={styles.replyBannerText}>
-              Replying to: {replyTo.text?.length > 60 ? replyTo.text.slice(0, 60) + '…' : (replyTo.text || (replyTo.image ? 'Photo' : ''))}
+              Replying to: {replyTo.text ? (replyTo.text.length > 60 ? replyTo.text.slice(0, 60) + '…' : replyTo.text) : (replyTo.image ? 'Photo' : '')}
             </Text>
             <TouchableOpacity onPress={() => setReplyTo(null)}>
               <Text style={styles.replyBannerClose}>✕</Text>
             </TouchableOpacity>
           </View>
-        )}
+        ) : null}
 
         {/* Composer */}
         <View
@@ -442,7 +480,9 @@ export default function Community({ navigation }) {
             value={message}
             onChangeText={setMessage}
             onFocus={() => {
-              if (scrollRef.current) scrollRef.current.scrollToEnd({ animated: true });
+              if (scrollRef.current) {
+                scrollRef.current.scrollToEnd({ animated: true });
+              }
             }}
           />
           <TouchableOpacity onPress={sendMessage} style={styles.sendButton}>
@@ -464,11 +504,11 @@ export default function Community({ navigation }) {
                 <Text style={styles.modalItemText}>Copy</Text>
               </TouchableOpacity>
 
-              {selectedMsg && canDelete(selectedMsg) && (
+              {selectedMsg && canDelete(selectedMsg) ? (
                 <TouchableOpacity style={styles.modalItem} onPress={handleDeleteLocal}>
                   <Text style={[styles.modalItemText, { color: '#E11D48' }]}>Delete</Text>
                 </TouchableOpacity>
-              )}
+              ) : null}
 
               <TouchableOpacity style={[styles.modalItem, styles.modalCancel]} onPress={() => setActionOpen(false)}>
                 <Text style={styles.modalCancelText}>Cancel</Text>
@@ -490,6 +530,7 @@ export default function Community({ navigation }) {
             ) : null}
           </Pressable>
         </Modal>
+
       </View>
     </KeyboardAvoidingView>
   );
@@ -498,16 +539,19 @@ export default function Community({ navigation }) {
 const styles = StyleSheet.create({
   kav: { flex: 1, backgroundColor: '#1C2E5C' },
   container: { flex: 1, backgroundColor: '#1C2E5C' },
+
   headerBar: {
     flexDirection: 'row',
-    justifyContent: 'space-between', paddingHorizontal: 16
+    justifyContent: 'space-between',
+    paddingHorizontal: 16,
+    paddingTop: 8,
+    paddingBottom: 8
   },
   iconBtn: { width: 36, alignItems: 'center', justifyContent: 'center' },
-  iconText: { color: '#E7EDF3', fontSize: 30 },
   headerTitle: { color: '#E7EDF3', fontSize: 24, fontWeight: '700' },
 
   searchContainer: { paddingHorizontal: 8, backgroundColor: '#1C2E5C' },
-  searchInput: { backgroundColor: '#FFF', borderRadius: 10, paddingLeft: 12, marginTop: 10 },
+  searchInput: { backgroundColor: '#FFF', borderRadius: 10, paddingLeft: 12, marginTop: 10, height: 40 },
 
   messagesContainer: { flex: 1, paddingHorizontal: 12, backgroundColor: '#1C2E5C' },
   row: { flexDirection: 'row', alignItems: 'flex-end', marginVertical: 6, gap: 8 },
@@ -526,16 +570,12 @@ const styles = StyleSheet.create({
     borderRadius: 12,
     maxWidth: '75%',
     position: 'relative',
-    paddingBottom: 18, // room for time
+    paddingBottom: 18
   },
   rightBubble: { alignSelf: 'flex-end', backgroundColor: '#DDEAF6' },
   leftBubble: { alignSelf: 'flex-start', backgroundColor: '#E7EDF3' },
 
-  // NEW: flash highlight when jumped to
-  highlightBubble: {
-    borderWidth: 2,
-    borderColor: '#007AFF',
-  },
+  highlightBubble: { borderWidth: 2, borderColor: '#007AFF' },
 
   username: { fontSize: 12, color: '#1F2933', fontWeight: '700', marginBottom: 2 },
   adminName: { color: '#007AFF' },
@@ -559,8 +599,12 @@ const styles = StyleSheet.create({
   },
 
   replyBanner: {
-    backgroundColor: '#E7EDF3', flexDirection: 'row', alignItems: 'center',
-    justifyContent: 'space-between', paddingHorizontal: 12, paddingVertical: 6
+    backgroundColor: '#E7EDF3',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingHorizontal: 12,
+    paddingVertical: 6
   },
   replyThumb: { width: 32, height: 32, borderRadius: 6, marginRight: 8 },
   replyBannerText: { color: '#1F2933', fontSize: 12, flex: 1, paddingRight: 8 },
@@ -584,7 +628,6 @@ const styles = StyleSheet.create({
   },
   sendButtonText: { color: '#FFF', fontWeight: '700', fontSize: 16 },
 
-  // Modal
   modalBackdrop: {
     flex: 1, backgroundColor: 'rgba(0,0,0,0.25)',
     justifyContent: 'center', alignItems: 'center'
@@ -599,7 +642,6 @@ const styles = StyleSheet.create({
   modalCancel: { borderTopWidth: StyleSheet.hairlineWidth, borderTopColor: '#E5E7EB' },
   modalCancelText: { fontSize: 16, color: '#6B7280' },
 
-  // Full-screen viewer
   viewerBackdrop: {
     flex: 1,
     backgroundColor: 'rgba(0,0,0,0.95)',

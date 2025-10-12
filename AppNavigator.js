@@ -1,4 +1,3 @@
-import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 
 
@@ -14,6 +13,9 @@ import Search from './Screen/User/Search.js';
 import WishList from './Screen/User/WishList.js';
 import Result from './Screen/User/Result.js';
 import Community from './Screen/User/Community.js';
+import ChangePasswordFinal from './Screen/User/ForgotPassword.js';
+import ViewProfile from './Screen/User/ViewProfile.js';
+import LOMChecker from './Screen/User/LOM.js';
 
 //admin
 import AdminRolesScreen from './Screen/Admin/RolesScreen.js';
@@ -33,9 +35,6 @@ import ManageAccount from './Screen/Admin/ManageAccount.js';
 import Seminars from './Screen/Admin/Webinars.js';
 import Loading from './components/loading.js';
 import AdminNotification from './Screen/Admin/AdminNotification.js';
-import ChangePasswordFinal from './Screen/User/ForgotPassword.js';
-import ViewProfile from './Screen/User/ViewProfile.js';
-import LOMChecker from './Screen/User/LOM.js';
 import PHDList from './Screen/Admin/phdList.js';
 
 
@@ -49,8 +48,6 @@ export default function AppNavigator() {
     <Stack.Navigator screenOptions={{
       headerShown: false
     }}>
-
-
       <Stack.Screen name="loading" component={Loading} />
       <Stack.Screen name="SignIn" component={SignIn} />
       <Stack.Screen name="Home" component={Home} />

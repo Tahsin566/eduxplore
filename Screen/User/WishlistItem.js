@@ -1,10 +1,8 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { collection, deleteDoc, doc, getDoc, getDocs, onSnapshot } from 'firebase/firestore';
-import { getDocumentAsync } from 'expo-document-picker';
+import { collection, deleteDoc, doc, getDoc} from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useNavigation } from '@react-navigation/native';
-import { useRole } from '../../auth.context';
 import Markdown from 'react-native-markdown-display';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -36,7 +34,6 @@ const WishlistItem = ({ item }) => {
             console.log('Error adding document: ', error);
         }
     }
-
 
 
     useEffect(() => {
@@ -78,6 +75,5 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 20,
         borderColor: '#BCC6CF',
-        // borderWidth: 1,
     }
 })

@@ -37,8 +37,6 @@ function SignUp({ navigation }) {
       return;
     }
 
-
-
     const data = {
       name: user.firstName + ' ' + user.lastName || '',
       email: user?.emailAddresses[0]?.emailAddress,
@@ -68,7 +66,6 @@ function SignUp({ navigation }) {
       Toast.show({ text1: 'Passwords do not match', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
 
-
     }
 
     try {
@@ -89,7 +86,6 @@ function SignUp({ navigation }) {
         }
       }
 
-
     } catch (error) {
       Toast.show({ text1: error.message, type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 13 }, autoHide: true, visibilityTime: 1000 })
 
@@ -102,14 +98,10 @@ function SignUp({ navigation }) {
   const onVerifyPress = async () => {
     if (!isLoaded) return
     try {
-
       const res = await signUp.attemptEmailAddressVerification({
         code,
       })
-
       console.log(res)
-
-
       if (res.status === 'complete') {
         await setActive({ session: res.createdSessionId })
         navigation.replace('Home')
@@ -117,8 +109,8 @@ function SignUp({ navigation }) {
 
         console.error(JSON.stringify(res, null, 2))
       }
-    } catch (err) {
-
+    } 
+    catch (err) {
       console.error(JSON.stringify(err, null, 2))
     }
   }

@@ -4,7 +4,6 @@ import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 
 import Footer from '../User/Footer';
 
 export default function VPDCalculator({ navigation }) {
-  // Hide default header
   useLayoutEffect(() => {
     navigation.setOptions({ headerShown: false });
   }, [navigation]);
