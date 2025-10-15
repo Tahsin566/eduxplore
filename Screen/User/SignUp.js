@@ -95,41 +95,6 @@ function SignUp({ navigation }) {
     }
   };
 
-  const onVerifyPress = async () => {
-    if (!isLoaded) return
-    try {
-      const res = await signUp.attemptEmailAddressVerification({
-        code,
-      })
-      console.log(res)
-      if (res.status === 'complete') {
-        await setActive({ session: res.createdSessionId })
-        navigation.replace('Home')
-      } else {
-
-        console.error(JSON.stringify(res, null, 2))
-      }
-    } 
-    catch (err) {
-      console.error(JSON.stringify(err, null, 2))
-    }
-  }
-
-  if (pendingVerification) {
-    return (
-      <>
-        <Text>Verify your email</Text>
-        <TextInput
-          value={code}
-          placeholder="Enter your verification code"
-          onChangeText={(code) => setCode(code)}
-        />
-        <TouchableOpacity onPress={onVerifyPress}>
-          <Text>Verify</Text>
-        </TouchableOpacity>
-      </>
-    )
-  }
 
   return (
     <ScrollView contentInsetAdjustmentBehavior="automatic" style={{ flexGrow: 1, backgroundColor: '#1C2E5C' }}>
@@ -148,7 +113,6 @@ function SignUp({ navigation }) {
             placeholderTextColor="#94A3B8"
           />
 
-          <Text style={{ color: 'red' }}>{usernameError}</Text>
 
           <Text style={styles.label}>EMAIL</Text>
           <TextInput
@@ -160,8 +124,6 @@ function SignUp({ navigation }) {
             autoCapitalize="none"
           />
 
-          <Text style={{ color: 'red' }}>{emailError}</Text>
-
           <Text style={styles.label}>PASSWORD</Text>
           <TextInput
             style={styles.input}
@@ -171,7 +133,6 @@ function SignUp({ navigation }) {
             onChangeText={setPassword}
           />
 
-          <Text style={{ color: 'red' }}>{passwordError}</Text>
 
           <Text style={styles.label}>CONFIRM PASSWORD</Text>
           <TextInput
@@ -181,8 +142,6 @@ function SignUp({ navigation }) {
             secureTextEntry
             onChangeText={setConfirmPassword}
           />
-
-          <Text style={{ color: 'red' }}>{confirmPasswordError}</Text>
 
           <View style={styles.checkbox}>
             <Text style={styles.checkboxLabel}>

@@ -20,7 +20,7 @@ export default function BachelorList() {
 
   const getUniversities = async () => {
     try {
-      const q = query(collection(db, "university"), where("hasBachelor", "==", true));
+      const q = query(collection(db, "university"), where("has_bachelor", "==", true));
       const querySnapshot = await getDocs(q);
       const universitiesData = querySnapshot.docs.map((doc) => { return {...doc.data(), id: doc.id}});
       setUniversities(universitiesData);

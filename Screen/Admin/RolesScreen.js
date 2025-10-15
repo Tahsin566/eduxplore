@@ -7,7 +7,7 @@ import { db } from '../../firebase.config';
 
 const INPUT_HEIGHT = 48;
 
-export default function AdminRoles({ route }) {
+export default function RoleScreen({ route }) {
 
 
   const navigation = useNavigation();
@@ -35,7 +35,7 @@ export default function AdminRoles({ route }) {
   return (
     <View style={styles.container}>
       {/* Header */}
-      <View style={styles.edit}><Text style={styles.title}>Admin Roles</Text></View>
+      <View style={styles.edit}><Text style={styles.title}>Assign role</Text></View>
       <TouchableOpacity onPress={() => navigation.navigate('ManageAccounts')}>
         <Ionicons name="chevron-back" size={24} color="#fff" />
       </TouchableOpacity>

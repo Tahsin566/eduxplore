@@ -32,6 +32,8 @@ export default function UpdateOverView({ route }) {
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
+  const [language,setLanguage] = useState('')
+  const [tutionFee,setTutionFee] = useState('')
   const [ieltsScore, setIeltsScore] = useState('');
   const [bachelorCheck, setBachelorCheck] = useState(false);
   const [masterCheck, setMasterCheck] = useState(false);
@@ -53,7 +55,7 @@ export default function UpdateOverView({ route }) {
       }
     }
 
-    if(input === 'name' || input === 'person' || input === 'designation' || input === 'address') {
+    if(input === 'name' || input === 'person' || input === 'designation' || input === 'address' || input === 'language') {
       if (!stringRegex.test(name)) {
         Toast.show({ text1: 'Invalid person details', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
         return
@@ -73,6 +75,15 @@ export default function UpdateOverView({ route }) {
         return
       }
     }
+
+    if(input === 'fee'){
+      if(!Number(tutionFee)){
+        Toast.show({ text1: 'Invalid tution fee', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        return
+      }
+    }
+
+    
 
     return name ? name : value
 
@@ -141,16 +152,18 @@ export default function UpdateOverView({ route }) {
         requirements:regexCheck('requirements',requirements,university?.requirements),
         about:regexCheck('about',about,university?.about),
         photo:image !== '' ? await uploadToCloudinary() : university?.photo,
-        person:regexCheck('person',person,university?.person),
-        designation:regexCheck('designation',designation,university?.designation),
+        advisor_name:regexCheck('person',person,university?.advisor_name),
+        advisor_designation:regexCheck('designation',designation,university?.advisor_designation),
         address:regexCheck('address',address,university?.address),
-        phone:regexCheck('phone',phone,university?.phone),
-        email:regexCheck('email',email,university?.email),
+        advisor_phone:regexCheck('phone',phone,university?.advisor_phone),
+        advisor_mail:regexCheck('email',email,university?.email),
         website:regexCheck('website',website,university?.website),
-        ieltsScore:regexCheck('ieltsScore',ieltsScore,university?.ieltsScore),
-        hasBachelor: bachelorCheck,
-        hasMaster: masterCheck,
-        hasPhd: phdCheck
+        min_ielts_score:regexCheck('ieltsScore',ieltsScore,university?.min_ielts_score),
+        has_bachelor: bachelorCheck,
+        main_language:regexCheck('language',language,university?.main_language),
+        has_master: masterCheck,
+        tution_fee:regexCheck('fee',tutionFee,university?.tution_fee),
+        has_PhD: phdCheck
 
       })
       console.log('Document updated');
@@ -182,16 +195,18 @@ export default function UpdateOverView({ route }) {
       setOverview(university?.overview);
       setRequirements(university?.requirements);
       setAbout(university?.about);
-      setPerson(university?.person);
-      setDesignation(university?.designation);
+      setPerson(university?.advisor_name);
+      setDesignation(university?.advisor_designation);
       setAddress(university?.address);
-      setPhone(university?.phone);
-      setEmail(university?.email);
+      setPhone(university?.advisor_phone);
+      setEmail(university?.advisor_mail);
       setWebsite(university?.website);
-      setIeltsScore(university?.ieltsScore);
-      setBachelorCheck(university?.hasBachelor);
-      setMasterCheck(university?.hasMaster);
-      setPhdCheck(university?.hasPhd);
+      setLanguage(university.main_language)
+      setTutionFee(university?.tution_fee)
+      setIeltsScore(university?.min_ielts_score);
+      setBachelorCheck(university?.has_bachelor);
+      setMasterCheck(university?.has_master);
+      setPhdCheck(university?.has_PhD);
     }, 5);
 
   }, [university?.id]);
@@ -264,6 +279,28 @@ export default function UpdateOverView({ route }) {
             placeholder={`update overview here...`}
             placeholderTextColor="#999"
           />
+          <View style={styles.inputGroup}>
+          <Text style={styles.label}>Update Main Language</Text>
+          <TextInput
+            style={[{ ...styles.input }]}
+            multiline
+            value={language}
+            onChangeText={setLanguage}
+            placeholder={`update main language here...`}
+            placeholderTextColor="#999"
+          />
+        </View>
+        <View style={styles.inputGroup}>
+          <Text style={styles.label}>Update Tution Fee</Text>
+          <TextInput
+            style={[{ ...styles.input }]}
+            multiline
+            value={tutionFee}
+            onChangeText={setTutionFee}
+            placeholder={`update university name here...`}
+            placeholderTextColor="#999"
+          />
+        </View>
         </View>
       </View>}
 
@@ -284,7 +321,8 @@ export default function UpdateOverView({ route }) {
       </View>}
 
 
-      {tab === 'about' && <View style={styles.formSection}>
+      {tab === 'about' && 
+      <View style={styles.formSection}>
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Update About</Text>
           <Text style={styles.label}>Enter the University Photo</Text>
@@ -301,7 +339,6 @@ export default function UpdateOverView({ route }) {
             placeholderTextColor="#999"
           />
         </View>
-      </View>}
       <Text style={[{ ...styles.label }, { marginHorizontal: 10 }]}>University Degree</Text>
       <View style={styles.checkboxContainer}>
         <Checkbox
@@ -347,15 +384,16 @@ export default function UpdateOverView({ route }) {
           value={designation}
           placeholder={`Designation`}
           placeholderTextColor="#999"
-        />
+          />
         <TextInput
           style={styles.singleInput}
           multiline
           onChangeText={setPhone}
           value={phone}
+          keyboardType='numeric'
           placeholder={`Phone number`}
           placeholderTextColor="#999"
-        />
+          />
         <TextInput
           style={styles.singleInput}
           multiline
@@ -363,7 +401,7 @@ export default function UpdateOverView({ route }) {
           value={email}
           placeholder={`Email`}
           placeholderTextColor="#999"
-        />
+          />
         <TextInput
           style={styles.singleInput}
           multiline
@@ -371,7 +409,7 @@ export default function UpdateOverView({ route }) {
           value={address}
           placeholder={`address`}
           placeholderTextColor="#999"
-        />
+          />
         <TextInput
           style={styles.singleInput}
           multiline
@@ -379,7 +417,7 @@ export default function UpdateOverView({ route }) {
           onChangeText={setIeltsScore}
           placeholder={`Minimum IELTS Score`}
           placeholderTextColor="#999"
-        />
+          />
         <TextInput
           style={styles.singleInput}
           multiline
@@ -387,8 +425,9 @@ export default function UpdateOverView({ route }) {
           value={website}
           placeholder={`Official Website link`}
           placeholderTextColor="#999"
-        />
+          />
       </View>
+      </View>}
 
       {/* Contact Info */}
       <TouchableOpacity style={[{ ...styles.button1 }, { margin: 10, marginHorizontal: 20 }]} onPress={handleUpdate}>
@@ -482,7 +521,7 @@ const styles = StyleSheet.create({
     color: '#1a2d3f',
   },
   inputGroup: {
-    marginBottom: 15,
+    marginBottom: 10,
   },
   uploadButton: {
     backgroundColor: '#d9d9d9',
@@ -511,33 +550,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#f5f5f5',
   },
 
-  /*
-  placeholderBox: {
-    width: 350,
-    height: 40,
-    backgroundColor: '#d9d9d9',
-    borderRadius: 4,
-    alignSelf: 'center',
-  },
-  placeholderSmall: {
-    width: 350,
-    height: 40,
-    backgroundColor: '#d9d9d9',
-    borderRadius: 4,
-    marginBottom: 20,
-    alignSelf: 'center',
-  },
-  placeholderLarge: {
-    width: 350,
-    height: 200,
-    backgroundColor: '#d9d9d9',
-    borderRadius: 4,
-    marginBottom: 20,
-    alignSelf: 'center',
-  }, */
-
-
-
+  
   // 5th section (Contact information and buttons)
   contactHeader: {
     alignItems: 'center',
@@ -570,22 +583,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
     fontWeight: 'bold',
-  },
-
-  // Source Section (For displaying source link)
-  sourceSection: {
-    backgroundColor: '#1a2d3f',
-    marginTop: 20,
-    paddingHorizontal: 10,
-  },
-  sourceText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  sourceLink: {
-    fontSize: 16,
-    color: '#fff',
-    textDecorationLine: 'underline',
-  },
+  }
 });

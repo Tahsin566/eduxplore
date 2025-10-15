@@ -2,21 +2,21 @@ import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestor
 import React, { useEffect, useState } from 'react';
 import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, StatusBar } from 'react-native';
 import { db } from '../../firebase.config';
-import { useRole } from '../../auth.context';
+import { useProfileAndAuth, useRole } from '../../auth.context';
 import WishlistItem from './WishlistItem';
 import { Ionicons } from '@expo/vector-icons';
 import Footer from '../User/Footer';  
 
 function WishList({ navigation }) {
 
-  const { profile, role } = useRole();
+  const { profile, role } = useProfileAndAuth();
   const [wishlist, setWishlist] = useState([]);
 
   const getWishList = async () => {
     const q = query(
       collection(db, 'wishlist'),
-      where('email', '==', profile?.email),
-      where('isMarked', '==', true)
+      where('user_email', '==', profile?.email),
+      where('is_marked', '==', true)
     );
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       if (querySnapshot.docs.length === 0) {

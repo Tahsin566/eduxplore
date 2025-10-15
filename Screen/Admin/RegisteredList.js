@@ -22,10 +22,12 @@ export default function RegisteredListScreen({ route }) {
   const [searchTerm, setSearchTerm] = useState('');
   const [registeredEmails, setRegisteredEmails] = useState([]);
 
+
+
 const getRegisteredEmails = async () => {
     setRegisteredEmails([]);
     try {
-      const q = query(collection(db,"seminars_reg"), where("isRegistered", "==", true), where("id", "==", id ));
+      const q = query(collection(db,"seminars_reg"), where("is_registered", "==", true), where("webinar_id", "==", id ));
       const querySnapshot = await getDocs(q);
       const emails = querySnapshot.docs.map((doc) => doc.data().email);
       setRegisteredEmails(emails);
@@ -78,7 +80,7 @@ const sendEmail = async () => {
           data={registeredEmails}
           keyExtractor={(item, index) => item+index}
           renderItem={({item, index}) => (
-            <View style={styles.emailRow}>
+              item.toLowerCase().includes(searchTerm.toLowerCase()) && <View style={styles.emailRow}>
               <View style={[styles.avatar, {backgroundColor: AVATAR_COLORS[index % AVATAR_COLORS.length]}]}>
                 <Ionicons name="person" size={17} color="#fff" />
               </View>

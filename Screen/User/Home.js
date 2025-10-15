@@ -1,10 +1,10 @@
 import { View, Text, TouchableOpacity, StatusBar, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { useRole } from '../../auth.context';
+import { useProfileAndAuth, useRole } from '../../auth.context';
 import Footer from '../User/Footer';
 
 function Home({ navigation }) {
-  const { role, profile } = useRole();
+  const { role, profile } = useProfileAndAuth();
 
   const rawName = profile?.name || '';
   const name = rawName.includes('null') ? rawName.replace('null', '') : rawName;

@@ -1,7 +1,7 @@
 import { View, Text, TouchableOpacity, StyleSheet, FlatList, Alert, Modal } from 'react-native';
 import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useRole } from '../../auth.context';
+import { useProfileAndAuth, useRole } from '../../auth.context';
 import { useEffect, useState } from 'react';
 import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
@@ -10,7 +10,7 @@ import AdminFooter from './adminFooter';
 
 export default function Seminars() {
   
-  const { role, profile } = useRole();
+  const { role, profile } = useProfileAndAuth();
   const navigation = useNavigation();
   const [seminars, setSeminars] = useState([]);
 
@@ -28,7 +28,7 @@ export default function Seminars() {
     const [isRegistered, setIsRegistered] = useState(false);
 
     const handleRegister = async () => {
-      const q = query(collection(db, "seminars_reg"), where("email", "==", profile?.email), where("id", "==", item.id));
+      const q = query(collection(db, "seminars_reg"), where("email", "==", profile?.email), where("webinar_id", "==", item.id));
       const querySnapshot = await getDocs(q);
       if (querySnapshot.docs.length !== 0) {
         setIsRegistered(!isRegistered);
@@ -36,10 +36,10 @@ export default function Seminars() {
         return;
       }
       try {
-        const res = await addDoc(collection(db, "seminars_reg"), {
+        await addDoc(collection(db, "seminars_reg"), {
           email: profile?.email,
-          isRegistered: true,
-          id: item.id,
+          is_registered: true,
+          webinar_id: item.id,
         });
         setIsRegistered(true);
       } catch (error) {
@@ -90,10 +90,10 @@ export default function Seminars() {
     };
 
     useEffect(() => {
-      const q = query(collection(db, "seminars_reg"), where("email", "==", profile?.email), where("id", "==", item.id));
+      const q = query(collection(db, "seminars_reg"), where("email", "==", profile?.email), where("webinar_id", "==", item.id));
       getDocs(q).then((snapshot) => {
         if (snapshot.docs.length !== 0) {
-          setIsRegistered(snapshot.docs[0].data().isRegistered);
+          setIsRegistered(snapshot.docs[0].data().is_registered);
         }
       });
     }, []);

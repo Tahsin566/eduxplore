@@ -16,7 +16,7 @@ const WishlistItem = ({ item }) => {
         try {
             setUniversity(null);
             const universitiesRef = collection(db, 'university');
-            const querySnapshot = await getDoc(doc(universitiesRef, item.id));
+            const querySnapshot = await getDoc(doc(universitiesRef, item.uni_id));
             const univerityData = { ...querySnapshot.data(), id: querySnapshot.id };
             console.log('univerityData', univerityData);
             setUniversity(univerityData);

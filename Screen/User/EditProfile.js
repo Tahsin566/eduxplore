@@ -1,14 +1,14 @@
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
-import { useRole } from '../../auth.context';
+import { useProfileAndAuth, useRole } from '../../auth.context';
 import { db } from '../../firebase.config';
 import { Ionicons } from '@expo/vector-icons';
 
 const ProfileSettings = ({ navigation }) => {
 
   
-  const { profile } = useRole();
+  const { profile } = useProfileAndAuth();
 
   const [name, setName] = useState('');
   const [ieltsScore, setIeltsScore] = useState('');
@@ -38,11 +38,11 @@ const ProfileSettings = ({ navigation }) => {
     if (querySnapshot.docs.length !== 0) {
       await updateDoc(doc(db, 'profile', querySnapshot.docs[0].id), {
         name,
-        ieltsScore,
-        groupSSC,
-        groupHSC,
-        bachelorSubject,
-        mastersSubject,
+        ielts_score: ieltsScore,
+        group_SSC: groupSSC,
+        group_HSC: groupHSC,
+        bachelor_subject: bachelorSubject,
+        masters_subject: mastersSubject,
         vpd,
       });
       console.log('updated');
@@ -53,11 +53,11 @@ const ProfileSettings = ({ navigation }) => {
     try {
       const res = await addDoc(collection(db, 'profile'), {
         name,
-        ieltsScore,
-        groupSSC,
-        groupHSC,
-        bachelorSubject,
-        mastersSubject,
+        ielts_score: ieltsScore,
+        group_SSC:groupSSC,
+        group_HSC:groupHSC,
+        bachelor_subject: bachelorSubject,
+        masters_subject: mastersSubject,
         vpd,
         email: profile?.email,
       });
@@ -80,11 +80,11 @@ const ProfileSettings = ({ navigation }) => {
     const querySnapshot = await getDocs(q);
     if (querySnapshot.docs.length !== 0) {
       setName(querySnapshot.docs[0].data().name);
-      setIeltsScore(querySnapshot.docs[0].data().ieltsScore);
-      setGroupSSC(querySnapshot.docs[0].data().groupSSC);
-      setGroupHSC(querySnapshot.docs[0].data().groupHSC);
-      setBachelorSubject(querySnapshot.docs[0].data().bachelorSubject);
-      setMastersSubject(querySnapshot.docs[0].data().mastersSubject);
+      setIeltsScore(querySnapshot.docs[0].data().ielts_score);
+      setGroupSSC(querySnapshot.docs[0].data().group_SSC);
+      setGroupHSC(querySnapshot.docs[0].data().group_HSC);
+      setBachelorSubject(querySnapshot.docs[0].data().bachelor_subject);
+      setMastersSubject(querySnapshot.docs[0].data().masters_subject);
       setVpd(querySnapshot.docs[0].data().vpd);
     }
   };

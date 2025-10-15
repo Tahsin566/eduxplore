@@ -6,14 +6,14 @@ import srhIcon from '../../Images/srh.png';
 import { use, useEffect, useState } from 'react';
 import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
-import { useRole } from '../../auth.context';
+import { useProfileAndAuth, useRole } from '../../auth.context';
 import * as Linking from 'expo-linking';
 import Markdown from 'react-native-markdown-display';
 
 
 export default function UniversityOverview({ route }) {
 
-  const { profile, role } = useRole()
+  const { profile, role } = useProfileAndAuth()
   const navigation = useNavigation();
 
 
@@ -27,7 +27,7 @@ export default function UniversityOverview({ route }) {
 
   const addToWishlist = async () => {
 
-    const q = query(collection(db, "wishlist"), where("id", "==", universityName.id), where("email", "==", profile?.email));
+    const q = query(collection(db, "wishlist"), where("uni_id", "==", universityName.id), where("user_email", "==", profile?.email));
     const querySnapshot = await getDocs(q);
     if (querySnapshot.docs.length !== 0) {
       setIsMarked(!isMarked);
@@ -41,11 +41,11 @@ export default function UniversityOverview({ route }) {
 
     try {
       const res = await addDoc(collection(db, "wishlist"), {
-        id: universityName.id,
-        isMarked: true,
-        email: profile?.email
+        uni_id: universityName.id,
+        is_marked: true,
+        user_email: profile?.email
       })
-      console.log('Inserted document with ID: ', res.id);
+      console.log('Inserted document `with` ID: ', res.id);
     } catch (error) {
       console.log('Error adding document: ', error);
     }
@@ -53,13 +53,13 @@ export default function UniversityOverview({ route }) {
 
   const getMarked = async () => {
     setIsMarked(false)
-    const q = query(collection(db, "wishlist"), where("id", "==", universityName.id), where("email", "==", profile?.email));
+    const q = query(collection(db, "wishlist"), where("uni_id", "==", universityName.id), where("user_email", "==", profile?.email));
 
     onSnapshot(q, (querySnapshot) => {
 
       if (querySnapshot.docs.length !== 0) {
-        console.log('single data', querySnapshot.docs[0].data().isMarked)
-        setIsMarked(querySnapshot.docs[0].data().isMarked)
+        console.log('single data', querySnapshot.docs[0].data().is_marked)
+        setIsMarked(querySnapshot.docs[0].data().is_marked)
       }
 
       if (querySnapshot.docs.length === 0) {
@@ -76,6 +76,10 @@ export default function UniversityOverview({ route }) {
     const querySnapshot = await getDocs(q);
     setUniversityData(querySnapshot.docs[0].data())
   }
+
+  const handleWebsitePress = (url) => {
+    Linking.openURL(url);
+  };
 
   useEffect(() => {
     setUniversityData(null);
@@ -107,7 +111,7 @@ export default function UniversityOverview({ route }) {
             <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>}
           {/* <Text style={styles.title}>Overview {isMarked ? 'Marked' : 'Not Marked'}</Text> */}
-          {role === 'user' && <TouchableOpacity onPress={addToWishlist}>
+          {role === 'user' || role === 'moderator' && <TouchableOpacity onPress={addToWishlist}>
             {isMarked === true ? <Ionicons name="bookmark" size={24} color="white" /> : <Ionicons name="bookmark-outline" size={24} color="white" />}
           </TouchableOpacity>}
         </View>
@@ -179,19 +183,18 @@ export default function UniversityOverview({ route }) {
           <View style={styles.contactHeader}>
             <Ionicons name="person-circle" size={50} color="#1abc9c" />
             <Text style={styles.contactTitle}>{universityData?.name}</Text>
-            <Text style={styles.subTitle}>{universityData?.designation}</Text>
+          <Text style={styles.address}>{universityData?.address}</Text>
           </View>
 
           {/* Contact Information */}
-          <Text style={styles.address}>{universityData?.person}</Text>
-          <Text style={styles.address}>{universityData?.address}</Text>
+          <Text style={styles.address}>{universityData?.advisor_name}</Text>
 
           {/* Buttons for Phone, Email, and Website */}
-          <Text style={styles.buttonText1}>Phone : {universityData?.phone}</Text>
+          <Text style={styles.buttonText1}>Phone : {universityData?.advisor_phone}</Text>
 
 
 
-          <Text style={styles.buttonText1}>Email : {universityData?.email}</Text>
+          <Text style={styles.buttonText1}>Email : {universityData?.advisor_mail}</Text>
 
 
           <TouchableOpacity style={styles.button1} onPress={() => handleWebsitePress(universityData?.website)}>

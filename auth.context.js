@@ -103,3 +103,8 @@ export const useRole = () => {
     if (!React.useContext(AuthContext)) throw new Error('useAuth must be used within a AuthProvider');
     return React.useContext(AuthContext);
 }
+
+export const useProfileAndAuth = () => {
+    if (!React.useContext(AuthContext)) throw new Error('useAuth must be used within a AuthProvider');
+    return React.useContext(AuthContext);
+}

@@ -8,6 +8,8 @@ import { Ionicons } from '@expo/vector-icons';
 function SearchResult({ navigation, route }) {
 
   const data = route.params;
+
+  console.log('data', data);
   const [university, setUniversity] = useState([]);
   const getUniversitySearch = async () => {
     setUniversity([]);
@@ -18,13 +20,12 @@ function SearchResult({ navigation, route }) {
       if(data.courseType){
         q = query(collection(db, 'university'),
           or(
+            where('has_PhD','==',true),
             where(
-              `has${data.courseType?.charAt(0)?.toUpperCase() + data.courseType?.slice(1)}`, '==', true
+              `has_${data.courseType?.charAt(0)?.toLowerCase() + data.courseType?.slice(1)}`, '==', true
             ),
-            where('language', '==', data.courseLanguage),
-            where('Intake', '==', data.intake)
-          )
-        
+            where('main_language', '==', data.courseLanguage[0]?.toUpperCase()+data.courseLanguage?.slice(1)),
+          ),
         );
       }
 
@@ -34,8 +35,9 @@ function SearchResult({ navigation, route }) {
         return;
       }
       let uni = res.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      console.log(uni)
       const filteredUni = uni.filter((u) => {
-        return data.search ? u.ieltsScore <= parseFloat(data.ieltsScore) && u?.name?.toLowerCase()?.includes(data.search?.toLowerCase()): u.ieltsScore <= parseFloat(data.ieltsScore);
+        return data.search ? u.min_ielts_score <= parseFloat(data.ieltsScore) && u?.name?.toLowerCase()?.includes(data.search?.toLowerCase()): u.min_ielts_score <= parseFloat(data.ieltsScore);
         
       })
       setUniversity(filteredUni);
@@ -84,18 +86,15 @@ function SearchResult({ navigation, route }) {
 
               <View style={{ flexDirection: 'row' }}>
                 <Text style={styles.detailsLabel}>Language : </Text>
-                <Text style={styles.detailsValue}>{u?.language}Germany</Text>
+                <Text style={styles.detailsValue}>{u?.main_language}</Text>
               </View>
 
               <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.detailsLabel}>Duration : 3 years</Text>
-                <Text style={styles.detailsValue}>{u?.duration}</Text>
+                <Text style={styles.detailsLabel}>Address :</Text>
+                <Text style={styles.detailsValue}>{u?.address}</Text>
               </View>
 
-              <View style={{ flexDirection: 'row' }}>
-                <Text style={styles.detailsLabel}>Tuition fees per semester : 107.00 </Text>
-                <Text style={styles.detailsValue}>{u?.tuitionFees}</Text>
-              </View>
+              
 
               <TouchableOpacity
                 onPress={() => navigation?.navigate('UniversityOverview', { universityName: u, path: 'Result' })}

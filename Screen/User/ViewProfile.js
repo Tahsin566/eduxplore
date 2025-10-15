@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useRole } from '../../auth.context'
+import { useProfileAndAuth, useRole } from '../../auth.context'
 import { collection, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore'
 import { db } from '../../firebase.config'
 import { useAuth, useUser } from '@clerk/clerk-expo'
@@ -13,7 +13,7 @@ const ViewProfile = () => {
 
   const { signOut } = useAuth()
   const { user,isSignedIn } = useUser()
-  const { profile, role, userId } = useRole()
+  const { profile, role, userId } = useProfileAndAuth()
   const navigation = useNavigation();
 
   const [userDetails, setUserDetails] = useState();
@@ -125,11 +125,11 @@ const ViewProfile = () => {
         {userDetails && role === 'user' ? <View>
           <Text style={styles.additional}>Additional Details</Text>
           <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Name in Passport : {userDetails?.name}</Text>
-          <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>IELTS Score : {userDetails?.ieltsScore} </Text>
-          <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Group in SSC : {userDetails?.groupSSC}</Text>
-          <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Group in HSC : {userDetails?.groupHSC}</Text>
-          <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Bachelor : {userDetails?.bachelorSubject || 'N/A'}</Text>
-          <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Master : {userDetails?.mastersSubject || 'N/A'} </Text>
+          <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>IELTS Score : {userDetails?.ielts_score} </Text>
+          <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Group in SSC : {userDetails?.group_SSC}</Text>
+          <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Group in HSC : {userDetails?.group_HSC}</Text>
+          <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Bachelor : {userDetails?.bachelor_subject || 'N/A'}</Text>
+          <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>Master : {userDetails?.masters_subject || 'N/A'} </Text>
           <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>VPD : {userDetails?.vpd}</Text>
         </View> : <Text style={{ color: '#fff', padding: 8, fontSize: 16 }}>{role === 'user' && 'You have not added any additional details'}</Text>}
 

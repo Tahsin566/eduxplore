@@ -8,14 +8,14 @@ import { useUser } from '@clerk/clerk-expo';
 import { addDoc, collection, getDoc, getDocs, query, where } from 'firebase/firestore';
 
 import { db } from '../../firebase.config';
-import { AuthContext, useAuth, useRole } from '../../auth.context';
+import { AuthContext, useAuth, useProfileAndAuth, useRole } from '../../auth.context';
 import Footer from '../User/Footer';
 import AdminFooter from './adminFooter';
 
 const HomeScreen = () => {
 
   const { user } = useUser();
-  const {role,profile} = useRole()
+  const {role,profile} = useProfileAndAuth()
 
   const navigation = useNavigation();
 

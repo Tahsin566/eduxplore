@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Linking, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Keyboard } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import srhIcon from '../../Images/srh.png';
@@ -30,6 +30,8 @@ export default function AddUniDetails() {
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
   const [ieltsScore, setIeltsScore] = useState('');
+  const [tutionFee, setTutionFee] = useState('');
+  const [language, setLanguage] = useState('');
   const [tab, setTab] = useState('overview');
 
   
@@ -112,7 +114,7 @@ export default function AddUniDetails() {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const markDown = /[a-zA-Z0-9 -\.,#\*]/;
 
-    if (!stringRegex.test(name) || !stringRegex.test(person) || !stringRegex.test(designation) || !stringRegex.test(phone)) {
+    if (!stringRegex.test(name) || !stringRegex.test(person) || !stringRegex.test(designation) || !stringRegex.test(address) || !stringRegex.test(language)) {
       Toast.show({ text1: 'Invalid person details', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
@@ -132,7 +134,10 @@ export default function AddUniDetails() {
       return
     }
 
-    
+    if(!Number(tutionFee)){
+      Toast.show({ text1: 'Tution fee should be a number', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      return
+    }
 
     try {
       const res = await addDoc(collection(db, "university"), {
@@ -141,16 +146,18 @@ export default function AddUniDetails() {
         requirements,
         about: AboutUniversity,
         photo: await uploadToCloudinary(),
-        person,
-        designation,
+        advisor_name:person,
+        advisor_designation:designation,
         address,
-        phone,
-        email,
+        main_language:language,
+        tution_fee:tutionFee,
+        advisor_phone:phone,
+        advisor_mail:email,
         website,
-        ieltsScore,
-        hasBachelor: bachelorCheck,
-        hasMaster: masterCheck,
-        hasPhd: phdCheck
+        min_ielts_score:ieltsScore,
+        has_bachelor: bachelorCheck,
+        has_master: masterCheck,
+        has_PhD: phdCheck
       })
       console.log('Inserted document with ID: ', res.id);
       navigation.navigate('UniversityList')
@@ -168,6 +175,8 @@ export default function AddUniDetails() {
     setPerson('');
     setDesignation('');
     setAddress('');
+    setLanguage('');
+    setTutionFee('');
     setPhone('');
     setEmail('');
     setWebsite('');
@@ -242,6 +251,36 @@ export default function AddUniDetails() {
             value={overView}
             onChangeText={setOverView}
             placeholder={`Enter the Overview`}
+            placeholderTextColor="#999"
+          />
+          <Text>Enter main language</Text>
+          <TextInput
+            style={{
+              height: 40,
+              borderColor: '#ccc',
+              borderWidth: 1,
+              marginVertical: 10,
+              borderRadius: 8,
+              padding: 10
+            }}
+            onChangeText={setLanguage}
+            value={language}
+            placeholder={`Main language`}
+            placeholderTextColor="#999"
+          />
+          <Text>Enter the Tution fee</Text>
+          <TextInput
+            style={{
+              height: 40,
+              borderColor: '#ccc',
+              borderWidth: 1,
+              marginVertical: 10,
+              borderRadius: 8,
+              padding: 10
+            }}
+            onChangeText={setTutionFee}
+            value={tutionFee}
+            placeholder={`Tution Fee per semester`}
             placeholderTextColor="#999"
           />
         </View>
@@ -334,6 +373,7 @@ export default function AddUniDetails() {
             style={styles.singleInput}
             multiline
             value={phone}
+            keyboardType="numeric"
             onChangeText={setPhone}
             placeholder={`Phone number`}
             placeholderTextColor="#999"
@@ -383,7 +423,7 @@ export default function AddUniDetails() {
 }
 const styles = StyleSheet.create({
   container: {
-    paddingBottom: 50
+    paddingBottom: 350
 
 
   },
@@ -526,22 +566,5 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#fff',
     fontWeight: 'bold',
-  },
-
-  // Source Section (For displaying source link)
-  sourceSection: {
-    backgroundColor: '#1a2d3f',
-    marginTop: 20,
-    paddingHorizontal: 10,
-  },
-  sourceText: {
-    color: '#fff',
-    fontSize: 16,
-    fontWeight: 'bold',
-  },
-  sourceLink: {
-    fontSize: 16,
-    color: '#fff',
-    textDecorationLine: 'underline',
   },
 });

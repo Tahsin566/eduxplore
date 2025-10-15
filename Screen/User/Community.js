@@ -8,7 +8,7 @@ import * as Clipboard from 'expo-clipboard';
 import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useUser } from '@clerk/clerk-expo';
-import { useRole } from '../../auth.context';
+import { useProfileAndAuth, useRole } from '../../auth.context';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Ionicons } from '@expo/vector-icons';
 
@@ -16,7 +16,7 @@ export default function Community({ navigation }) {
 
   // auth / role
   const { user } = useUser();
-  const { role, profile } = useRole();
+  const { role, profile } = useProfileAndAuth();
 
   // basic states
   const [message, setMessage] = useState('');
@@ -80,7 +80,7 @@ export default function Community({ navigation }) {
 
   function displayNameOf(msg) {
     if (msg && msg.name && String(msg.name).trim()) {
-      return String(msg.name).trim();
+      return String(msg.name).trim().replace('null', '');
     }
     if (msg && msg.email) {
       const parts = msg.email.split('@');
@@ -192,7 +192,7 @@ export default function Community({ navigation }) {
         photo: profile?.photo || user.imageUrl,
         image: (await uploadToCloudinary()) || '',
         time: new Date(),
-        replyToId: replyTo ? (replyTo.id || null) : null,
+        reply_to: replyTo ? (replyTo.id || null) : null,
       });
     } catch (e) {
       console.log('Error adding document: ', e);
@@ -240,13 +240,13 @@ export default function Community({ navigation }) {
   const handleDeleteLocal = () => {
     if (!selectedMsg) return;
     if (!canDelete(selectedMsg)) {
-      setActionOpen(false);
       Alert.alert("You can't delete this message.");
+      setActionOpen(false)
       return;
     }
     try {
       deleteDoc(doc(db, 'chat', selectedMsg.id));
-      setActionOpen(false);
+      setActionOpen(false)
     } catch (err) {
       console.log('Error adding document: ', err);
     }
@@ -269,6 +269,7 @@ export default function Community({ navigation }) {
   }
 
   // jump to original (beginner style: plain object lookups)
+  //complex
   function scrollToOriginal(replyToId, quoteText) {
     if (!scrollRef.current) return;
 
@@ -296,8 +297,7 @@ export default function Community({ navigation }) {
 
   // filter (kept same behavior)
   const shownMessages = messages
-    .filter((m) => !hiddenIds.has(m.id))
-    .filter((m) => ((m && m.message) ? m.message : '').toLowerCase().includes(searchQuery.toLowerCase()));
+    .filter((m) => (m && m.message).toLowerCase().includes(searchQuery.toLowerCase()));
 
   if (loading) {
     return (
@@ -357,6 +357,7 @@ export default function Community({ navigation }) {
           keyboardDismissMode="interactive"
         >
           {shownMessages.map((msg) => {
+
             const isMine = msg && msg.email === myEmail;
             const isAdminSender = (msg && msg.role === 'admin') || (isMine && role === 'admin');
             const name = displayNameOf(msg);
@@ -364,7 +365,7 @@ export default function Community({ navigation }) {
             const quote = parsed.quote;
             const body = parsed.body;
             const timeStr = formatTime(msg.time);
-            const replyToId = msg && msg.replyToId ? msg.replyToId : null;
+            const replyToId = msg && msg.reply_to ? msg.reply_to : null;
 
             const leftUri = !isMine ? resolveAvatar(msg, false) : null;
             const rightUri = isMine ? resolveAvatar(msg, true) : null;
@@ -520,7 +521,7 @@ export default function Community({ navigation }) {
         {/* Full-screen Image Viewer */}
         <Modal
           transparent
-          visible={!!viewerUri}
+          visible={viewerUri}
           animationType="fade"
           onRequestClose={() => setViewerUri(null)}
         >

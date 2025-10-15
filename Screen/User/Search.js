@@ -26,8 +26,8 @@ function Chip({ label, selected, onPress, style }) {
 export default function FindUniversity({ navigation }) {
 
   const [search, setSearch] = useState('');
-  const [courseType, setCourseType] = useState(null);
-  const [courseLanguage, setCourseLanguage] = useState(null);
+  const [courseType, setCourseType] = useState('bachelor');
+  const [courseLanguage, setCourseLanguage] = useState('german');
   const [intake, setIntake] = useState(null);
   const [ieltsScore, setIeltsScore] = useState(0);
 
@@ -96,8 +96,7 @@ export default function FindUniversity({ navigation }) {
               <View style={styles.rowWrap}>
                 <Chip label="Bachelor"  selected={courseType === 'bachelor'} onPress={() => toggle(courseType, 'bachelor', setCourseType)} />
                 <Chip label="Master’s"  selected={courseType === 'master'}  onPress={() => toggle(courseType, 'master', setCourseType)} />
-                <Chip label="Diploma"   selected={courseType === 'diploma'}  onPress={() => toggle(courseType, 'diploma', setCourseType)} />
-                <Chip label="PhD"       selected={courseType === 'phd'}      onPress={() => toggle(courseType, 'phd', setCourseType)} />
+                <Chip label="PhD"       selected={courseType === 'PhD'}      onPress={() => toggle(courseType, 'PhD', setCourseType)} />
               </View>
             </View>
 
@@ -111,20 +110,6 @@ export default function FindUniversity({ navigation }) {
                 <Chip label="English only" selected={courseLanguage === 'english'} onPress={() => toggle(courseLanguage, 'english', setCourseLanguage)} />
                 <Chip label="German"       selected={courseLanguage === 'german'}  onPress={() => toggle(courseLanguage, 'german', setCourseLanguage)} />
                 <Chip label="French"       selected={courseLanguage === 'french'}  onPress={() => toggle(courseLanguage, 'french', setCourseLanguage)} />
-              </View>
-            </View>
-
-            {/* Intake */}
-            <View style={styles.section}>
-              <View style={styles.sectionTitleRow}>
-                <Ionicons name="calendar" size={16} color="#9CC3FF" />
-                <Text style={styles.sectionTitle}>Intake</Text>
-              </View>
-              <View style={styles.rowWrap}>
-                <Chip label="Winter" selected={intake === 'winter'} onPress={() => toggle(intake, 'winter', setIntake)} />
-                <Chip label="Summer" selected={intake === 'summer'} onPress={() => toggle(intake, 'summer', setIntake)} />
-                <Chip label="Fall"   selected={intake === 'fall'}   onPress={() => toggle(intake, 'fall', setIntake)} />
-                <Chip label="Spring" selected={intake === 'spring'} onPress={() => toggle(intake, 'spring', setIntake)} />
               </View>
             </View>
 
