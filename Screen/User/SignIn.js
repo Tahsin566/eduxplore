@@ -110,7 +110,7 @@ function SignIn({ navigation }) {
           />
 
           {/* Forgot */}
-          <TouchableOpacity onPress={() => navigation.replace('forgot')} style={{ alignSelf: 'flex-end' }}>
+          <TouchableOpacity onPress={() => navigation.replace('ForgotPassword')} style={{ alignSelf: 'flex-end' }}>
             <Text style={styles.forgotPassword}>Forgot password</Text>
           </TouchableOpacity>
 

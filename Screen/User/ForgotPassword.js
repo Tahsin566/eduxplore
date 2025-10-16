@@ -1,5 +1,6 @@
 import { useSignIn } from '@clerk/clerk-expo';
 import { useAuth } from '@clerk/clerk-expo';
+import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
@@ -75,7 +76,7 @@ const ForgotPassword = ({ navigation }) => {
     return (
       <View style={styles.container}>
         <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('SignIn')}>
-          <Text style={styles.backText}>←</Text>
+          <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.header}>Reset your password</Text>
         {error && <Text style={{ color: 'red' }}>{error}</Text>}
@@ -107,7 +108,7 @@ const ForgotPassword = ({ navigation }) => {
         style={styles.backButton}
         onPress={() => navigation.navigate('SignIn')}
       >
-        <Text style={styles.backText}>‹</Text>
+        <Ionicons name="chevron-back" size={24} color="#fff" />
       </TouchableOpacity>
 
       <Text style={styles.header}>Password Reset</Text>
@@ -138,7 +139,10 @@ const styles = StyleSheet.create({
   },
   backButton: {
     position: 'absolute',
-    top: 57,
+    top: 0,
+    width: 50,
+    height: 50,
+    zIndex: 1,
     left: 20,
   },
   backText: {

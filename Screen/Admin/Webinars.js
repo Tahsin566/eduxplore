@@ -13,12 +13,12 @@ export default function Webinars() {
   
   const { role, profile } = useProfileAndAuth();
   const navigation = useNavigation();
-  const [seminars, setSeminars] = useState([]);
+  const [webinars,setWebinars] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "seminars"), (snapshot) => {
-      const seminarsData = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
-      setSeminars(seminarsData);
+    const unsubscribe = onSnapshot(collection(db, "webinars"), (snapshot) => {
+      const webinars = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
+      setWebinars(webinars);
     });
     return () => unsubscribe && unsubscribe();
   }, []);
@@ -29,15 +29,15 @@ export default function Webinars() {
     const [isRegistered, setIsRegistered] = useState(false);
 
     const handleRegister = async () => {
-      const q = query(collection(db, "seminars_reg"), where("email", "==", profile?.email), where("webinar_id", "==", item.id));
+      const q = query(collection(db, "webinars_reg"), where("email", "==", profile?.email), where("webinar_id", "==", item.id));
       const querySnapshot = await getDocs(q);
       if (querySnapshot.docs.length !== 0) {
         setIsRegistered(!isRegistered);
-        await deleteDoc(doc(db, "seminars_reg", querySnapshot.docs[0].id));
+        await deleteDoc(doc(db, "webinars_reg", querySnapshot.docs[0].id));
         return;
       }
       try {
-        await addDoc(collection(db, "seminars_reg"), {
+        await addDoc(collection(db, "webinars_reg"), {
           email: profile?.email,
           is_registered: true,
           webinar_id: item.id,
@@ -51,7 +51,7 @@ export default function Webinars() {
     const handleMarkAsCompleted = async () => {
 
       try {
-        await updateDoc(doc(db, "seminars", item.id), {
+        await updateDoc(doc(db, "webinars", item.id), {
           registration_status: item?.registration_status === 'open' ? 'close' : 'open'
         })
 
@@ -76,7 +76,7 @@ export default function Webinars() {
             text: 'Yes',
             onPress: async () => {
               try {
-                await deleteDoc(doc(db, "seminars", item.id));
+                await deleteDoc(doc(db, "webinars", item.id));
                 console.log('deleted');
               } catch (error) {
                 Toast.show({ text1: 'Error deleting seminar', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
@@ -91,7 +91,7 @@ export default function Webinars() {
     };
 
     useEffect(() => {
-      const q = query(collection(db, "seminars_reg"), where("email", "==", profile?.email), where("webinar_id", "==", item.id));
+      const q = query(collection(db, "webinars_reg"), where("email", "==", profile?.email), where("webinar_id", "==", item.id));
       getDocs(q).then((snapshot) => {
         if (snapshot.docs.length !== 0) {
           setIsRegistered(snapshot.docs[0].data().is_registered);
@@ -170,7 +170,7 @@ export default function Webinars() {
         </View>
 
         <FlatList
-          data={seminars}
+          data={webinars}
           keyExtractor={(item) => item.id}
           renderItem={({ item }) => <RenderItem item={item} />}
           numColumns={2}

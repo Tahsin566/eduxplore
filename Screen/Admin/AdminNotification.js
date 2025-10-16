@@ -14,6 +14,10 @@ export default function AdminNotification() {
 
   const [notifications, setNotifications] = useState([]);
 
+  const formatDate = (seconds) => {
+    const date = new Date(seconds * 1000);
+    return date.toLocaleString();
+  }
 
   const handleDelete = async(id) => {
     try {
@@ -71,6 +75,7 @@ export default function AdminNotification() {
         <View key={index} style={styles.notification}>
           <Text style={{width:'80%'}}>{notification.title}</Text>
           <Text styleq={{width:'80%'}}>{notification.message}</Text>
+          <Text>{formatDate(notification.time)}</Text>
           <TouchableOpacity onPress={() => handleDelete(notification.id)} style={styles.deleteBtn}><Ionicons name='trash' size={24} color="red" /></TouchableOpacity>
         </View>
       ))}

@@ -27,7 +27,7 @@ export default function RegisteredListScreen({ route }) {
 const getRegisteredEmails = async () => {
     setRegisteredEmails([]);
     try {
-      const q = query(collection(db,"seminars_reg"), where("is_registered", "==", true), where("webinar_id", "==", id ));
+      const q = query(collection(db,"webinars_reg"), where("is_registered", "==", true), where("webinar_id", "==", id ));
       const querySnapshot = await getDocs(q);
       const emails = querySnapshot.docs.map((doc) => doc.data().email);
       setRegisteredEmails(emails);

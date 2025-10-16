@@ -12,6 +12,11 @@ export default function NotificationScreen() {
   const navigation = useNavigation();
   const [notifications, setNotifications] = useState([]);
 
+  const formatDate = (seconds) => {
+    const date = new Date(seconds * 1000);
+    return date.toLocaleString();
+  }
+
   useEffect(() => {
     let q = null
 
@@ -54,6 +59,7 @@ export default function NotificationScreen() {
         <View key={index} style={styles.notification}>
           <Text>{notification.title}</Text>
           <Text>{notification.message}</Text>
+          <Text>{formatDate(notification.time)}</Text>
         </View>
       ))}
     </ScrollView>
@@ -116,10 +122,8 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
     borderRadius: 8,
     padding: 20,
-    flexDirection: 'row',
     marginTop: 10,
     marginBottom: 2,
-    alignItems: 'center',
     borderWidth: 1,
     marginHorizontal: 10,
     

@@ -59,8 +59,6 @@ export const AuthProvider = ({ children }) => {
 
         if(!isLoaded) return
 
-        // console.log(user.lastSignInAt)
-
         let unsubscribe=null
 
         if (user) {
@@ -82,15 +80,12 @@ export const AuthProvider = ({ children }) => {
                 if(data[0] && data[0]?.role === 'admin'){
                     navigation.dispatch(StackActions.replace('HomeScreen'));
                 }
-                else if(data[0] && data[0]?.role === 'user' || data[0] && data[0]?.role === 'moderator'){
+                else if((data[0] && data[0]?.role === 'user') || (data[0] && data[0]?.role === 'moderator')){
                     navigation.dispatch(StackActions.replace('Home'));
                 }
             
             })
         }
-        
-
-        return () => unsubscribe && unsubscribe
 
     }, [isSignedIn,user])
 

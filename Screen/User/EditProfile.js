@@ -6,7 +6,7 @@ import { db } from '../../firebase.config';
 import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 
-const ProfileSettings = ({ navigation }) => {
+const EditProfile = ({ navigation }) => {
 
   
   const { profile } = useProfileAndAuth();
@@ -205,7 +205,7 @@ const ProfileSettings = ({ navigation }) => {
   );
 };
 
-export default ProfileSettings;
+export default EditProfile;
 
 
 const styles = StyleSheet.create({

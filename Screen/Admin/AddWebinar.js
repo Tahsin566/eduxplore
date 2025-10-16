@@ -58,7 +58,7 @@ export default function AddWebinar() {
     setLoading(true);
 
     try {
-      await addDoc(collection(db, "seminars"), {
+      await addDoc(collection(db, "webinars"), {
         topic,
         time: date.getHours() >= 12 ? date.getHours() - 12 + ':' + date.getMinutes() + ' ' + (date.getHours() >= 12 ? 'PM' : 'AM') : date.getHours() + ':' + date.getMinutes() + ' ' + (date.getHours() >= 12 ? 'PM' : 'AM'),
         date: date.toDateString(),

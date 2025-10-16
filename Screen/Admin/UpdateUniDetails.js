@@ -10,7 +10,7 @@ import * as ImagePicker from 'expo-image-picker';
 import Checkbox from 'expo-checkbox';
 import Toast from 'react-native-toast-message';
 
-export default function UpdateOverView({ route }) {
+export default function UpdateUniDetails({ route }) {
   
   const navigation = useNavigation();
 

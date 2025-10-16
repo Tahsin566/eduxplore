@@ -53,7 +53,7 @@ export default function UpdateWebinar({ route }) {
 
     setLoading(true);
     try {
-      await updateDoc(doc(db, "seminars", route.params?.id), {
+      await updateDoc(doc(db, "webinars", route.params?.id), {
         topic,
         time: date.getHours() >= 12 ? date.getHours() - 12 + ':' + date.getMinutes() + ' ' + (date.getHours() >= 12 ? 'PM' : 'AM') : date.getHours() + ':' + date.getMinutes() + ' ' + (date.getHours() >= 12 ? 'PM' : 'AM'),
         date: date.toDateString(),

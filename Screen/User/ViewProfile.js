@@ -135,7 +135,7 @@ const ViewProfile = () => {
 
         <View style={styles.buttonContainer}>
 
-          {role === 'user' && <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('ProfileSettings')}>
+          {role === 'user' && <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('EditProfile')}>
             <Text style={styles.buttonText}>Edit Profile</Text>
           </TouchableOpacity>}
 

@@ -4,7 +4,6 @@ import { createStackNavigator } from '@react-navigation/stack';
 import SignIn from './Screen/User/SignIn.js';
 import SignUp from './Screen/User/SignUp.js';
 import Home from './Screen/User/Home.js';
-import ProfileSettings from './Screen/User/EditProfile.js';
 import GradeConverter from './Screen/User/GradeConverter.js';
 import ECTSCalculator from './Screen/User/ECTSCalculator.js';
 import VPDCalculator from './Screen/User/VPDCalculator.js';
@@ -39,6 +38,7 @@ import AddWebinar from './Screen/Admin/AddWebinar.js';
 import Webinars from './Screen/Admin/Webinars.js';
 import ForgotPassword from './Screen/User/ForgotPassword.js';
 import SendNotification from './Screen/Admin/SendNotification.js';
+import EditProfile from './Screen/User/EditProfile.js';
 
 
 const Stack = createStackNavigator();
@@ -61,7 +61,7 @@ export default function AppNavigator() {
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="ProfileSettings" component={ProfileSettings} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="ViewProfile" component={ViewProfile} />
         <Stack.Screen name="LOM" component={LOMChecker} />
         <Stack.Screen name="GradeConverter" component={GradeConverter} />
@@ -88,7 +88,7 @@ export default function AppNavigator() {
         <Stack.Screen name="SendNotification" component={SendNotification} />
         <Stack.Screen name="Webinars" component={Webinars} />
         <Stack.Screen name="ManageAccounts" component={ManageAccount} />
-        <Stack.Screen name="forgot" component={ForgotPassword} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen name="AdminNotification" component={AdminNotification} />
       </Stack.Navigator>
     </>
