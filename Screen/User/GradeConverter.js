@@ -7,7 +7,7 @@ export default function Menu({ navigation }) {
     <View style={styles.container}>
       {/* Header with back chevron and centered title */}
       <View style={styles.headerBar}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => navigation.replace('Home')} style={styles.backBtn}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Grade Converter</Text>
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   },
   backBtn: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
   backTxt: { color: '#FFFFFF', fontSize: 26, lineHeight: 26, marginTop: -2 },
-  headerText: { color: '#FFFFFF', fontSize: 20, fontWeight: '700' },
+  headerText: { color: '#FFFFFF', fontSize: 20, fontWeight: '700',marginLeft: -1 },
 
   scroll: { paddingHorizontal: 16, paddingBottom: 20 },
 

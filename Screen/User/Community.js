@@ -320,7 +320,7 @@ export default function Community({ navigation }) {
         {/* Header */}
         <View style={styles.headerBar}>
           <TouchableOpacity
-            onPress={() => (role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home'))}
+            onPress={() => (role === 'admin' ? navigation.replace('HomeScreen') : navigation.replace('Home'))}
             style={styles.iconBtn}
           >
             <Ionicons name="chevron-back" size={24} color="#fff" />

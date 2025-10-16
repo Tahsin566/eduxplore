@@ -1,9 +1,10 @@
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useProfileAndAuth, useRole } from '../../auth.context';
 import { db } from '../../firebase.config';
 import { Ionicons } from '@expo/vector-icons';
+import Toast from 'react-native-toast-message';
 
 const ProfileSettings = ({ navigation }) => {
 
@@ -21,6 +22,8 @@ const ProfileSettings = ({ navigation }) => {
   const [showGroupSSCPicker, setShowGroupSSCPicker] = useState(false);
   const [showGroupHSCPicker, setShowGroupHSCPicker] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   const togglePicker = (field) => {
     setShowGroupSSCPicker(field === 'groupSSC');
     setShowGroupHSCPicker(field === 'groupHSC');
@@ -36,6 +39,7 @@ const ProfileSettings = ({ navigation }) => {
     const querySnapshot = await getDocs(q);
 
     if (querySnapshot.docs.length !== 0) {
+      setLoading(true)
       await updateDoc(doc(db, 'profile', querySnapshot.docs[0].id), {
         name,
         ielts_score: ieltsScore,
@@ -45,7 +49,8 @@ const ProfileSettings = ({ navigation }) => {
         masters_subject: mastersSubject,
         vpd,
       });
-      console.log('updated');
+      Toast.show({ text1: 'Profile updated successfully', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false)
       navigation.navigate('ViewProfile');
       return;
     }
@@ -61,10 +66,12 @@ const ProfileSettings = ({ navigation }) => {
         vpd,
         email: profile?.email,
       });
-      console.log('Inserted document with ID: ', res.id);
+      Toast.show({ text1: 'Successfully added', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false)
       navigation.navigate('ViewProfile');
     } catch (error) {
-      console.log('Error adding document: ', error);
+      Toast.show({ text1: 'Error adding profile', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false)
     }
   };
 
@@ -201,7 +208,7 @@ const ProfileSettings = ({ navigation }) => {
           disabled={!isFormChanged()}
           onPress={handleSave}
         >
-          <Text style={styles.saveBtnText}>Save Changes</Text>
+          {loading ? <ActivityIndicator size="small" color="#000" />:<Text style={styles.saveBtnText}>Save Changes</Text>}
         </TouchableOpacity>
       </View>
     </ScrollView>

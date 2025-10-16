@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../../firebase.config';
+import Toast from 'react-native-toast-message';
 
 const INPUT_HEIGHT = 48;
 
@@ -17,18 +18,23 @@ export default function RoleScreen({ route }) {
   const [selectedRole, setSelectedRole] = useState('Please select');
   const [visible, setVisible] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   const roles = ['Moderator (Community)', 'Admin (Full Access)', 'User'];
 
 
   const updateUserPrevilege = async () => {
+    setLoading(true)
     try {
       await updateDoc(doc(db, "users", id), {
         role: selectedRole.split(' ')[0].toLowerCase()
       })
-      console.log('Document updated with ID', id);
+      Toast.show({ text1: 'Role updated successfully', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false)
       navigation.navigate('ManageAccounts')
     } catch (error) {
-      console.log('Error adding document: ', error);
+      setLoading(false)
+      Toast.show({ text1: 'Error updating role', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   };
 
@@ -79,7 +85,7 @@ export default function RoleScreen({ route }) {
 
       {/* Save button*/}
       <TouchableOpacity onPress={updateUserPrevilege} style={styles.addButton}>
-        <Text style={styles.addButtonText}>Save Change</Text>
+        {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.addButtonText}>Save Change</Text>}
       </TouchableOpacity>
     </View>
   );

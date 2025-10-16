@@ -1,6 +1,6 @@
 import { useSignUp, useUser } from '@clerk/clerk-expo';
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StatusBar, StyleSheet, ScrollView, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StatusBar, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useRole } from '../../auth.context';
 import { db } from '../../firebase.config';
@@ -23,51 +23,24 @@ function SignUp({ navigation }) {
   const [pendingVerification, setPendingVerification] = useState(false);
   const [code, setCode] = useState('');
 
+  const [loading, setLoading] = useState(false);
 
-  const EnterUserToDb = async () => {
-
-    if (!isSignedIn) return
-
-    const q = query(collection(db, "users"), where("email", "==", user?.emailAddresses[0]?.emailAddress));
-    const querySnapshot = await getDocs(q);
-
-
-    if (querySnapshot.docs.length !== 0) {
-      console.log('User already exists');
-      return;
-    }
-
-    const data = {
-      name: user.firstName + ' ' + user.lastName || '',
-      email: user?.emailAddresses[0]?.emailAddress,
-      role: 'user',
-      photo: user.imageUrl,
-    }
-
-    try {
-      const res = await addDoc(collection(db, "users"), data)
-      console.log('Inserted document with ID: ', res.id);
-    } catch (error) {
-      console.log('Error adding document: ', error);
-    }
-
-
-  }
 
   const handleSignUp = async () => {
 
     if (!(username && email && password && confirmPassword)) {
-      Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'All fields are required', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 
     if (password !== confirmPassword) {
 
-      Toast.show({ text1: 'Passwords do not match', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Passwords do not match', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
 
     }
 
+    setLoading(true);
     try {
       const res = await signUp.create({
         firstName: username,
@@ -78,15 +51,19 @@ function SignUp({ navigation }) {
 
       if (res.status === "complete") {
         await setActive({ session: res.createdSessionId });
-        await EnterUserToDb()
+        Toast.show({ text1: 'Signed up successfully', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        setLoading(false);
+
         if (role === 'admin') {
-          navigation.navigate('HomeScreen')
+          navigation.replace('HomeScreen')
         } else if (role === 'user' || role === 'moderator') {
-          navigation.navigate('Home')
+          navigation.replace('Home')
         }
+        
       }
 
     } catch (error) {
+      setLoading(false);
       Toast.show({ text1: error.message, type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 13 }, autoHide: true, visibilityTime: 1000 })
 
       if (error.message.includes('Password has been found in an online data breach')) {
@@ -150,7 +127,7 @@ function SignUp({ navigation }) {
           </View>
 
           <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-            <Text style={styles.buttonText}>CREATE ACCOUNT</Text>
+            {loading ? <ActivityIndicator size="small" color="#000" /> : <Text style={styles.buttonText}>CREATE ACCOUNT</Text>}
           </TouchableOpacity>
 
           <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>

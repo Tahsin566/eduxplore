@@ -6,6 +6,7 @@ import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/fire
 import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
 import { TextInput } from 'react-native-gesture-handler';
+import Toast from 'react-native-toast-message';
 
 const data = ['University 1', 'University 2', 'University 3', 'University 4'];
 
@@ -25,12 +26,12 @@ export default function BachelorList() {
       const universitiesData = querySnapshot.docs.map((doc) => { return {...doc.data(), id: doc.id}});
       setUniversities(universitiesData);
     } catch (error) {
-      console.error('Error fetching universities:', error);
+      Toast.show({ text1: 'Error fetching universities', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   };
 
   const handlePress = (item) => {
-    navigation.navigate("UniversityOverview", { universityName: item,path : 'BachelorList' });
+    navigation.navigate("UniversityDetails", { universityName: item,path : 'BachelorList' });
   };
 
   const deleteUniversityDetails = async (item) => {
@@ -47,9 +48,8 @@ export default function BachelorList() {
           onPress: async () => {
             try {
               await deleteDoc(doc(db, "university", item.id));
-              console.log('deleted');
             } catch (error) {
-              console.log('Error adding document: ', error);
+              Toast.show({ text1: 'Error deleting university', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
             }
           },
         },
@@ -106,7 +106,7 @@ export default function BachelorList() {
           </TouchableOpacity>
           {role === 'admin' && <View style={styles.buttonContainer}>
 
-            <TouchableOpacity onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })} style={styles.update}>
+            <TouchableOpacity onPress={() => navigation.navigate("UpdateUniDetails", { university : item, path : 'BachelorList' })} style={styles.update}>
               <Text style={styles.text}>Update</Text>
             </TouchableOpacity>
 

@@ -58,9 +58,8 @@ export default function FindUniversity({ navigation }) {
           {/* Header */}
           <View style={styles.headerBar}>
             <TouchableOpacity
-              onPress={() => navigation?.navigate('Home')}
+              onPress={() => navigation?.replace('Home')}
               style={styles.iconBtn}
-              hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
             >
               <Ionicons name="chevron-back" size={24} color="#fff" />
             </TouchableOpacity>
@@ -167,8 +166,8 @@ const styles = StyleSheet.create({
     paddingHorizontal: 6,
     marginBottom: 12,
   },
-  iconBtn: { width: 36, height: 36, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { color: '#E7EDF3', fontSize: 18, fontWeight: '700' },
+  iconBtn: { height: 36, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { color: '#E7EDF3', fontSize: 18, fontWeight: '700',marginLeft: '25%',marginRight: 'auto' },
 
   scroll: { paddingBottom: 24 },
   searchWrap: {

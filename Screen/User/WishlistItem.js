@@ -43,7 +43,7 @@ const WishlistItem = ({ item }) => {
     return (
 
         <View style={styles.cardContainer}>
-            <TouchableOpacity onPress={() => navigation.navigate('UniversityOverview', { universityName: university, path: 'WishList' })}>
+            <TouchableOpacity onPress={() => navigation.navigate('UniversityDetails', { universityName: university, path: 'WishList' })}>
 
 
                 <View>

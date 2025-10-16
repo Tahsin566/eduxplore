@@ -59,7 +59,6 @@ function SearchResult({ navigation, route }) {
           <TouchableOpacity
             onPress={() => navigation?.navigate('Search', { path: 'search' })}
             style={styles.iconBtn}
-            hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
           >
             <Ionicons name='chevron-back' size={24} color='white' />
           </TouchableOpacity>
@@ -97,7 +96,7 @@ function SearchResult({ navigation, route }) {
               
 
               <TouchableOpacity
-                onPress={() => navigation?.navigate('UniversityOverview', { universityName: u, path: 'Result' })}
+                onPress={() => navigation?.navigate('UniversityDetails', { universityName: u, path: 'Result' })}
               >
                 <Text style={styles.moreLink}>{'\u2192'} More</Text>
               </TouchableOpacity>
@@ -122,22 +121,15 @@ const styles = StyleSheet.create({
   canvas: {
     flex: 1,
     backgroundColor: '#1C2E5C',
-    paddingHorizontal: 14,
-    paddingBottom: 16,
+    paddingHorizontal: 14
   },
 
   headerBar: {
-    height: 48,
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingHorizontal: 6,
-    marginTop: 20,
-    marginBottom: 12,
+    paddingHorizontal: 6
   },
   iconBtn: {
-    width: 36,
-    height: 36,
     alignItems: 'center',
     justifyContent: 'center',
   },
@@ -149,6 +141,8 @@ const styles = StyleSheet.create({
     color: '#E7EDF3',
     fontSize: 24,
     fontWeight: '700',
+    marginLeft: '22%',
+    marginRight: 'auto'
   },
 
   scroll: {

@@ -6,7 +6,7 @@ export default function Footer() {
   
   const navigation = useNavigation();
 
-  const goHome = () => navigation.navigate('Home');
+  const goHome = () => navigation.replace('Home');
   const goWishlist = () => navigation.navigate('WishList');
   const goCommunity = () => navigation.navigate('Community');
   const goProfile = () => navigation.navigate('ViewProfile');

@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Keyboard } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Keyboard, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import srhIcon from '../../Images/srh.png';
@@ -34,20 +34,28 @@ export default function AddUniDetails() {
   const [language, setLanguage] = useState('');
   const [tab, setTab] = useState('overview');
 
+  const [loading, setLoading] = useState(false);
+
   
 
   const pickImage = async () => {
 
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!permissionResult.granted) {
-      alert('Permission to access media library is required!');
+      Toast.show({
+        type: 'error',
+        text1: 'Permission to access media library is required!',
+        topOffset: -10,
+        text1Style: { color: 'red', fontSize: 16 },
+        autoHide: true,
+        visibilityTime: 1000
+      })
       return;
     }
 
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      aspect: [1, 1],
       quality: 0.8,
     });
 
@@ -61,6 +69,7 @@ export default function AddUniDetails() {
       setFile(newFile);
     }
   };
+
 
 
   const uploadToCloudinary = async () => {
@@ -79,18 +88,20 @@ export default function AddUniDetails() {
       });
 
       const data = await response.json();
-      console.log(data)
-      // console.log(JSON.stringify(data, null, 2));
       return data?.secure_url
 
     } catch (error) {
-      console.log('Error uploading image:', error.message);
+      Toast.show({ text1: 'Error uploading image', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return ''
     }
   };
 
 
+
+
   const addUniversity = async () => {
+
+    
 
     if(!(
       name &&
@@ -139,8 +150,10 @@ export default function AddUniDetails() {
       return
     }
 
+    setLoading(true)
+
     try {
-      const res = await addDoc(collection(db, "university"), {
+      await addDoc(collection(db, "university"), {
         name,
         overview: overView,
         requirements,
@@ -159,10 +172,11 @@ export default function AddUniDetails() {
         has_master: masterCheck,
         has_PhD: phdCheck
       })
-      console.log('Inserted document with ID: ', res.id);
+      Toast.show({ text1: 'Successfully added', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false)
       navigation.navigate('UniversityList')
     } catch (error) {
-      console.log('Error adding document: ', error);
+      Toast.show({ text1: 'Error adding document', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
 
   }
@@ -183,6 +197,9 @@ export default function AddUniDetails() {
     setIeltsScore('');
   }, [])
 
+
+
+
   return (
     <ScrollView contentContainerStyle={styles.container}>
       {/* Header */}
@@ -191,7 +208,7 @@ export default function AddUniDetails() {
           <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
             <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>
-          <Text style={styles.title}>Add Overview</Text>
+          <Text style={styles.title}>Add University Details</Text>
         </View>
 
         <View style={styles.body}>
@@ -415,7 +432,7 @@ export default function AddUniDetails() {
 
 
       <TouchableOpacity onPress={addUniversity} style={styles.button1}>
-        <Text style={styles.buttonText1}>Add university</Text>
+        {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.buttonText1}>Add university</Text>}
       </TouchableOpacity>
 
     </ScrollView>
@@ -455,7 +472,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: 'white',
     fontWeight: 'bold',
-    marginRight: '88',
+    marginRight: 'auto',
+    marginLeft: 'auto'
   },
   separator: {
     gap: 10,
@@ -494,8 +512,7 @@ const styles = StyleSheet.create({
   },
   formSection: {
     padding: 20,
-    backgroundColor: '#fff',
-    marginTop: 10,
+    backgroundColor: '#fff'
   },
   formTitle: {
     fontSize: 22,

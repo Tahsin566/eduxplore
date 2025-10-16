@@ -21,7 +21,7 @@ export default function Appointment({ navigation }) {
     <View style={styles.container}>
       {/* Header with Back Button */}
       <View style={styles.headerRow}>
-        <TouchableOpacity style={styles.backButton} onPress={() => navigation.navigate('Home')}>
+        <TouchableOpacity style={styles.backButton} onPress={() => navigation.replace('Home')}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>Appointment</Text>

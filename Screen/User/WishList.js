@@ -42,7 +42,7 @@ function WishList({ navigation }) {
         <View style={styles.headerBar}>
           <TouchableOpacity
             onPress={() =>
-              role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home')
+              role === 'admin' ? navigation.replace('HomeScreen') : navigation.replace('Home')
             }
             style={styles.iconBtn}
             hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
@@ -61,7 +61,7 @@ function WishList({ navigation }) {
           keyboardShouldPersistTaps="handled"
         >
           {wishlist.length !== 0 ? (
-            wishlist.map((item) => <WishlistItem key={item.id} item={item} />)
+            wishlist.map((item,index) => <WishlistItem key={index} item={item} />)
           ) : (
             <View style={{ alignItems: 'center', justifyContent: 'center', height: '100%' }}>
               <Text style={{ color: 'white', fontSize: 18, fontWeight: 'bold', marginTop: 20 }}>

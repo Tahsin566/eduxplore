@@ -101,7 +101,7 @@ function Home({ navigation }) {
         <TouchableOpacity
           style={styles.feature}
           activeOpacity={0.85}
-          onPress={() => navigation.navigate('Seminars')}
+          onPress={() => navigation.navigate('Webinars')}
         >
           <View style={styles.featureCircle}>
             <MaterialCommunityIcons name="presentation-play" size={26} color="#fff" />

@@ -83,7 +83,7 @@ const HomeScreen = () => {
 
       <TouchableOpacity
         style={styles.card}
-        onPress={() => navigation.navigate('CoustomSend')}
+        onPress={() => navigation.navigate('SendNotification')}
         >
         <View style={styles.iconNotification}>
           <Ionicons name="notifications" size={32} color="#FFB946" />
@@ -97,7 +97,7 @@ const HomeScreen = () => {
 
       <TouchableOpacity
         style={styles.card}
-        onPress={() => navigation.navigate('Seminars')}
+        onPress={() => navigation.navigate('Webinars')}
       >
         <View style={styles.iconSeminar}>
           <Ionicons name="calendar" size={32} color="#886cff" />

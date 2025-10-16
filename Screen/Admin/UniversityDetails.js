@@ -9,6 +9,7 @@ import { db } from '../../firebase.config';
 import { useProfileAndAuth, useRole } from '../../auth.context';
 import * as Linking from 'expo-linking';
 import Markdown from 'react-native-markdown-display';
+import Toast from 'react-native-toast-message';
 
 
 export default function UniversityOverview({ route }) {
@@ -45,9 +46,9 @@ export default function UniversityOverview({ route }) {
         is_marked: true,
         user_email: profile?.email
       })
-      console.log('Inserted document `with` ID: ', res.id);
+      Toast.show({ text1: 'Added successfully', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     } catch (error) {
-      console.log('Error adding document: ', error);
+      Toast.show({ text1: 'Error adding to wishlist', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   }
 
@@ -111,7 +112,7 @@ export default function UniversityOverview({ route }) {
             <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>}
           {/* <Text style={styles.title}>Overview {isMarked ? 'Marked' : 'Not Marked'}</Text> */}
-          {role === 'user' || role === 'moderator' && <TouchableOpacity onPress={addToWishlist}>
+          {(role === 'user' || role === 'moderator') && <TouchableOpacity onPress={addToWishlist}>
             {isMarked === true ? <Ionicons name="bookmark" size={24} color="white" /> : <Ionicons name="bookmark-outline" size={24} color="white" />}
           </TouchableOpacity>}
         </View>
@@ -135,7 +136,7 @@ export default function UniversityOverview({ route }) {
           style={styles.button}
           onPress={() => setTab('overview')}
         >
-          <Text style={[{ ...styles.buttonText }, { color: tab === 'overview' ? 'indigo' : '#000' }]}>OverView</Text>
+          <Text style={[{ ...styles.buttonText }, { color: tab === 'overview' ? 'indigo' : '#000' }]}>Overview</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -201,7 +202,7 @@ export default function UniversityOverview({ route }) {
             <Text style={styles.websiteBtnText}>Course website</Text>
           </TouchableOpacity>
 
-          {role === 'admin' && <TouchableOpacity style={styles.button1} onPress={() => navigation.navigate('UpdateOVerView', { university: universityName })}>
+          {role === 'admin' && <TouchableOpacity style={styles.button1} onPress={() => navigation.navigate('UpdateUniDetails', { university: universityName,path:path })}>
             <Text style={[{ ...styles.buttonText1 }, { fontWeight: 'bold', color: 'white' }]}>Update</Text>
           </TouchableOpacity>}
         </View>

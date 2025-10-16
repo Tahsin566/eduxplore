@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useRole } from '../../auth.context';
@@ -9,7 +9,7 @@ import { addDoc, collection } from 'firebase/firestore';
 import Toast from 'react-native-toast-message';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
-export default function AddSeminar() {
+export default function AddWebinar() {
 
   
   const { role } = useRole();
@@ -17,25 +17,31 @@ export default function AddSeminar() {
 
   const [topic, setTopic] = useState('');
   const [date, setDate] = useState(new Date());
-  const [time, setTime] = useState('');
   const [mode, setMode] = useState('date');
   const [show, setShow] = useState(false);
   const [guest, setGuest] = useState('');
   const [description, setDescription] = useState('');
+  const [loading, setLoading] = useState(false);
+
+
 
   const onChange = (_, selectedDate) => {
-    setShow(Platform.OS === "ios");
+    setShow(false);
     if (selectedDate) {
       setDate(selectedDate);
     }
   };
+
+
 
   const showMode = (currentMode) => {
     setShow(true);
     setMode(currentMode);
   };
 
-  const addSeminar = async () => {
+
+
+  const addWebinar = async () => {
 
     if (!topic || !date || !guest || !description) {
       Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
@@ -49,8 +55,10 @@ export default function AddSeminar() {
       return
     }
 
+    setLoading(true);
+
     try {
-      const res = await addDoc(collection(db, "seminars"), {
+      await addDoc(collection(db, "seminars"), {
         topic,
         time: date.getHours() >= 12 ? date.getHours() - 12 + ':' + date.getMinutes() + ' ' + (date.getHours() >= 12 ? 'PM' : 'AM') : date.getHours() + ':' + date.getMinutes() + ' ' + (date.getHours() >= 12 ? 'PM' : 'AM'),
         date: date.toDateString(),
@@ -59,26 +67,31 @@ export default function AddSeminar() {
         status: 'upcoming',
         description
       })
-      console.log('Inserted document with ID: ', res.id);
 
-      const notification = await addDoc(collection(db, "notification"), {
+      await addDoc(collection(db, "notification"), {
         message : `A new webinar has been added titled : ${topic}\nVisit the webinar page for more details`,
         recipient : 'user',
         time : new Date()
       })
 
-      navigation.navigate('Seminars')
+      Toast.show({ text1: 'Webinar added successfully', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false)
+      navigation.navigate('Webinars')
     } catch (error) {
-      console.log('Error adding document: ', error);
+      Toast.show({ text1: 'Error adding webinar', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false)
     }
   };
+
+
+
   return (
     <ScrollView enabled contentContainerStyle={{ flexGrow: 1 }}>
 
       <View style={styles.container}>
         {/* Header row */}
         <View style={styles.headerRow}>
-          <TouchableOpacity onPress={() => navigation.navigate('Seminars')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Webinars')}>
             <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Add Webinar</Text>
@@ -139,8 +152,8 @@ export default function AddSeminar() {
 
         {/* Add Seminar button */}
         {role === 'admin' && (
-          <TouchableOpacity style={styles.addButton} onPress={() => { addSeminar() }}>
-            <Text style={styles.addButtonText}>Add Webinar</Text>
+          <TouchableOpacity style={styles.addButton} onPress={() => { addWebinar() }}>
+            {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.addButtonText}>Add Webinar</Text>}
           </TouchableOpacity>
         )}
       </View>
@@ -165,7 +178,8 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginRight: 24, // to balance space because of back icon
+    marginRight: 'auto', // to balance space because of back icon
+    marginLeft:'auto'
   },
   label: {
     color: '#ccc',

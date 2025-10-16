@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Linking } from 'react-native';
+import { View, Text, StyleSheet, Image, TouchableOpacity, ScrollView, TextInput, Linking, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import srhIcon from '../../Images/srh.png';
@@ -33,11 +33,13 @@ export default function UpdateOverView({ route }) {
   const [email, setEmail] = useState('');
   const [website, setWebsite] = useState('');
   const [language,setLanguage] = useState('')
-  const [tutionFee,setTutionFee] = useState('')
+  const [tutionFee,setTutionFee] = useState(0)
   const [ieltsScore, setIeltsScore] = useState('');
   const [bachelorCheck, setBachelorCheck] = useState(false);
   const [masterCheck, setMasterCheck] = useState(false);
   const [phdCheck, setPhdCheck] = useState(false);
+
+  const [loading, setLoading] = useState(false);
 
 
   const regexCheck = (input, name, value) => {
@@ -90,6 +92,8 @@ export default function UpdateOverView({ route }) {
     
   }
 
+
+
   const pickImage = async () => {
 
     const permissionResult = await ImagePicker.requestMediaLibraryPermissionsAsync();
@@ -101,7 +105,6 @@ export default function UpdateOverView({ route }) {
     const result = await ImagePicker.launchImageLibraryAsync({
       mediaTypes: ["images"],
       allowsEditing: true,
-      aspect: [1, 1],
       quality: 0.8,
     });
 
@@ -132,18 +135,17 @@ export default function UpdateOverView({ route }) {
       });
 
       const data = await response.json();
-      console.log(data)
-      // console.log(JSON.stringify(data, null, 2));
       return data?.secure_url
 
     } catch (error) {
-      console.log('Error uploading image:', error.message);
+      Toast.show({ text1: 'Error uploading image', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return ''
     }
   };
 
 
   const handleUpdate = async () => {
+    setLoading(true);
     try {
       await updateDoc(doc(db, 'university', university?.id), {
 
@@ -166,10 +168,13 @@ export default function UpdateOverView({ route }) {
         has_PhD: phdCheck
 
       })
-      console.log('Document updated');
+
+      Toast.show({ text1: 'Successfully updated', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false);
       navigation.navigate('UniversityList')
     } catch (error) {
-      console.log('Error adding document: ', error);
+      Toast.show({ text1: 'Error updating university', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false);
     }
   };
 
@@ -431,7 +436,7 @@ export default function UpdateOverView({ route }) {
 
       {/* Contact Info */}
       <TouchableOpacity style={[{ ...styles.button1 }, { margin: 10, marginHorizontal: 20 }]} onPress={handleUpdate}>
-        <Text style={styles.buttonText1}>Save changes</Text>
+        {loading ? <ActivityIndicator size="small" color="#fff" />:<Text style={styles.buttonText1}>Save changes</Text>}
       </TouchableOpacity>
       <View>
       </View>
@@ -463,7 +468,8 @@ const styles = StyleSheet.create({
     fontSize: 24,
     color: 'white',
     fontWeight: 'bold',
-    marginRight: '65',
+    marginRight: 'auto',
+    marginLeft:'auto'
   },
   body: {
     marginTop: 20,
@@ -511,8 +517,7 @@ const styles = StyleSheet.create({
   },
   formSection: {
     padding: 20,
-    backgroundColor: '#fff',
-    marginTop: 10,
+    backgroundColor: '#fff'
   },
   formTitle: {
     fontSize: 22,

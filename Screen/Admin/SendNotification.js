@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { db } from '../../firebase.config';
@@ -18,6 +18,8 @@ export default function SendNotification() {
   const [recipient, setRecipient] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
 
+  const [loading, setLoading] = useState(false);
+
   const SendNotification = async() => {
 
     const stringRegex = /^[A-Z]+[a-zA-Z0-9 .,]*/;
@@ -32,16 +34,19 @@ export default function SendNotification() {
       return
     }
 
+    setLoading(true)
+
     try {
-      const res = await addDoc(collection(db,"notification"),{
+      await addDoc(collection(db,"notification"),{
         message,
         recipient:recipient?.toLowerCase(),
         time: new Date()  
       })
-      console.log('Inserted document with ID: ', res.id);
+      Toast.show({ text1: 'Notification sent successfully', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false)
       navigation.navigate('AdminNotification')
     } catch (error) {
-      console.log('Error adding document: ', error);
+      Toast.show({ text1: 'Error sending notification', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   };
 
@@ -49,7 +54,7 @@ export default function SendNotification() {
     <View style={styles.container}>
       <View><Text style={styles.heading}>Send Notification</Text></View>
       
-        <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home') }>
+        <TouchableOpacity onPress={() => role === 'admin' ? navigation.replace('HomeScreen') : navigation.replace('Home') }>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
       
@@ -102,9 +107,9 @@ export default function SendNotification() {
       ))}
 
       <TouchableOpacity onPress={SendNotification} style={styles.sendButton}>
-        <Text style={styles.sendButtonText}>Send Notification</Text>
+        {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.sendButtonText}>Send Notification</Text>}
       </TouchableOpacity>
-    </View>
+      </View>
   );
 }
 

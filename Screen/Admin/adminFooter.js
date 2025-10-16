@@ -3,15 +3,13 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { FontAwesome5, MaterialIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useRole } from '../../auth.context';
 
 
 export default function AdminFooter() {
   
-  const {profile} = useRole()
   const navigation = useNavigation();
 
-  const goHome = () => navigation.navigate('HomeScreen');     // ensure route name matches your navigator
+  const goHome = () => navigation.replace('HomeScreen');     // ensure route name matches your navigator
   const goCommunity = () => navigation.navigate('Community');
   const goProfile = () => navigation.navigate('ViewProfile');  // ensure route name matches
 

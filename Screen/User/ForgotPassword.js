@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
 import Toast from 'react-native-toast-message';
 
-const PasswordReset = ({ navigation }) => {
+const ForgotPassword = ({ navigation }) => {
 
   const { signIn, setActive, isLoaded } = useSignIn()
   const { signOut } = useAuth()
@@ -15,6 +15,8 @@ const PasswordReset = ({ navigation }) => {
   const [code, setCode] = React.useState('')
   const [successfulCreation, setSuccessfulCreation] = React.useState(false)
   const [error, setError] = React.useState('')
+
+  const [loading, setLoading] = useState(false);
 
   const onRequestReset = async () => {
     if (!isLoaded) return
@@ -44,6 +46,8 @@ const PasswordReset = ({ navigation }) => {
       signOut()
     }
 
+    setLoading(true)
+
     try {
       const result = await signIn.attemptSecondFactor({
         strategy: "reset_password_email_code",
@@ -53,8 +57,9 @@ const PasswordReset = ({ navigation }) => {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId })
+        Toast.show({ text1: 'Successfull', type: 'success', topOffset: -10, text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       } else {
-        console.log(result)
+        Toast.show({ text1: 'Failed', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       }
     } catch (err) {
       Toast.show({ text1: 'Error resetting password', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
@@ -123,7 +128,7 @@ const PasswordReset = ({ navigation }) => {
   );
 };
 
-export default PasswordReset;
+export default ForgotPassword;
 
 const styles = StyleSheet.create({
   container: {

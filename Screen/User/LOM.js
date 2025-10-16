@@ -127,7 +127,7 @@ export default function LOMChecker({ navigation }) {
 
       {/* Header */}
       <View style={styles.headerBar}>
-        <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.iconBtn}>
+        <TouchableOpacity onPress={() => navigation.replace('Home')} style={styles.iconBtn}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>LOM Checker</Text>
@@ -247,7 +247,7 @@ const styles = StyleSheet.create({
     padding: 5
   },
   iconBtn: { width: 36, alignItems: 'center', justifyContent: 'center' },
-  headerTitle: { color: '#E7EDF3', fontSize: 18, fontWeight: '700' },
+  headerTitle: { color: '#E7EDF3', fontSize: 18, fontWeight: '700',marginLeft: 'auto',marginRight: 'auto' },
 
   messages: { flex: 1 },
 

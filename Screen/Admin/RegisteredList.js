@@ -32,7 +32,7 @@ const getRegisteredEmails = async () => {
       const emails = querySnapshot.docs.map((doc) => doc.data().email);
       setRegisteredEmails(emails);
     } catch (error) {
-      console.log('Error getting registered emails: ', error);
+      Toast.show({ text1: 'Error fetching registered emails', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   };
 
@@ -57,7 +57,7 @@ const sendEmail = async () => {
       <View style={styles.container}>
 
         <View style={styles.headerRow}>
-          <TouchableOpacity onPress={() => navigation.navigate('Seminars')} style={styles.headerIcon}>
+          <TouchableOpacity onPress={() => navigation.navigate('Webinars')} style={styles.headerIcon}>
             <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.title}>Registered List</Text>

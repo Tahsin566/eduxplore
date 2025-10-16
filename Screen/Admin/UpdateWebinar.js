@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useRole } from '../../auth.context';
@@ -9,7 +9,7 @@ import { addDoc, collection, doc, updateDoc } from 'firebase/firestore';
 import Toast from 'react-native-toast-message';
 import RNDateTimePicker from '@react-native-community/datetimepicker';
 
-export default function UpdateSeminar({ route }) {
+export default function UpdateWebinar({ route }) {
 
   
   const { role } = useRole();
@@ -22,6 +22,8 @@ export default function UpdateSeminar({ route }) {
   const [show, setShow] = useState(false);
   const [guest, setGuest] = useState('');
   const [description, setDescription] = useState('');
+
+  const [loading, setLoading] = useState(false);
 
   const onChange = (_, selectedDate) => {
     setShow(Platform.OS === "ios");
@@ -49,6 +51,7 @@ export default function UpdateSeminar({ route }) {
       return
     }
 
+    setLoading(true);
     try {
       await updateDoc(doc(db, "seminars", route.params?.id), {
         topic,
@@ -57,11 +60,12 @@ export default function UpdateSeminar({ route }) {
         guest,
         description
       })
-      // console.log('Inserted document with ID: ', res.id);
-
-      navigation.navigate('Seminars')
+      Toast.show({ text1: 'Webinar updated successfully', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false);
+      navigation.navigate('Webinars');
     } catch (error) {
-      console.log('Error adding document: ', error);
+      Toast.show({ text1: 'Error updating webinar', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false);
     }
   };
 
@@ -79,7 +83,7 @@ export default function UpdateSeminar({ route }) {
       <View style={styles.container}>
         {/* Header row */}
         <View style={styles.headerRow}>
-          <TouchableOpacity onPress={() => navigation.navigate('Seminars')}>
+          <TouchableOpacity onPress={() => navigation.navigate('Webinars')}>
             <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.headerTitle}>Update Webinar</Text>
@@ -141,7 +145,7 @@ export default function UpdateSeminar({ route }) {
         {/* Add Seminar button */}
         {role === 'admin' && (
           <TouchableOpacity style={styles.addButton} onPress={updateWebinar}>
-            <Text style={styles.addButtonText}>Save Changes</Text>
+            {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.addButtonText}>Save Changes</Text>}
           </TouchableOpacity>
         )}
       </View>

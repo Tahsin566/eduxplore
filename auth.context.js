@@ -1,5 +1,5 @@
 import { useAuth, useUser } from '@clerk/clerk-expo';
-import { StackActions, useNavigation } from '@react-navigation/native';
+import { CommonActions, StackActions, useNavigation } from '@react-navigation/native';
 import { addDoc, collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
 import React, { useEffect } from 'react';
 import { db } from './firebase.config';
@@ -48,7 +48,6 @@ export const AuthProvider = ({ children }) => {
             setRole('user')
             setProfile(data)
             setUserId(res.id)
-            console.log('Inserted document with ID: ', res.id);
         } catch (error) {
             console.log('Error adding document: ', error);
         }
@@ -60,6 +59,8 @@ export const AuthProvider = ({ children }) => {
 
         if(!isLoaded) return
 
+        // console.log(user.lastSignInAt)
+
         let unsubscribe=null
 
         if (user) {
@@ -70,11 +71,8 @@ export const AuthProvider = ({ children }) => {
             unsubscribe = onSnapshot(q, (snapshot) => {
 
                 if (snapshot.docs.length === 0) {
-                    // navigation.navigate('SignIn')
                     return;
                 }
-
-                console.log('changed');
                 const data = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
                 setRole(data[0]?.role);
                 setUserId(data[0]?.id);
@@ -94,7 +92,7 @@ export const AuthProvider = ({ children }) => {
 
         return () => unsubscribe && unsubscribe
 
-    }, [user])
+    }, [isSignedIn,user])
 
     return <AuthContext.Provider value={{ user, role, userId, profile,EnterUserToDb }}>{children}</AuthContext.Provider>;
 }

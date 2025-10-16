@@ -7,8 +7,9 @@ import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateD
 import { db } from '../../firebase.config';
 import Footer from '../User/Footer';
 import AdminFooter from './adminFooter';
+import Toast from 'react-native-toast-message';
 
-export default function Seminars() {
+export default function Webinars() {
   
   const { role, profile } = useProfileAndAuth();
   const navigation = useNavigation();
@@ -43,7 +44,7 @@ export default function Seminars() {
         });
         setIsRegistered(true);
       } catch (error) {
-        console.log('Error adding document: ', error);
+        Toast.show({ text1: 'Error registering', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       }
     };
 
@@ -56,7 +57,7 @@ export default function Seminars() {
 
       }
       catch (error) {
-        console.log('Error adding document: ', error);
+        Toast.show({ text1: 'Error updating registration status', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       }
 
     }
@@ -78,7 +79,7 @@ export default function Seminars() {
                 await deleteDoc(doc(db, "seminars", item.id));
                 console.log('deleted');
               } catch (error) {
-                console.log('Error adding document: ', error);
+                Toast.show({ text1: 'Error deleting seminar', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
               }
             },
             style: 'default',
@@ -105,7 +106,7 @@ export default function Seminars() {
         <View>
 
           {role === 'admin' && <TouchableOpacity style={{marginLeft: 'auto'}}>
-            <MaterialCommunityIcons name="pencil-box" size={24} color='#34495e' onPress={() => navigation.navigate('EditSeminar', { id: item.id,webinar : item })} />
+            <MaterialCommunityIcons name="pencil-box" size={24} color='#34495e' onPress={() => navigation.navigate('UpdateWebinar', { id: item.id,webinar : item })} />
           </TouchableOpacity>}
 
           <Text style={styles.cardSmallText}>Webinar info</Text>
@@ -128,18 +129,13 @@ export default function Seminars() {
 
           {/* <Text>{item?.status === 'upcoming' ? 'Upcoming' : 'Completed'}</Text> */}
 
-          {item?.registration_status === 'open' ? <TouchableOpacity onPress={handleRegister} style={[styles.registerButton, isRegistered]}>
+          {(item?.registration_status === 'open' && role !== 'admin') ? <TouchableOpacity onPress={handleRegister} style={[styles.registerButton, isRegistered]}>
             <Text style={styles.registerText}>{isRegistered ? 'Registered' : 'Register'}</Text>
-          </TouchableOpacity> : <Text>Registration closed</Text>}
+          </TouchableOpacity> : <Text>Registration {item?.registration_status === 'open' ? 'open' : 'closed'}</Text>}
 
           {role === 'admin' && <TouchableOpacity onPress={() => handleMarkAsCompleted(item)} style={[styles.registerButton, isRegistered]}>
             <Text style={styles.registerText}>{item?.registration_status === 'open' ? 'Close Registration' : 'Open Registration'}</Text>
           </TouchableOpacity>}
-
-
-          {/* <TouchableOpacity onPress={() => setIsRegisterOpen(!isRegisterOpen)} style={[styles.registerButton, isRegistered]}>
-            <Text style={styles.registerText}>Open</Text>
-          </TouchableOpacity> */}
 
           {role === 'admin' && (
             <>
@@ -166,7 +162,7 @@ export default function Seminars() {
     <>
       <View style={styles.container}>
         <View style={styles.header}>
-          <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home')}>
+          <TouchableOpacity onPress={() => role === 'admin' ? navigation.replace('HomeScreen') : navigation.replace('Home')}>
             <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
           <Text style={styles.title}>Webinar</Text>
@@ -185,7 +181,7 @@ export default function Seminars() {
 
 
         {role === 'admin' && (
-          <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('AddSeminar')}>
+          <TouchableOpacity style={styles.fab} onPress={() => navigation.navigate('AddWebinar')}>
             <Ionicons name="add" size={28} color="#2c3e50" />
           </TouchableOpacity>
         )}

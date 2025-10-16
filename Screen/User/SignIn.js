@@ -19,37 +19,47 @@ function SignIn({ navigation }) {
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const handlegoogleauth = async () => {
+
+    setLoading(true);
 
     try {
       if (!isSignedIn) {
         const googleAuth = await googleauth.startSSOFlow({ strategy: 'oauth_google' });
         if (googleAuth.createdSessionId) {
           setActive({ session: googleAuth.createdSessionId });
+          Toast.show({ text1: 'Signed in successfully', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
         }
       }
+      setLoading(false);
     } catch (error) {
-      console.log(error?.errors?.[0]?.message || error?.message);
-      Toast.show({ text1: 'Error signing in', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Error signing in', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false);
     }
   };
 
   const handleSignIn = async () => {
 
     if (!email || !password) {
-      Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'All fields are required', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
+
+    setLoading(true);
 
     try {
       const result = await signIn.create({ password, identifier: email });
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId });
+        Toast.show({ text1: 'Signed in successfully', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       }
+      setLoading(false);
     } catch (error) {
-      if(error?.errors?.[0]?.longMessage?.includes('Identifier is invalid')) Toast.show({ text1: 'Incorrect email or password', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
-      else Toast.show({ text1: 'Error signing in', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      setLoading(false);
+      if(error?.errors?.[0]?.longMessage?.includes('Identifier is invalid')) Toast.show({ text1: 'Incorrect email or password', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      else Toast.show({ text1: 'Error signing in', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   };
   const Logo = () => (
@@ -106,7 +116,7 @@ function SignIn({ navigation }) {
 
           {/* Primary Sign In (same size/layout; color changed to white) */}
           <TouchableOpacity style={styles.primaryBtn} onPress={handleSignIn}>
-            <Text style={styles.primaryBtnText}>Sign in</Text>
+            {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.primaryBtnText}>Sign in</Text>}
           </TouchableOpacity>
 
           {/* Footer */}

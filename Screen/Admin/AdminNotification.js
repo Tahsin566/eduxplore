@@ -6,6 +6,7 @@ import { collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, where 
 import { db } from '../../firebase.config';
 import { ScrollView } from 'react-native-gesture-handler';
 import { useRole } from '../../auth.context';
+import Toast from 'react-native-toast-message';
 
 export default function AdminNotification() {
 
@@ -17,9 +18,8 @@ export default function AdminNotification() {
   const handleDelete = async(id) => {
     try {
       await deleteDoc(doc(db, "notification", id));
-      console.log('deleted');
     } catch (error) {
-      console.log('Error adding document: ', error);
+      Toast.show({ text1: 'Error deleting notification', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   }
 
@@ -38,7 +38,7 @@ export default function AdminNotification() {
     <View style={styles.container}>
 
       <TouchableOpacity 
-        onPress={() => navigation.navigate('HomeScreen')} 
+        onPress={() => navigation.replace('HomeScreen')} 
         style={{ 
           backgroundColor: '#1C2E5C',  
           flexDirection: 'row', 

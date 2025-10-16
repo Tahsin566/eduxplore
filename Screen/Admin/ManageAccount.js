@@ -6,6 +6,7 @@ import { collection, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useEffect, useState } from 'react';
 import { useRole } from '../../auth.context';
+import Toast from 'react-native-toast-message';
 
 // const admins = ['Admin1', 'Admin2', 'Admin3', 'Admin4', 'Admin5'];
 
@@ -42,7 +43,7 @@ export default function ManageAccountsScreen() {
       const data = res.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setAdmins(data);
     } catch (error) {
-      console.log(error)
+      Toast.show({ text1: 'Error getting admins', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   }
 
@@ -54,7 +55,7 @@ export default function ManageAccountsScreen() {
       const data = res.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setAdmins(data);
     } catch (error) {
-      console.log(error)
+      Toast.show({ text1: 'Error getting moderators', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
     
   }
@@ -66,7 +67,7 @@ export default function ManageAccountsScreen() {
       const data = res.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setAdmins(data);
     } catch (error) {
-      console.log(error)
+      Toast.show({ text1: 'Error getting users', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   }
 
@@ -78,7 +79,7 @@ export default function ManageAccountsScreen() {
     <View style={styles.container}>
       {/* Header with Drawer */}
         <View style={styles.edit}><Text style={styles.title}>Manage Accounts</Text></View>
-        <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home')}>
+        <TouchableOpacity onPress={() => role === 'admin' ? navigation.replace('HomeScreen') : navigation.replace('Home')}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         
@@ -107,7 +108,7 @@ export default function ManageAccountsScreen() {
         {admins.map((admin, index) => (
         <TouchableOpacity
           key={index}
-          onPress={() => navigation.navigate('AdminRoles', { id: admin.id })}
+          onPress={() => navigation.navigate('RoleScreen', { id: admin.id })}
           style={styles.row}
         >
           <View style={styles.avatar}>

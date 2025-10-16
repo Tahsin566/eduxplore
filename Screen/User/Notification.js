@@ -32,7 +32,7 @@ export default function NotificationScreen() {
     <SafeAreaView style={styles.container}>
       {/* Header */}
       <View style={styles.header}>
-        <TouchableOpacity onPress={() => role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home')} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => role === 'admin' ? navigation.replace('HomeScreen') : navigation.replace('Home')} style={styles.backBtn}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerTitle}>Notification</Text>
@@ -60,8 +60,6 @@ export default function NotificationScreen() {
   );
 }
 
-const PURPLE = '#2c3e50';
-const BG = '#F6F7FB';
 
 const styles = StyleSheet.create({
   container: { 

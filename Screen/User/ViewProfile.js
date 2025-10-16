@@ -4,7 +4,7 @@ import { useProfileAndAuth, useRole } from '../../auth.context'
 import { collection, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore'
 import { db } from '../../firebase.config'
 import { useAuth, useUser } from '@clerk/clerk-expo'
-import { useNavigation } from '@react-navigation/native'
+import { CommonActions, StackActions, useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker';
 
@@ -77,7 +77,7 @@ const ViewProfile = () => {
         photo: imageUrl
       })
       setFile()
-      console.log('Document updated');
+      console.log('Photo updated');
     } 
     catch (error) {
       console.log('Error adding document: ', error);
@@ -103,7 +103,7 @@ const ViewProfile = () => {
       <View style={styles.container}>
 
         <Text style={[{ ...styles.text }, { ...styles.header }]}>User Profile</Text>
-        <TouchableOpacity style={styles.backButton} onPress={() => role === 'admin' ? navigation.navigate('HomeScreen') : navigation.navigate('Home')} >
+        <TouchableOpacity style={styles.backButton} onPress={() => role === 'admin' ? navigation.replace('HomeScreen') : navigation.replace('Home')} >
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
 

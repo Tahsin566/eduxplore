@@ -16,7 +16,7 @@ export default function UniversityList() {
     <View style={styles.container}>
       
       <View style={styles.header}>
-        <TouchableOpacity style={styles.backBtn} onPress={() => role === 'admin' ? navigation.navigate('HomeScreen')  : navigation.navigate('Home')}>
+        <TouchableOpacity style={styles.backBtn} onPress={() => role === 'admin' ? navigation.replace('HomeScreen')  : navigation.replace('Home')}>
           <Ionicons name="chevron-back" size={28} color="#fff" />
         </TouchableOpacity>
         {/* <Text style={styles.headerTitle}>University Program</Text> */}
@@ -58,7 +58,7 @@ export default function UniversityList() {
       </View>
 
       {role === 'admin' && <TouchableOpacity style={styles.fab}
-      onPress={() => navigation.navigate('AddOverView')}
+      onPress={() => navigation.navigate('AddUniDetails')}
       >
         <Ionicons name="add" size={28} color="#2c3e50" />
       </TouchableOpacity>}
