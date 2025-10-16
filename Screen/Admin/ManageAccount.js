@@ -154,7 +154,6 @@ const styles = StyleSheet.create({
     marginVertical: 10,
   },
   listContainer: {
-    // backgroundColor: '#ecf0f1',
     borderRadius: 5,
     padding: 12,
   },

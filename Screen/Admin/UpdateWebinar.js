@@ -170,7 +170,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginRight: 24, // to balance space because of back icon
+    marginRight: 24,
   },
   label: {
     color: '#ccc',

@@ -9,9 +9,9 @@ export default function AdminFooter() {
   
   const navigation = useNavigation();
 
-  const goHome = () => navigation.replace('HomeScreen');     // ensure route name matches your navigator
+  const goHome = () => navigation.replace('HomeScreen');     
   const goCommunity = () => navigation.navigate('Community');
-  const goProfile = () => navigation.navigate('ViewProfile');  // ensure route name matches
+  const goProfile = () => navigation.navigate('ViewProfile');  
 
   return (
     <View style={styles.container}>

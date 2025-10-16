@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView,ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
@@ -49,17 +49,17 @@ export default function NotificationScreen() {
       </View>}
 
       {/* List of notifications */}
+      <ScrollView>
       {notifications.map((notification, index) => (
         <View key={index} style={styles.notification}>
           <Text>{notification.title}</Text>
           <Text>{notification.message}</Text>
         </View>
       ))}
-
+    </ScrollView>
     </SafeAreaView>
   );
 }
-
 
 const styles = StyleSheet.create({
   container: { 

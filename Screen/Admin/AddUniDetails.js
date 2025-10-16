@@ -241,7 +241,7 @@ export default function AddUniDetails() {
         </TouchableOpacity>
       </View>
 
-      {/* Form */}
+      {/* Form OverView*/}
       {tab === 'overview' && <View style={styles.formSection}>
 
         <View style={styles.inputGroup}>
@@ -303,6 +303,7 @@ export default function AddUniDetails() {
         </View>
       </View>}
 
+            {/* Form OverView*/}
       {tab === 'requirement' && <View style={styles.formSection}>
         {/* {fields.map((label, index) => ( */}
         <View style={styles.inputGroup}>
@@ -318,7 +319,7 @@ export default function AddUniDetails() {
         </View>
         {/* ))} */}
       </View>}
-
+            {/* Form OverView*/}
       {tab === 'about' && <View style={styles.formSection}>
         <View style={styles.inputGroup}>
           <Text style={styles.label}>Enter the University Photo</Text>

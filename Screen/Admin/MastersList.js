@@ -67,7 +67,7 @@ export default function MastersList() {
 
   return (
     <View style={styles.container}>
-      {/* Back Button & Title */}
+      {/* Back Button */}
       <View><Text style={styles.title}>Master's List</Text></View>
       <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
         <Ionicons name="chevron-back" size={24} color="#fff" />

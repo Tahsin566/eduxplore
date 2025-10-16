@@ -52,7 +52,7 @@ const HomeScreen = () => {
 
 
 
-      {/* Navigation Buttons styled as cards */}
+      {/* Navigation Buttons styled cards */}
       <TouchableOpacity
         style={styles.card}
         onPress={() => navigation.navigate('UniversityList')}
@@ -64,7 +64,7 @@ const HomeScreen = () => {
           <Text style={styles.cardTitle}>University List</Text>
           <Text style={styles.cardSubtitle}>Bachelors,masters and PhD programs</Text>
         </View>
-        <Ionicons name="chevron-forward" size={24} color="#babec6" style={styles.chevron} />
+        <Ionicons name="chevron-forward" size={24} color="#babec6" style={styles.chevrons} />
       </TouchableOpacity>
 
       <TouchableOpacity
@@ -201,6 +201,9 @@ const styles = StyleSheet.create({
     fontSize: 15,
     color: '#616e87',
     marginTop: 3,
+  },
+  chevrons: {
+    marginLeft: -36,
   },
   chevron: {
     marginLeft: 'auto',

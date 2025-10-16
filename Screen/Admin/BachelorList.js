@@ -187,7 +187,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     textAlign: 'center',
-    // flexWrap: 'wrap',
   },
   buttonContainer: {
     flexDirection: 'row',

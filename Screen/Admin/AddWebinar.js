@@ -90,7 +90,7 @@ export default function AddWebinar() {
 
       <View style={styles.container}>
         {/* Header row */}
-        <View style={styles.headerRow}>
+        <View style={styles.header}>
           <TouchableOpacity onPress={() => navigation.navigate('Webinars')}>
             <Ionicons name="chevron-back" size={24} color="#fff" />
           </TouchableOpacity>
@@ -167,7 +167,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#22305e',
     paddingHorizontal: 20,
   },
-  headerRow: {
+  header: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 32,
@@ -178,7 +178,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginRight: 'auto', // to balance space because of back icon
+    marginRight: 'auto', 
     marginLeft:'auto'
   },
   label: {

@@ -70,7 +70,7 @@ export default function PHDList() {
 
   return (
     <View style={styles.container}>
-      {/* Back Button & Title */}
+      {/* Back Button */}
       <View style={styles.edit}><Text style={styles.title}>PHD List</Text></View>
       <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
         <Ionicons name="chevron-back" size={24} color="#fff" />
