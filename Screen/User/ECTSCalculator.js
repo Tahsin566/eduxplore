@@ -1,35 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState} from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import Footer from '../User/Footer';
 
 export default function ECTSCalculatorScreen({ navigation }) {
 
-  const [bdCredit, setBdCredit] = useState('');
+  const [Credit, setCredit] = useState('');
   const [ects, setEcts] = useState('');
 
   const onCalculate = () => {
-    if (bdCredit === '') {
+    if (Credit === '') {
       setEcts('');
-    } else {
-      const r = bdCredit * 1.5;
+    } 
+    else {
+      const r = Credit * 1.5;
       if (isNaN(r)) setEcts('');
-      else setEcts((Math.round(r * 100) / 100).toString());
+      else setEcts((r).toString());
     }
   };
+ 
 
   return (
     <View style={styles.screen}>
-      {/* Top Bar */}
-      <View style={styles.topBar}>
-        <TouchableOpacity onPress={() => navigation.navigate('GradeConverter')} style={styles.backBtn}>
+      {/* Header */}
+      <View style={styles.headerContainer}>
+        <TouchableOpacity onPress={() => navigation.navigate('GradeConverter')} style={styles.backButton}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.title}>ECTS Calculator</Text>
+        <Text style={styles.headerTitle}>ECTS Calculator</Text>
         <View style={{ width: 24 }} />
       </View>
 
-      <ScrollView contentContainerStyle={styles.content}>
+      <ScrollView contentContainerStyle={styles.page}>
         {/* Card */}
         <View style={styles.card}>
           <View style={styles.iconTile}>
@@ -37,47 +39,45 @@ export default function ECTSCalculatorScreen({ navigation }) {
           </View>
 
           <Text style={styles.cardTitle}>ECTS Calculator</Text>
-          <Text style={styles.cardSub}>Convert your credits to European{'\n'}Credit Transfer System</Text>
+          <Text style={styles.cardSubInfo}>Convert your credits to European{'\n'}Credit Transfer System</Text>
 
           {/* Total Credit */}
-          <Text style={styles.fieldLabel}>Total Credit*</Text>
-          <View style={styles.inputRow}>
+          <Text style={styles.inputFieldTitle}>Total Credit*</Text>
+          <View style={styles.inputField}>
             <TextInput
               style={styles.input}
               keyboardType="decimal-pad"
-              placeholder="Enter your hours"
+              placeholder="Enter your Credit"
               placeholderTextColor="#8898A6"
-              value={bdCredit}
-              onChangeText={setBdCredit}
+              value={Credit}
+              onChangeText={setCredit}
             />
-            <Ionicons name="calculator-outline" size={18} color="#4C5A67" />
           </View>
 
-          <TouchableOpacity style={styles.calcBtn} onPress={onCalculate} activeOpacity={0.85}>
-            <Ionicons name="calculator" size={16} color="#fff" style={{ marginRight: 6 }} />
-            <Text style={styles.calcBtnText}>Calculate</Text>
+          <TouchableOpacity style={styles.calculateButton} onPress={onCalculate} activeOpacity={0.85}>
+            <Text style={styles.calculateButtonText}>Calculate</Text>
           </TouchableOpacity>
         </View>
 
         {/* Result */}
-        <Text style={styles.resultLabel}>Equivalent ECTS is :</Text>
-        <TextInput style={styles.resultInput} editable={false} value={ects} />
+        <Text style={styles.resultFieldTitle}>Equivalent ECTS is :</Text>
+        <TextInput style={styles.resultField} editable={false} value={ects} />
 
         {/* Info box */}
         <View style={styles.infoBox}>
-          <View style={styles.infoTitleRow}>
+          <View style={styles.infoBoxTitleIcon}>
             <Ionicons name="alert-circle" size={16} color="#F59E0B" />
-            <Text style={styles.infoTitle}>Conversion Information</Text>
+            <Text style={styles.infoBoxTitle}>Conversion Information</Text>
           </View>
-          <Text style={styles.infoText}>
-            Most European universities consider 1 Bangladeshi credit = 1.5 ECTS. This conversion may vary slightly
+          <Text style={styles.infoBoxText}>
+            Most European universities consider 1 credit = 1.5 ECTS. This conversion may vary slightly
             between institutions.
           </Text>
         </View>
       </ScrollView>
 
       {/* Footer */}
-      <View style={styles.footerWrap}>
+      <View style={styles.footerContainer}>
         <Footer navigation={navigation} />
       </View>
     </View>
@@ -91,21 +91,17 @@ const styles = StyleSheet.create({
     backgroundColor: '#1C2E5C',
   },
 
-  topBar: {
+  headerContainer: {
     paddingHorizontal: 16,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 16,
+    marginTop:-5,
     justifyContent: 'space-between',
   },
-  backBtn: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
-  backTxt: { color: '#E7EDF3', fontSize: 26, lineHeight: 26, marginTop: -2 },
-  title: { color: '#FFFFFF', fontSize: 18, fontWeight: '700' },
-
-  content: {
-    paddingHorizontal: 16,
-    paddingBottom: 24,
-  },
+  backButton: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
+  headerTitle: { color: '#FFFFFF', fontSize: 18, fontWeight: '700' },
+  page: { paddingHorizontal: 20 },
 
   card: {
     backgroundColor: '#E9EEF3',
@@ -135,7 +131,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 4,
   },
-  cardSub: {
+  cardSubInfo: {
     color: '#607389',
     fontSize: 12,
     textAlign: 'center',
@@ -143,8 +139,8 @@ const styles = StyleSheet.create({
     lineHeight: 16,
   },
 
-  fieldLabel: { color: '#0F172A', fontSize: 12, fontWeight: '700', marginTop: 16, marginBottom: 6 },
-  inputRow: {
+  inputFieldTitle: { color: '#0F172A', fontSize: 12, fontWeight: '700', marginTop: 16, marginBottom: 6 },
+  inputField: {
     height: 38,
     borderRadius: 6,
     backgroundColor: '#FFFFFF',
@@ -155,7 +151,7 @@ const styles = StyleSheet.create({
   },
   input: { flex: 1, color: '#0F172A', marginRight: 8 },
 
-  calcBtn: {
+  calculateButton: {
     alignSelf: 'center',
     marginTop: 12,
     backgroundColor: '#4C6EF5',
@@ -165,10 +161,10 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  calcBtnText: { color: '#FFFFFF', fontWeight: '700', fontSize: 13 },
+  calculateButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 13 },
 
-  resultLabel: { color: '#E7EDF3', fontSize: 12, marginTop: 16, marginBottom: 6, paddingHorizontal: 2 },
-  resultInput: {
+  resultFieldTitle: { color: '#E7EDF3', fontSize: 12, marginTop: 16, marginBottom: 6, paddingHorizontal: 2 },
+  resultField: {
     height: 38,
     borderRadius: 6,
     backgroundColor: '#FFFFFF',
@@ -182,11 +178,14 @@ const styles = StyleSheet.create({
     padding: 12,
     marginTop: 14,
   },
-  infoTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
-  infoTitle: { color: '#B45309', fontWeight: '800', fontSize: 12 },
-  infoText: { color: '#6B7280', fontSize: 12, lineHeight: 16 },
+  infoBoxTitleIcon: { flexDirection: 'row', alignItems: 'center', gap: 6, marginBottom: 6 },
+  infoBoxTitle: { color: '#B45309', fontWeight: '800', fontSize: 12 },
+  infoBoxText: { color: '#6B7280', fontSize: 12, lineHeight: 16 },
 
-  footerWrap: {
-    borderTopWidth: 0,
+  footerContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });

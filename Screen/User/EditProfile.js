@@ -1,7 +1,7 @@
 import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
-import { useProfileAndAuth, useRole } from '../../auth.context';
+import { useProfileAndAuth } from '../../auth.context';
 import { db } from '../../firebase.config';
 import { Ionicons } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
@@ -56,16 +56,6 @@ const ProfileSettings = ({ navigation }) => {
     }
 
     try {
-      const res = await addDoc(collection(db, 'profile'), {
-        name,
-        ielts_score: ieltsScore,
-        group_SSC:groupSSC,
-        group_HSC:groupHSC,
-        bachelor_subject: bachelorSubject,
-        masters_subject: mastersSubject,
-        vpd,
-        email: profile?.email,
-      });
       Toast.show({ text1: 'Successfully added', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       setLoading(false)
       navigation.navigate('ViewProfile');
