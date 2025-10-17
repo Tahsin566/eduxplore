@@ -10,7 +10,7 @@ export const AuthProvider = ({ children }) => {
 
     const navigation = useNavigation()
 
-    const { user,isLoaded } = useUser();
+    const { user, isLoaded } = useUser();
     const [role, setRole] = React.useState();
     const [userId, setUserId] = React.useState();
     const [profile, setProfile] = React.useState();
@@ -57,13 +57,16 @@ export const AuthProvider = ({ children }) => {
 
     useEffect(() => {
 
-        if(!isLoaded) return
-
-        let unsubscribe=null
-
+        
+        if (!isLoaded) return
+        
+        let unsubscribe = null
+        
         if (user) {
-
-            EnterUserToDb()
+            
+            async()=>{
+                await EnterUserToDb()
+            }
 
             const q = query(collection(db, "users"), where("email", "==", user?.emailAddresses[0]?.emailAddress));
             unsubscribe = onSnapshot(q, (snapshot) => {
@@ -75,21 +78,25 @@ export const AuthProvider = ({ children }) => {
                 setRole(data[0]?.role);
                 setUserId(data[0]?.id);
                 setProfile(data[0]);
-                
-                
-                if(data[0] && data[0]?.role === 'admin'){
-                    navigation.dispatch(StackActions.replace('HomeScreen'));
+
+                if (data[0].role && (data[0]?.role === 'user' || data[0]?.role === 'moderator')) {
+                    navigation.dispatch(StackActions.replace('Home'))
                 }
-                else if((data[0] && data[0]?.role === 'user') || (data[0] && data[0]?.role === 'moderator')){
-                    navigation.dispatch(StackActions.replace('Home'));
+                else if (data[0].role && data[0]?.role === 'admin') {
+                    navigation.dispatch(StackActions.replace('HomeScreen'))
                 }
-            
+
+
+
             })
         }
 
-    }, [isSignedIn,user])
 
-    return <AuthContext.Provider value={{ user, role, userId, profile,EnterUserToDb }}>{children}</AuthContext.Provider>;
+        // return () => unsubscribe && unsubscribe
+
+    }, [isSignedIn, user])
+
+    return <AuthContext.Provider value={{ user, role, userId, profile, EnterUserToDb }}>{children}</AuthContext.Provider>;
 }
 
 export const useRole = () => {
