@@ -13,6 +13,7 @@ export default function AdminNotification() {
   const navigation = useNavigation();
 
   const [notifications, setNotifications] = useState([]);
+  const [role, setRole] = useState('admin');
 
   
 
@@ -31,6 +32,7 @@ export default function AdminNotification() {
       const snapshot = await getDocs(q);
       const notifications = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setNotifications(notifications);
+      setRole('user');
     } catch (error) {
       Toast.show({ text1: 'Error getting notifications', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
@@ -38,10 +40,11 @@ export default function AdminNotification() {
 
   const getAdminNotification = async() =>{
     try {
-      const q = query(collection(db, "notification"), orderBy("time", "desc"),where('recipient', '==', 'admin'));
+      const q = query(collection(db, "notification"), orderBy("date", "desc"),where('recipient', '==', 'admin'));
       const snapshot = await getDocs(q);
       const notifications = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setNotifications(notifications);
+      setRole('admin');
     } catch (error) {
       Toast.show({ text1: 'Error getting notifications', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
@@ -53,6 +56,7 @@ export default function AdminNotification() {
       const snapshot = await getDocs(q);
       const notifications = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
       setNotifications(notifications);
+      setRole('moderator');
     } catch (error) {
       Toast.show({ text1: 'Error getting notifications', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
@@ -92,13 +96,13 @@ export default function AdminNotification() {
 
       <View style={styles.filter}>
         <TouchableOpacity onPress={getAdminNotification}>
-          <Text style={{color:'white'}}>Admin</Text>
+          <Text style={{color: role === 'admin' ? '#1C2E5C' : 'white'}}>Admin</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={getUserNotification}>
-          <Text style={{color:'white'}}>User</Text>
+          <Text style={{color: role === 'user' ? '#1C2E5C' : 'white'}}>User</Text>
         </TouchableOpacity>
         <TouchableOpacity onPress={getModeratorNotification}>
-          <Text style={{color:'white'}}>Moderator</Text>
+          <Text style={{color: role === 'moderator' ? '#1C2E5C' : 'white'}}>Moderator</Text>
         </TouchableOpacity>
       </View>
 

@@ -119,9 +119,6 @@ export default function BachelorList() {
 
       </ScrollView>
 
-
-      {filteredUniversities.length === 0 && <Text style={{ color: '#fff' }}>No Universities Found</Text>}
-
       {/* Add Floating Button */}
 
     </View>

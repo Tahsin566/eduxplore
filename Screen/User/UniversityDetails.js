@@ -182,12 +182,12 @@ export default function UniversityDetails({ route }) {
         <View>
 
           <View style={styles.contactHeader}>
-            <Ionicons name="person-circle" size={50} color="#1abc9c" />
             <Text style={styles.contactTitle}>{universityData?.name}</Text>
           <Text style={styles.address}>{universityData?.address}</Text>
           </View>
 
           {/* Contact Information */}
+            <Ionicons name="person-circle" style={{marginHorizontal:'auto'}} size={50} color="#1abc9c" />
           <Text style={styles.address}>{universityData?.advisor_name}</Text>
 
           {/* Buttons for Phone, Email, and Website */}

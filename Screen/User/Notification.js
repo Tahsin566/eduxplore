@@ -17,10 +17,10 @@ export default function NotificationScreen() {
     let q = null
 
     if(role === 'moderator'){
-      q = query(collection(db, "notification"), orderBy("time", "desc"),where('recipient', '==', 'moderator'));
+      q = query(collection(db, "notification"), orderBy("date", "desc"),where('recipient', '==', 'moderator'));
     } 
     else if(role === 'user'){
-      q = query(collection(db, "notification"), orderBy("time", "desc"),where('recipient', '==', 'user'));
+      q = query(collection(db, "notification"), orderBy("date", "desc"),where('recipient', '==', 'user'));
     }
 
     onSnapshot(q ,(snapshot) => {

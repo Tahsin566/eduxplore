@@ -3,7 +3,7 @@ import { Ionicons, MaterialCommunityIcons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useProfileAndAuth, useRole } from '../../auth.context';
 import { useEffect, useState } from 'react';
-import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, query, updateDoc, where } from 'firebase/firestore';
+import { addDoc, collection, deleteDoc, doc, getDocs, onSnapshot, orderBy, query, updateDoc, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import Footer from '../User/Footer';
 import AdminFooter from './adminFooter';
@@ -16,7 +16,8 @@ export default function Webinars() {
   const [webinars,setWebinars] = useState([]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "webinars"), (snapshot) => {
+    const q = query(collection(db, "webinars"), orderBy("date", "asc"));
+    const unsubscribe = onSnapshot(q,(snapshot) => {
       const webinars = snapshot.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
       setWebinars(webinars);
     });
