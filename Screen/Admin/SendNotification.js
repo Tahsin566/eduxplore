@@ -15,6 +15,7 @@ export default function SendNotification() {
   const navigation = useNavigation();
 
   const [message, setMessage] = useState('');
+  const [link, setLink] = useState('');
   const [recipient, setRecipient] = useState(null);
   const [isVisible, setIsVisible] = useState(false);
 
@@ -22,7 +23,7 @@ export default function SendNotification() {
 
   const SendNotification = async() => {
 
-    const stringRegex = /^[A-Z]+[a-zA-Z0-9 .,]*/;
+    const stringRegex = /^[A-Z]{1}[a-zA-Z0-9 .,]*/;
 
     if(!(message && recipient)) {
       Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
@@ -40,7 +41,10 @@ export default function SendNotification() {
       await addDoc(collection(db,"notification"),{
         message,
         recipient:recipient?.toLowerCase(),
-        time: new Date()  
+        time: new Date(Date.now()).getHours() > 12 ? new Date(Date.now()).getHours() - 12 + ':' + new Date(Date.now()).getMinutes() + ' ' + (new Date(Date.now()).getHours() >= 12 ? 'PM' : 'AM') : new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes() + ' ' + (new Date(Date.now()).getHours() >= 12 ? 'PM' : 'AM'),
+        date : new Date(Date.now()).toDateString(),
+        sender:profile?.name,
+        link:link || '' 
       })
       Toast.show({ text1: 'Notification sent successfully', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       setLoading(false)
@@ -68,6 +72,15 @@ export default function SendNotification() {
         numberOfLines={10}
         value={message}
         onChangeText={setMessage}
+        placeholderTextColor="#888"
+      />
+      <Text style={styles.label}>Link(if any)</Text>
+      <TextInput
+        style={styles.textarea}
+        placeholder="link..."
+        multiline
+        value={link}
+        onChangeText={setLink}
         placeholderTextColor="#888"
       />
 

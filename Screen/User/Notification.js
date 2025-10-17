@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { collection, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
+import * as Linking from 'expo-linking';
 
 export default function NotificationScreen() {
 
@@ -58,8 +59,11 @@ export default function NotificationScreen() {
       {notifications.map((notification, index) => (
         <View key={index} style={styles.notification}>
           <Text>{notification.title}</Text>
-          <Text>{notification.message}</Text>
-          <Text>{formatDate(notification.time)}</Text>
+          <Text>{notification.message?.split('https')[0]}</Text>
+          <TouchableOpacity onPress={()=>Linking.openURL(notification.message?.replace('https', 'linkhttps')?.split('link')[1])}>
+            <Text style={{ color: 'blue' }}>{notification.message?.replace('https', 'linkhttps')?.split('link')[1]}</Text>
+          </TouchableOpacity>
+          <Text style={{ width: '80%', marginTop: 15 }}>{notification.date} at {notification.time}</Text>
         </View>
       ))}
     </ScrollView>

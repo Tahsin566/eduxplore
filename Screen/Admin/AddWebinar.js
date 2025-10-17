@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, ActivityIndicator } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
-import { useRole } from '../../auth.context';
+import { useProfileAndAuth, useRole } from '../../auth.context';
 import { ScrollView } from 'react-native-gesture-handler';
 import { db } from '../../firebase.config';
 import { addDoc, collection } from 'firebase/firestore';
@@ -12,7 +12,7 @@ import RNDateTimePicker from '@react-native-community/datetimepicker';
 export default function AddWebinar() {
 
   
-  const { role } = useRole();
+  const { role ,profile} = useProfileAndAuth();
   const navigation = useNavigation();
 
   const [topic, setTopic] = useState('');
@@ -71,7 +71,11 @@ export default function AddWebinar() {
       await addDoc(collection(db, "notification"), {
         message : `A new webinar has been added titled : ${topic}\nVisit the webinar page for more details`,
         recipient : 'user',
-        time : new Date()
+        time: new Date(Date.now()).getHours() > 12 ? new Date(Date.now()).getHours() - 12 + ':' + new Date(Date.now()).getMinutes() + ' ' + (new Date(Date.now()).getHours() >= 12 ? 'PM' : 'AM') : new Date(Date.now()).getHours() + ':' + new Date(Date.now()).getMinutes() + ' ' + (new Date(Date.now()).getHours() >= 12 ? 'PM' : 'AM'),
+        date : new Date(Date.now()).toDateString(),
+        sender:profile?.name,
+        link :''
+        
       })
 
       Toast.show({ text1: 'Webinar added successfully', type: 'success', text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })

@@ -27,6 +27,40 @@ export default function AdminNotification() {
     }
   }
 
+  
+  const getUserNotification = async() =>{
+    try {
+      const q = query(collection(db, "notification"), orderBy("time", "desc"),where('recipient', '==', 'user'));
+      const snapshot = await getDocs(q);
+      const notifications = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
+      setNotifications(notifications);
+    } catch (error) {
+      Toast.show({ text1: 'Error getting notifications', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+    }
+  }
+
+  const getAdminNotification = async() =>{
+    try {
+      const q = query(collection(db, "notification"), orderBy("time", "desc"),where('recipient', '==', 'admin'));
+      const snapshot = await getDocs(q);
+      const notifications = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
+      setNotifications(notifications);
+    } catch (error) {
+      Toast.show({ text1: 'Error getting notifications', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+    }
+  }
+
+  const getModeratorNotification = async() =>{
+    try {
+      const q = query(collection(db, "notification"), orderBy("time", "desc"),where('recipient', '==', 'moderator'));
+      const snapshot = await getDocs(q);
+      const notifications = snapshot.docs.map((doc) => ({...doc.data(), id: doc.id}));
+      setNotifications(notifications);
+    } catch (error) {
+      Toast.show({ text1: 'Error getting notifications', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+    }
+  }
+
   useEffect(() => {
 
     const q = query(collection(db, "notification"), orderBy("time", "desc"),where('recipient', '==', 'admin'));
@@ -59,6 +93,17 @@ export default function AdminNotification() {
         </Text>
       </TouchableOpacity>
 
+      <View style={styles.filter}>
+        <TouchableOpacity onPress={getAdminNotification}>
+          <Text style={{color:'white'}}>Admin</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={getUserNotification}>
+          <Text style={{color:'white'}}>User</Text>
+        </TouchableOpacity>
+        <TouchableOpacity onPress={getModeratorNotification}>
+          <Text style={{color:'white'}}>Moderator</Text>
+        </TouchableOpacity>
+      </View>
 
       {/* Empty state */}
       {notifications.length === 0 && <View style={styles.empty}>
@@ -75,7 +120,7 @@ export default function AdminNotification() {
         <View key={index} style={styles.notification}>
           <Text style={{width:'80%'}}>{notification.title}</Text>
           <Text styleq={{width:'80%'}}>{notification.message}</Text>
-          <Text>{formatDate(notification.time)}</Text>
+          <Text style={{width:'80%',marginTop:15}}>{notification.date} at {notification.time}</Text>
           <TouchableOpacity onPress={() => handleDelete(notification.id)} style={styles.deleteBtn}><Ionicons name='trash' size={24} color="red" /></TouchableOpacity>
         </View>
       ))}
@@ -136,6 +181,21 @@ const styles = StyleSheet.create({
     marginTop: 10,
     marginBottom: 2,
     borderWidth: 1,
+    marginHorizontal: 10,
+    borderRadius: 10
+  },
+  filter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    backgroundColor: '#1C2E5C',
+    padding: 15,
+    position: 'relative',
+    top: 2,
+    marginTop: 10,
+    marginBottom: 2,
+    borderWidth: 1,
+    borderColor:'gray',
     marginHorizontal: 10,
     borderRadius: 10
   },

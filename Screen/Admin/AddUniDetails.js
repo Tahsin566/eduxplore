@@ -121,7 +121,7 @@ export default function AddUniDetails() {
       return
     }
 
-    const stringRegex = /^[A-Z]+[a-zA-Z0-9 .,]*/;
+    const stringRegex = /^[A-Z]{1}[a-zA-Z0-9 .,]*/;
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const markDown = /[a-zA-Z0-9 -\.,#\*]/;
 
