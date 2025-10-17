@@ -93,8 +93,6 @@ function SearchResult({ navigation, route }) {
                 <Text style={styles.detailsValue}>{u?.address}</Text>
               </View>
 
-              
-
               <TouchableOpacity
                 onPress={() => navigation?.navigate('UniversityDetails', { universityName: u, path: 'Result' })}
               >

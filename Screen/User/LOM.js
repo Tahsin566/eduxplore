@@ -46,7 +46,7 @@ export default function LOMChecker({ navigation }) {
     }
   }
 
-  // --- Gemini call (unchanged behavior) ---
+  // --- Gemini call 
   async function sendToGemini(userText) {
     try {
       if (!GEMINI_API_KEY) throw new Error('Missing GEMINI_API_KEY.');

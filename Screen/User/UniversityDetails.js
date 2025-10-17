@@ -111,7 +111,6 @@ export default function UniversityDetails({ route }) {
           {path === 'Result' && <TouchableOpacity onPress={() => path === 'Result' && navigation.navigate('Search')}>
             <Ionicons name="chevron-back" size={24} color="white" />
           </TouchableOpacity>}
-          {/* <Text style={styles.title}>Overview {isMarked ? 'Marked' : 'Not Marked'}</Text> */}
           {(role === 'user' || role === 'moderator') && <TouchableOpacity onPress={addToWishlist}>
             {isMarked === true ? <Ionicons name="bookmark" size={24} color="white" /> : <Ionicons name="bookmark-outline" size={24} color="white" />}
           </TouchableOpacity>}
@@ -120,7 +119,6 @@ export default function UniversityDetails({ route }) {
 
 
         <View style={styles.body}>
-          {/* <Image source={srhIcon} style={styles.logo} /> */}
         </View>
 
         <Text style={styles.description}>
@@ -165,7 +163,6 @@ export default function UniversityDetails({ route }) {
         <View>
 
           {tab === 'overview' && <View style={styles.card2}>
-            {/* <Text style={styles.paragraph}>{universityData?.overview}</Text> */}
             <Markdown>{universityData?.overview}</Markdown>
           </View>}
 
