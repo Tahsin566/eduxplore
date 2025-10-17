@@ -25,7 +25,7 @@ export default function PHDList() {
     navigation.navigate("UniversityDetails", { universityName: item, path: 'MastersList' });
   };
 
-  const filteredUniversities = universities.filter(item => 
+  const filteredUniversities = universities.filter(item =>
     item?.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -90,6 +90,9 @@ export default function PHDList() {
           <Ionicons style={styles.icon} name="search" size={24} color="#000" />
         </TouchableOpacity>
       </View>
+      {filteredUniversities.length === 0 && (
+        <Text style={styles.text}>No results found</Text>
+      )}
       {/* List */}
       <ScrollView contentContainerStyle={styles.listContainer}>
         {universities.map((item, index) => (
@@ -116,9 +119,6 @@ export default function PHDList() {
         ))}
       </ScrollView>
 
-      {filteredUniversities.length === 0 && (
-        <Text style={styles.text}>No results found</Text>
-      )}
 
     </View>
   );

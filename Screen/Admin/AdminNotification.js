@@ -14,10 +14,7 @@ export default function AdminNotification() {
 
   const [notifications, setNotifications] = useState([]);
 
-  const formatDate = (seconds) => {
-    const date = new Date(seconds * 1000);
-    return date.toLocaleString();
-  }
+  
 
   const handleDelete = async(id) => {
     try {

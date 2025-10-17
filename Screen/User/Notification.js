@@ -13,11 +13,6 @@ export default function NotificationScreen() {
   const navigation = useNavigation();
   const [notifications, setNotifications] = useState([]);
 
-  const formatDate = (seconds) => {
-    const date = new Date(seconds * 1000);
-    return date.toLocaleString();
-  }
-
   useEffect(() => {
     let q = null
 

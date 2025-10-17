@@ -11,7 +11,7 @@ import { ScrollView } from 'react-native-gesture-handler';
 const data = ['University 1', 'University 2', 'University 3', 'University 4'];
 
 export default function MastersList() {
-  
+
   const { role } = useRole()
   const navigation = useNavigation();
 
@@ -22,8 +22,8 @@ export default function MastersList() {
   const handlePress = (item) => {
     navigation.navigate("UniversityDetails", { universityName: item, path: 'MastersList' });
   };
-  
-  const filteredUniversities = universities.filter(item => 
+
+  const filteredUniversities = universities.filter(item =>
     item?.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
@@ -39,28 +39,28 @@ export default function MastersList() {
   };
 
   const deleteUniversityDetails = async (item) => {
-      Alert.alert(
-        'Delete University',
-        'Are you sure you want to delete this university?',
-        [
-          {
-            text: 'Cancel',
-            style: 'cancel',
+    Alert.alert(
+      'Delete University',
+      'Are you sure you want to delete this university?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          onPress: async () => {
+            try {
+              await deleteDoc(doc(db, "university", item.id));
+            } catch (error) {
+              Toast.show({ text1: 'Error deleting university', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+            }
           },
-          {
-            text: 'Delete',
-            onPress: async () => {
-              try {
-                await deleteDoc(doc(db, "university", item.id));
-              } catch (error) {
-                Toast.show({ text1: 'Error deleting university', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
-              }
-            },
-          },
-        ],
-        { cancelable: false }
-      )
-    };
+        },
+      ],
+      { cancelable: false }
+    )
+  };
 
   useEffect(() => {
     getUniversities();
@@ -87,36 +87,37 @@ export default function MastersList() {
           <Ionicons style={styles.icon} name="search" size={24} color="#000" />
         </TouchableOpacity>
       </View>
+      {filteredUniversities.length === 0 && (
+        <Text style={styles.text}>No results found</Text>
+      )}
       {/* List */}
       <ScrollView contentContainerStyle={styles.listContainer}>
-              {universities.map((item, index) => (
-                item?.name.toLowerCase().includes(searchQuery.toLowerCase()) ?  <View key={index} style={styles.listItem}>
-      
-                <TouchableOpacity key={index} style={styles.listbutton} onPress={() => handlePress(item)}>
-                  <Image style={styles.image} source={{ uri: item?.photo }} />
-                  <Text style={styles.listText}>
-                    {item?.name}
-                  </Text>
-                {/* {role === 'admin' && <TouchableOpacity style={styles.update} onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })}><Ionicons name='create-outline' size={20} color='#000'/></TouchableOpacity>} */}
-                </TouchableOpacity>
-                {role === 'admin' && <View style={styles.buttonContainer}>
-      
-                  <TouchableOpacity onPress={() => navigation.navigate("UpdateUniDetails", { university : item, path : 'BachelorList' })} style={styles.update}>
-                    <Text style={styles.text}>Update</Text>
-                  </TouchableOpacity>
-      
-                  <TouchableOpacity onPress={() => deleteUniversityDetails(item)} style={styles.delete}>
-                    <Text style={styles.text}>Delete</Text>
-                  </TouchableOpacity>
-                </View>}
-                </View> : null
-              ))}
-            </ScrollView>
+        {universities.map((item, index) => (
+          item?.name.toLowerCase().includes(searchQuery.toLowerCase()) ? <View key={index} style={styles.listItem}>
 
-            {filteredUniversities.length === 0 && (
-              <Text style={styles.text}>No results found</Text>
-            )}
-      
+            <TouchableOpacity key={index} style={styles.listbutton} onPress={() => handlePress(item)}>
+              <Image style={styles.image} source={{ uri: item?.photo }} />
+              <Text style={styles.listText}>
+                {item?.name}
+              </Text>
+              {/* {role === 'admin' && <TouchableOpacity style={styles.update} onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })}><Ionicons name='create-outline' size={20} color='#000'/></TouchableOpacity>} */}
+            </TouchableOpacity>
+            {role === 'admin' && <View style={styles.buttonContainer}>
+
+              <TouchableOpacity onPress={() => navigation.navigate("UpdateUniDetails", { university: item, path: 'BachelorList' })} style={styles.update}>
+                <Text style={styles.text}>Update</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => deleteUniversityDetails(item)} style={styles.delete}>
+                <Text style={styles.text}>Delete</Text>
+              </TouchableOpacity>
+            </View>}
+          </View> : null
+        ))}
+      </ScrollView>
+
+
+
     </View>
   );
 }
@@ -186,7 +187,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     width: '65%',
     color: '#000',
-    overflow:"scroll",
+    overflow: "scroll",
     fontWeight: 'bold',
   },
   image: {
@@ -220,18 +221,18 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around', 
+    justifyContent: 'space-around',
   },
-  update:{
+  update: {
     backgroundColor: '#1C2E5C',
     borderRadius: 20,
     marginBottom: 10,
     padding: 12,
     width: '40%',
     alignItems: 'center'
-    
+
   },
-  delete:{
+  delete: {
     backgroundColor: 'red',
     borderRadius: 20,
     marginBottom: 10,
@@ -239,7 +240,7 @@ const styles = StyleSheet.create({
     width: '40%',
     alignItems: 'center'
   },
-  text:{
+  text: {
     color: '#fff',
     fontWeight: 'bold'
   }

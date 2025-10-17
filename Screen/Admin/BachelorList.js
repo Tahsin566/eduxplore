@@ -11,8 +11,8 @@ import Toast from 'react-native-toast-message';
 const data = ['University 1', 'University 2', 'University 3', 'University 4'];
 
 export default function BachelorList() {
-  
-  const {role} = useRole()
+
+  const { role } = useRole()
   const navigation = useNavigation();
 
   const [universities, setUniversities] = useState([]);
@@ -23,7 +23,7 @@ export default function BachelorList() {
     try {
       const q = query(collection(db, "university"), where("has_bachelor", "==", true));
       const querySnapshot = await getDocs(q);
-      const universitiesData = querySnapshot.docs.map((doc) => { return {...doc.data(), id: doc.id}});
+      const universitiesData = querySnapshot.docs.map((doc) => { return { ...doc.data(), id: doc.id } });
       setUniversities(universitiesData);
     } catch (error) {
       Toast.show({ text1: 'Error fetching universities', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
@@ -31,7 +31,7 @@ export default function BachelorList() {
   };
 
   const handlePress = (item) => {
-    navigation.navigate("UniversityDetails", { universityName: item,path : 'BachelorList' });
+    navigation.navigate("UniversityDetails", { universityName: item, path: 'BachelorList' });
   };
 
   const deleteUniversityDetails = async (item) => {
@@ -58,10 +58,10 @@ export default function BachelorList() {
     )
   };
 
-  const filteredUniversities = universities.filter(item => 
+  const filteredUniversities = universities.filter(item =>
     item?.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
-  
+
 
   useEffect(() => {
     getUniversities();
@@ -74,56 +74,56 @@ export default function BachelorList() {
       <TouchableOpacity onPress={() => navigation.navigate('UniversityList')}>
         <Ionicons name="chevron-back" size={24} color="#fff" />
       </TouchableOpacity>
-   
-    <View style={styles.space}><Text></Text></View>
 
-    <View style={styles.search}>
-      <TextInput 
-        value={searchQuery}
-        onChangeText={setSearchQuery}
-        style={styles.searchinput}
-        placeholder="Search"
-        placeholderTextColor="#999"
-      />
-      <TouchableOpacity>
-        <Ionicons style={styles.icon} name="search" size={24} color="#000" />
-      </TouchableOpacity>
-    </View>
+      <View style={styles.space}><Text></Text></View>
 
-    
+      <View style={styles.search}>
+        <TextInput
+          value={searchQuery}
+          onChangeText={setSearchQuery}
+          style={styles.searchinput}
+          placeholder="Search"
+          placeholderTextColor="#999"
+        />
+        <TouchableOpacity>
+          <Ionicons style={styles.icon} name="search" size={24} color="#000" />
+        </TouchableOpacity>
+      </View>
+
+      {filteredUniversities.length === 0 && <Text style={{ color: '#fff' }}>No Universities Found</Text>}
 
       {/* List */}
       <ScrollView contentContainerStyle={styles.listContainer}>
         {universities.map((item, index) => (
-          item?.name.toLowerCase().includes(searchQuery.toLowerCase()) ?  <View key={index} style={styles.listItem}>
+          item?.name.toLowerCase().includes(searchQuery.toLowerCase()) ? <View key={index} style={styles.listItem}>
 
-          <TouchableOpacity key={index} style={styles.listbutton} onPress={() => handlePress(item)}>
-            <Image style={styles.image} source={{ uri: item?.photo }} />
-            <Text style={styles.listText}>
-              {item?.name}
-            </Text>
-          {/* {role === 'admin' && <TouchableOpacity style={styles.update} onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })}><Ionicons name='create-outline' size={20} color='#000'/></TouchableOpacity>} */}
-          </TouchableOpacity>
-          {role === 'admin' && <View style={styles.buttonContainer}>
-
-            <TouchableOpacity onPress={() => navigation.navigate("UpdateUniDetails", { university : item, path : 'BachelorList' })} style={styles.update}>
-              <Text style={styles.text}>Update</Text>
+            <TouchableOpacity key={index} style={styles.listbutton} onPress={() => handlePress(item)}>
+              <Image style={styles.image} source={{ uri: item?.photo }} />
+              <Text style={styles.listText}>
+                {item?.name}
+              </Text>
+              {/* {role === 'admin' && <TouchableOpacity style={styles.update} onPress={() => navigation.navigate("UpdateOVerView", { university : item, path : 'BachelorList' })}><Ionicons name='create-outline' size={20} color='#000'/></TouchableOpacity>} */}
             </TouchableOpacity>
+            {role === 'admin' && <View style={styles.buttonContainer}>
 
-            <TouchableOpacity onPress={() => deleteUniversityDetails(item)} style={styles.delete}>
-              <Text style={styles.text}>Delete</Text>
-            </TouchableOpacity>
-          </View>}
+              <TouchableOpacity onPress={() => navigation.navigate("UpdateUniDetails", { university: item, path: 'BachelorList' })} style={styles.update}>
+                <Text style={styles.text}>Update</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity onPress={() => deleteUniversityDetails(item)} style={styles.delete}>
+                <Text style={styles.text}>Delete</Text>
+              </TouchableOpacity>
+            </View>}
           </View> : null
         ))}
-      
+
       </ScrollView>
 
 
-      {filteredUniversities.length === 0 && <Text style={{color: '#fff'}}>No Universities Found</Text>}
+      {filteredUniversities.length === 0 && <Text style={{ color: '#fff' }}>No Universities Found</Text>}
 
       {/* Add Floating Button */}
-      
+
     </View>
   );
 }
@@ -134,18 +134,18 @@ const styles = StyleSheet.create({
     backgroundColor: '#1C2E5C',
     paddingHorizontal: 20,
   },
-  search:{
+  search: {
     backgroundColor: '#ecf0f1',
     borderRadius: 5,
     marginHorizontal: 10,
     padding: 8,
     marginBottom: 10
-    
+
   },
-  searchinput:{
+  searchinput: {
     width: '88%',
   },
-  icon:{
+  icon: {
     position: 'absolute',
     right: 0,
     bottom: 0,
@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
   },
   listItem: {
     backgroundColor: '#ecf0f1',
-    justifyContent:'center',
+    justifyContent: 'center',
     borderRadius: 5,
     fontWeight: 'bold',
   },
@@ -190,13 +190,13 @@ const styles = StyleSheet.create({
   },
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'space-around', 
+    justifyContent: 'space-around',
   },
   listText: {
     fontSize: 20,
     width: '65%',
     color: '#000',
-    overflow:"scroll",
+    overflow: "scroll",
     fontWeight: 'bold',
   },
   image: {
@@ -204,7 +204,7 @@ const styles = StyleSheet.create({
     height: 50,
     borderRadius: 0,
     marginRight: 10,
-    resizeMode:'contain'
+    resizeMode: 'contain'
   },
   fab: {
     position: 'absolute',
@@ -215,16 +215,16 @@ const styles = StyleSheet.create({
     borderRadius: 28,
     elevation: 4,
   },
-  update:{
+  update: {
     backgroundColor: '#1C2E5C',
     borderRadius: 20,
     marginBottom: 10,
     padding: 12,
     width: '40%',
     alignItems: 'center'
-    
+
   },
-  delete:{
+  delete: {
     backgroundColor: 'red',
     borderRadius: 20,
     marginBottom: 10,
@@ -232,7 +232,7 @@ const styles = StyleSheet.create({
     width: '40%',
     alignItems: 'center'
   },
-  text:{
+  text: {
     color: '#fff',
     fontWeight: 'bold'
   }
