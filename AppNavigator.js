@@ -25,7 +25,7 @@ import BachelorList from './Screen/Admin/BachelorList.js';
 import MastersList from './Screen/Admin/MastersList.js';
 import UpdateWebinar from './Screen/Admin/UpdateWebinar.js';
 import RegisteredList from './Screen/Admin/RegisteredList.js'
-import UniversityDetails from './Screen/Admin/UniversityDetails.js'
+import UniversityDetails from './Screen/User/UniversityDetails.js'
 import AddUniDetails from './Screen/Admin/AddUniDetails.js'
 import UpdateUniDetails from './Screen/Admin/UpdateUniDetails.js'
 import Notification from './Screen/User/Notification.js';

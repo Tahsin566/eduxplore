@@ -7,6 +7,7 @@ import { useEffect, useState } from 'react';
 import { useRole } from '../../auth.context';
 import { Image } from 'react-native';
 import Toast from 'react-native-toast-message';
+import { ScrollView } from 'react-native-gesture-handler';
 
 const data = ['University 1', 'University 2', 'University 3', 'University 4'];
 
@@ -90,7 +91,7 @@ export default function PHDList() {
         </TouchableOpacity>
       </View>
       {/* List */}
-      <View style={styles.listContainer}>
+      <ScrollView contentContainerStyle={styles.listContainer}>
         {universities.map((item, index) => (
           item?.name.toLowerCase().includes(searchQuery.toLowerCase()) ? <View key={index} style={styles.listItem}>
 
@@ -113,7 +114,7 @@ export default function PHDList() {
             </View>}
           </View> : null
         ))}
-      </View>
+      </ScrollView>
 
       {filteredUniversities.length === 0 && (
         <Text style={styles.text}>No results found</Text>

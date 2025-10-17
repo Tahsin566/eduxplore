@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react';
 import { collection, deleteDoc, doc, getDocs, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
-import { TextInput } from 'react-native-gesture-handler';
+import { ScrollView, TextInput } from 'react-native-gesture-handler';
 import Toast from 'react-native-toast-message';
 
 const data = ['University 1', 'University 2', 'University 3', 'University 4'];
@@ -93,7 +93,7 @@ export default function BachelorList() {
     
 
       {/* List */}
-      <View style={styles.listContainer}>
+      <ScrollView contentContainerStyle={styles.listContainer}>
         {universities.map((item, index) => (
           item?.name.toLowerCase().includes(searchQuery.toLowerCase()) ?  <View key={index} style={styles.listItem}>
 
@@ -117,7 +117,7 @@ export default function BachelorList() {
           </View> : null
         ))}
       
-      </View>
+      </ScrollView>
 
 
       {filteredUniversities.length === 0 && <Text style={{color: '#fff'}}>No Universities Found</Text>}
