@@ -2,7 +2,7 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView,ScrollView } fro
 import { Ionicons } from '@expo/vector-icons';
 import { useNavigation } from '@react-navigation/native';
 import { useEffect, useState } from 'react';
-import { collection, getDocs, onSnapshot, orderBy, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, orderBy, query, where } from 'firebase/firestore';
 import { db } from '../../firebase.config';
 import { useRole } from '../../auth.context';
 import * as Linking from 'expo-linking';
@@ -125,7 +125,7 @@ const styles = StyleSheet.create({
   notification: {
     backgroundColor: '#fff',
     borderRadius: 8,
-    padding: 20,
+    padding: 15,
     marginTop: 10,
     marginBottom: 2,
     borderWidth: 1,

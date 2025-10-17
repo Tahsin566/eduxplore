@@ -4,19 +4,18 @@ import { ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, Status
 import Slider from '@react-native-community/slider';
 import Footer from '../User/Footer';
 
-/* Small chip button */
-function Chip({ label, selected, onPress, style }) {
+function SelectButton({ label, selected, onPress, style }) {
   return (
     <TouchableOpacity
       onPress={onPress}
       activeOpacity={0.8}
       style={[
-        styles.chip,
-        selected ? styles.chipSelected : styles.chipUnselected,
+        styles.SelectButton,
+        selected ? styles.SelectButtonSelected : styles.SelectButtonUnselected,
         style,
       ]}
     >
-      <Text style={[styles.chipText, selected ? styles.chipTextSelected : styles.chipTextUnselected]}>
+      <Text style={[styles.SelectButtonText, selected ? styles.SelectButtonTextSelected : styles.SelectButtonTextUnselected]}>
         {label}
       </Text>
     </TouchableOpacity>
@@ -47,7 +46,7 @@ export default function FindUniversity({ navigation }) {
   };
 
   return (
-    <View style={styles.root}>
+    <View style={styles.Background}>
       <StatusBar barStyle="light-content" />
       <KeyboardAvoidingView
         style={{ flex: 1 }}
@@ -68,11 +67,11 @@ export default function FindUniversity({ navigation }) {
           </View>
 
           <ScrollView
-            contentContainerStyle={[styles.scroll, { paddingBottom: 110 }]} // space for footer
+            contentContainerStyle={[styles.scroll, { paddingBottom: 110 }]} 
             keyboardShouldPersistTaps="handled"
           >
             {/* Search bar */}
-            <View style={styles.searchWrap}>
+            <View style={styles.searchBar}>
               <TextInput
                 style={styles.searchInput}
                 placeholder="Search university or programs"
@@ -87,36 +86,36 @@ export default function FindUniversity({ navigation }) {
             </View>
 
             {/* Course Type */}
-            <View className="section" style={styles.section}>
-              <View style={styles.sectionTitleRow}>
+            <View className="Piker" style={styles.Piker}>
+              <View style={styles.PikerTitleRow}>
                 <Ionicons name="albums" size={16} color="#9CC3FF" />
-                <Text style={styles.sectionTitle}>Course Type</Text>
+                <Text style={styles.PikerTitle}>Course Type</Text>
               </View>
-              <View style={styles.rowWrap}>
-                <Chip label="Bachelor"  selected={courseType === 'bachelor'} onPress={() => toggle(courseType, 'bachelor', setCourseType)} />
-                <Chip label="Master’s"  selected={courseType === 'master'}  onPress={() => toggle(courseType, 'master', setCourseType)} />
-                <Chip label="PhD"       selected={courseType === 'PhD'}      onPress={() => toggle(courseType, 'PhD', setCourseType)} />
+              <View style={styles.rowSpace}>
+                <SelectButton label="Bachelor"  selected={courseType === 'bachelor'} onPress={() => toggle(courseType, 'bachelor', setCourseType)} />
+                <SelectButton label="Master’s"  selected={courseType === 'master'}  onPress={() => toggle(courseType, 'master', setCourseType)} />
+                <SelectButton label="PhD"       selected={courseType === 'PhD'}      onPress={() => toggle(courseType, 'PhD', setCourseType)} />
               </View>
             </View>
 
             {/* Course Language */}
-            <View style={styles.section}>
-              <View style={styles.sectionTitleRow}>
+            <View style={styles.Piker}>
+              <View style={styles.PikerTitleRow}>
                 <Ionicons name="language" size={16} color="#9CC3FF" />
-                <Text style={styles.sectionTitle}>Course Language</Text>
+                <Text style={styles.PikerTitle}>Course Language</Text>
               </View>
-              <View style={styles.rowWrap}>
-                <Chip label="English only" selected={courseLanguage === 'english'} onPress={() => toggle(courseLanguage, 'english', setCourseLanguage)} />
-                <Chip label="German"       selected={courseLanguage === 'german'}  onPress={() => toggle(courseLanguage, 'german', setCourseLanguage)} />
-                <Chip label="French"       selected={courseLanguage === 'french'}  onPress={() => toggle(courseLanguage, 'french', setCourseLanguage)} />
+              <View style={styles.rowSpace}>
+                <SelectButton label="English only" selected={courseLanguage === 'english'} onPress={() => toggle(courseLanguage, 'english', setCourseLanguage)} />
+                <SelectButton label="German"       selected={courseLanguage === 'german'}  onPress={() => toggle(courseLanguage, 'german', setCourseLanguage)} />
+                <SelectButton label="French"       selected={courseLanguage === 'french'}  onPress={() => toggle(courseLanguage, 'french', setCourseLanguage)} />
               </View>
             </View>
 
             {/* IELTS Score */}
-            <View style={styles.section}>
-              <View style={styles.sectionTitleRow}>
+            <View style={styles.Piker}>
+              <View style={styles.PikerTitleRow}>
                 <Ionicons name="image" size={16} color="#9CC3FF" />
-                <Text style={styles.sectionTitle}>IELTS Score</Text>
+                <Text style={styles.PikerTitle}>IELTS Score</Text>
               </View>
 
               <View style={styles.sliderRow}>
@@ -137,7 +136,7 @@ export default function FindUniversity({ navigation }) {
               <Text style={styles.sliderValue}>Selected: {ieltsScore.toFixed(1)}</Text>
             </View>
 
-            {/* CTA */}
+            {/* Search Button */}
             <TouchableOpacity style={styles.searchButton} onPress={handleSearchClick} activeOpacity={0.85}>
               <Text style={styles.searchButtonText}>Search University</Text>
             </TouchableOpacity>
@@ -145,7 +144,7 @@ export default function FindUniversity({ navigation }) {
         </View>
 
         {/* Footer (fixed) */}
-        <View style={styles.footerWrap}>
+        <View style={styles.footerContainer}>
           <Footer navigation={navigation} />
         </View>
       </KeyboardAvoidingView>
@@ -153,11 +152,9 @@ export default function FindUniversity({ navigation }) {
   );
 }
 
-const NAVY = '#1C2E5C';
-
 const styles = StyleSheet.create({
-  root: { flex: 1, backgroundColor: NAVY },
-  canvas: { flex: 1, backgroundColor: NAVY, paddingHorizontal: 14, paddingBottom: 16 },
+  Background: { flex: 1, backgroundColor: '#1C2E5C' },
+  canvas: { flex: 1, backgroundColor: '#1C2E5C', paddingHorizontal: 14, paddingBottom: 16 },
 
   headerBar: {
     flexDirection: 'row',
@@ -170,11 +167,11 @@ const styles = StyleSheet.create({
   headerTitle: { color: '#E7EDF3', fontSize: 18, fontWeight: '700',marginLeft: '25%',marginRight: 'auto' },
 
   scroll: { paddingBottom: 24 },
-  searchWrap: {
+  searchBar: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#E9EEF5',
-    borderRadius: 20,
+    borderRadius: 15,
     paddingLeft: 14,
     paddingRight: 10,
     height: 40,
@@ -190,17 +187,17 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 
-  section: { marginBottom: 14 },
-  sectionTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
-  sectionTitle: { color: '#E7EDF3', fontSize: 14, fontWeight: '700' },
-  rowWrap: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
+  Piker: { marginBottom: 14 },
+  PikerTitleRow: { flexDirection: 'row', alignItems: 'center', gap: 8, marginBottom: 8 },
+  PikerTitle: { color: '#E7EDF3', fontSize: 14, fontWeight: '700' },
+  rowSpace: { flexDirection: 'row', flexWrap: 'wrap', gap: 8 },
 
-  chip: { paddingVertical: 6, paddingHorizontal: 10, borderRadius: 6, borderWidth: 1 },
-  chipUnselected: { backgroundColor: '#E9EEF5', borderColor: '#CDD6DE' },
-  chipSelected: { backgroundColor: '#4F6DE6', borderColor: '#4F6DE6' },
-  chipText: { fontSize: 13 },
-  chipTextUnselected: { color: '#0F172A', fontWeight: '600' },
-  chipTextSelected: { color: '#FFFFFF', fontWeight: '700' },
+  SelectButton: { paddingVertical: 6, paddingHorizontal: 10, borderRadius: 6, borderWidth: 1 },
+  SelectButtonUnselected: { backgroundColor: '#E9EEF5', borderColor: '#CDD6DE' },
+  SelectButtonSelected: { backgroundColor: '#4F6DE6', borderColor: '#4F6DE6' },
+  SelectButtonText: { fontSize: 13 },
+  SelectButtonTextUnselected: { color: '#0F172A', fontWeight: '600' },
+  SelectButtonTextSelected: { color: '#FFFFFF', fontWeight: '700' },
 
   sliderRow: { flexDirection: 'row', alignItems: 'center', gap: 8 },
   sliderEdge: { color: '#DDE7F2', width: 20, textAlign: 'center', fontSize: 12 },
@@ -216,7 +213,7 @@ const styles = StyleSheet.create({
     minWidth: 180,
   },
   searchButtonText: { color: '#FFFFFF', fontWeight: '700', fontSize: 15, textAlign: 'center' },
-  footerWrap: {
+  footerContainer: {
     position: 'absolute',
     left: 0,
     right: 0,

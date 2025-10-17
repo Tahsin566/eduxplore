@@ -9,7 +9,6 @@ import { Ionicons } from '@expo/vector-icons';
 const WishlistItem = ({ item }) => {
 
     const navigation = useNavigation();
-
     const [university, setUniversity] = useState();
 
     const getData = async () => {
@@ -44,7 +43,6 @@ const WishlistItem = ({ item }) => {
 
         <View style={styles.cardContainer}>
             <TouchableOpacity onPress={() => navigation.navigate('UniversityDetails', { universityName: university, path: 'WishList' })}>
-
 
                 <View>
                     {/* <Text style={styles.universityTitle}>{item.id}</Text> */}

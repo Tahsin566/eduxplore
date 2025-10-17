@@ -1,6 +1,6 @@
 import { View, Text, TouchableOpacity, StatusBar, StyleSheet } from 'react-native';
 import { Ionicons, MaterialCommunityIcons, MaterialIcons } from '@expo/vector-icons';
-import { useProfileAndAuth, useRole } from '../../auth.context';
+import { useProfileAndAuth } from '../../auth.context';
 import Footer from '../User/Footer';
 
 function Home({ navigation }) {
@@ -13,11 +13,11 @@ function Home({ navigation }) {
     <View style={styles.container}>
       <StatusBar />
 
-      {/* Header bar with centered title + notification icon */}
+      {/* Header */}
       <View style={styles.headerBar}>
         <Text style={styles.headerTitle}>Eduexplore</Text>
         <TouchableOpacity
-          style={styles.notifBtn}
+          style={styles.notificationButton}
           onPress={() =>
             role && role === 'admin'
               ? navigation.navigate('AdminNotification')
@@ -36,8 +36,8 @@ function Home({ navigation }) {
         </Text>
       </View>
 
-      {/* Grid */}
-      <View style={styles.grid}>
+      {/* Features Button */}
+      <View style={styles.FeaturesButton}>
         <TouchableOpacity
           style={styles.feature}
           activeOpacity={0.85}
@@ -83,7 +83,7 @@ function Home({ navigation }) {
             <MaterialIcons name="calculate" size={26} color="#fff" />
           </View>
           <Text style={styles.featureTitle}>Grade Converter</Text>
-          <Text style={styles.featureSubtitle}>Calculator CGPA</Text>
+          <Text style={styles.featureSubtitle}>Convert your CGPA</Text>
         </TouchableOpacity>
 
         <TouchableOpacity
@@ -112,7 +112,7 @@ function Home({ navigation }) {
       </View>
 
       {/* Footer */}
-      <View style={styles.footerWrap}>
+      <View style={styles.footerContainer}>
         <Footer />
       </View>
     </View>
@@ -129,7 +129,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#234B6C',
     marginTop: 16,
     width: '87%',
-    alignSelf: 'center',          // simple centering (beginner-friendly)
+    alignSelf: 'center',          
     borderRadius: 2,
     justifyContent: 'center',
   },
@@ -142,7 +142,7 @@ const styles = StyleSheet.create({
     fontWeight: '800',
     fontSize: 18,
   },
-  notifBtn: {
+  notificationButton: {
     position: 'absolute',
     right: 12,
     top: 0,
@@ -161,7 +161,7 @@ const styles = StyleSheet.create({
   welcomeTitle: { color: '#FFFFFF', fontSize: 16, fontWeight: '800', marginBottom: 6 },
   welcomeBody: { color: '#E7EEFF', fontSize: 12, lineHeight: 18 },
 
-  grid: {
+  FeaturesButton: {
     flexDirection: 'row',
     flexWrap: 'wrap',
     paddingHorizontal: 18,
@@ -181,5 +181,10 @@ const styles = StyleSheet.create({
   featureTitle: { color: '#FFFFFF', fontWeight: '700', fontSize: 13 },
   featureSubtitle: { color: '#BFD1E6', fontSize: 10, marginTop: 2, textAlign: 'center' },
 
-  footerWrap: { position: 'absolute', left: 0, right: 0, bottom: 0 },
+    footerContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
+  },
 });

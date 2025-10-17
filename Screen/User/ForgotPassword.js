@@ -2,7 +2,7 @@ import { useSignIn } from '@clerk/clerk-expo';
 import { useAuth } from '@clerk/clerk-expo';
 import { Ionicons } from '@expo/vector-icons';
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet } from 'react-native';
 import Toast from 'react-native-toast-message';
 
 const ForgotPassword = ({ navigation }) => {
@@ -113,7 +113,7 @@ const ForgotPassword = ({ navigation }) => {
 
       <Text style={styles.header}>Password Reset</Text>
 
-      <Text style={styles.label}>Enter Your Email</Text>
+      <Text style={styles.inputTitle}>Enter Your Email</Text>
       <TextInput
         style={styles.input}
         keyboardType="email-address"
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     marginBottom: 100,
     
   },
-  label: {
+  inputTitle: {
     color: '#FFFFFF',
     fontSize: 13,
     marginBottom: 10,

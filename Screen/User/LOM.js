@@ -7,7 +7,6 @@ import { Ionicons } from '@expo/vector-icons';
 const GEMINI_API_KEY = process.env.EXPO_PUBLIC_GEMINI_API_KEY || '';
 
 export default function LOMChecker({ navigation }) {
-  // messages: {id, role: 'user'|'assistant', content}
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState('');
   const [inputHeight, setInputHeight] = useState(40);
@@ -238,7 +237,7 @@ export default function LOMChecker({ navigation }) {
 
 const styles = StyleSheet.create({
   root: { flex: 1, backgroundColor: '#1C2E5C' },
-  flex: { flex: 1 },
+  flex: { flex: 1 ,marginBottom: 10},
 
   headerBar: {
     flexDirection: 'row',
@@ -248,7 +247,6 @@ const styles = StyleSheet.create({
   },
   iconBtn: { width: 36, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { color: '#E7EDF3', fontSize: 18, fontWeight: '700',marginLeft: 'auto',marginRight: 'auto' },
-
   messages: { flex: 1 },
 
   bubble: {
@@ -261,7 +259,6 @@ const styles = StyleSheet.create({
   bubbleLeft: { alignSelf: 'flex-start', backgroundColor: '#FFFFFF' },
   bubbleRight: { alignSelf: 'flex-end', backgroundColor: '#E7EDF3' },
   bubbleText: { color: '#09121A', fontSize: 15, lineHeight: 21 },
-
   readMoreInline: { color: '#A7C2FF', textDecorationLine: 'underline' },
 
   composerRow: {

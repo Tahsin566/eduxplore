@@ -1,8 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView,
-  Image, Alert, ActivityIndicator, Modal, Pressable, KeyboardAvoidingView, Platform
-} from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView,
+  Image, Alert, ActivityIndicator, Modal, Pressable, KeyboardAvoidingView, Platform } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Clipboard from 'expo-clipboard';
 import { addDoc, collection, deleteDoc, doc, onSnapshot, orderBy, query } from 'firebase/firestore';
@@ -14,11 +12,11 @@ import { Ionicons } from '@expo/vector-icons';
 
 export default function Community({ navigation }) {
 
-  // auth / role
+  // role
   const { user } = useUser();
   const { role, profile } = useProfileAndAuth();
 
-  // basic states
+  // states
   const [message, setMessage] = useState('');
   const [loading, setLoading] = useState(true);
   const [image, setImage] = useState(null);
@@ -32,9 +30,6 @@ export default function Community({ navigation }) {
   const [actionOpen, setActionOpen] = useState(false);
   const [selectedMsg, setSelectedMsg] = useState(null);
 
-  // UI-only local hide for “delete” without touching DB
-  const [hiddenIds, setHiddenIds] = useState(new Set());
-
   // safe area
   const insets = useSafeAreaInsets();
 
@@ -44,11 +39,11 @@ export default function Community({ navigation }) {
   // scroll
   const scrollRef = useRef(null);
 
-  // simple composer height calc (kept same behavior)
+  // composer 
   const [composerHeight, setComposerHeight] = useState(58);
 
-  // --- keep jump-to-original but make it beginner-style (use plain objects instead of Map)
-  const positionsRef = useRef({}); // { [id]: y }
+  // jump-to-original 
+  const positionsRef = useRef({});
   const [highlightedId, setHighlightedId] = useState(null);
 
   // subscribe to chat
@@ -126,7 +121,7 @@ export default function Community({ navigation }) {
     return role === 'admin' || (msg && msg.email === myEmail);
   }
 
-  // pick image (basic)
+  // pick image
   const pickImage = async () => {
     const perm = await ImagePicker.requestMediaLibraryPermissionsAsync();
     if (!perm.granted) {
@@ -150,7 +145,7 @@ export default function Community({ navigation }) {
     }
   };
 
-  // upload (kept same)
+  // upload
   const uploadToCloudinary = async () => {
     if (!file) return;
     const formData = new FormData();
@@ -169,7 +164,7 @@ export default function Community({ navigation }) {
     }
   };
 
-  // send (kept same)
+  // send 
   const sendMessage = async () => {
     if ((!message || !message.trim()) && !image) {
       Alert.alert('Please enter a message or pick an image');
@@ -252,7 +247,7 @@ export default function Community({ navigation }) {
     }
   };
 
-  // avatar (kept same)
+  // avatar 
   function resolveAvatar(msg, isMine) {
     if (isMine) {
       return profile?.photo || user?.imageUrl || null;
@@ -268,34 +263,20 @@ export default function Community({ navigation }) {
     }, 1200);
   }
 
-  // jump to original (beginner style: plain object lookups)
-  //complex
+  // jump to original 
   function scrollToOriginal(replyToId, quoteText) {
     if (!scrollRef.current) return;
 
-    if (replyToId && positionsRef.current && positionsRef.current[replyToId] !== undefined) {
-      const y = positionsRef.current[replyToId];
-      const targetY = y > 12 ? y - 12 : 0;
-      scrollRef.current.scrollTo({ y: targetY, animated: true });
-      flashHighlight(replyToId);
-      return;
-    }
+    const targetId = replyToId || messages.find(m => m.message?.includes(quoteText))?.id;
+    
+    if (!targetId || positionsRef.current[targetId] === undefined) return;
 
-    if (quoteText) {
-      const target = messages.find((m) => {
-        const mm = (m && m.message) ? m.message : '';
-        return mm.indexOf(quoteText) !== -1;
-      });
-      if (target && positionsRef.current[target.id] !== undefined) {
-        const y = positionsRef.current[target.id];
-        const targetY = y > 12 ? y - 12 : 0;
-        scrollRef.current.scrollTo({ y: targetY, animated: true });
-        flashHighlight(target.id);
-      }
-    }
+    const targetY = positionsRef.current[targetId] - 12;
+    scrollRef.current.scrollTo({ y: targetY < 0 ? 0 : targetY, animated: true });
+    flashHighlight(targetId);
   }
 
-  // filter (kept same behavior)
+  // filter 
   const shownMessages = messages
     .filter((m) => (m && m.message).toLowerCase().includes(searchQuery.toLowerCase()));
 
@@ -307,11 +288,9 @@ export default function Community({ navigation }) {
     );
   }
 
-  const bottomInsetPad = insets.bottom > 0 ? 4 : 0;
-
   return (
     <KeyboardAvoidingView
-      style={styles.kav}
+      style={styles.BackGround}
       behavior="padding"
       keyboardVerticalOffset={Platform.OS === 'ios' ? 84 : 45}
     >
@@ -521,14 +500,18 @@ export default function Community({ navigation }) {
         {/* Full-screen Image Viewer */}
         <Modal
           transparent
-          visible={viewerUri}
+          visible={viewerUri !== null}
           animationType="fade"
           onRequestClose={() => setViewerUri(null)}
         >
           <Pressable style={styles.viewerBackdrop} onPress={() => setViewerUri(null)}>
-            {viewerUri ? (
-              <Image source={{ uri: viewerUri }} style={styles.viewerImage} resizeMode="contain" />
-            ) : null}
+            {viewerUri && (
+              <Image
+                source={{ uri: viewerUri }}
+                style={styles.viewerImage}
+                resizeMode="contain"
+              />
+            )}
           </Pressable>
         </Modal>
 
@@ -538,15 +521,15 @@ export default function Community({ navigation }) {
 }
 
 const styles = StyleSheet.create({
-  kav: { flex: 1, backgroundColor: '#1C2E5C' },
+  BackGround: { flex: 1, backgroundColor: '#1C2E5C' },
   container: { flex: 1, backgroundColor: '#1C2E5C' },
 
   headerBar: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: 16,
-    paddingTop: 8,
-    paddingBottom: 8
+    marginTop: -5,
+    marginBottom: 5
   },
   iconBtn: { width: 36, alignItems: 'center', justifyContent: 'center' },
   headerTitle: { color: '#E7EDF3', fontSize: 24, fontWeight: '700' },
@@ -645,7 +628,7 @@ const styles = StyleSheet.create({
 
   viewerBackdrop: {
     flex: 1,
-    backgroundColor: 'rgba(0,0,0,0.95)',
+    backgroundColor: '#ffffff',
     justifyContent: 'center',
     alignItems: 'center',
   },

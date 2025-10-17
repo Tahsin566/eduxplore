@@ -1,4 +1,4 @@
-import { and, collection, getDocs, or, query, where } from 'firebase/firestore';
+import { collection, getDocs, or, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, StatusBar } from 'react-native';
 import { db } from '../../firebase.config';
@@ -51,7 +51,7 @@ function SearchResult({ navigation, route }) {
   }, [data]);
 
   return (
-    <View style={styles.root}>
+    <View style={styles.Background}>
       <StatusBar barStyle="light-content" />
       <View style={styles.canvas}>
         {/* Header */}
@@ -105,8 +105,8 @@ function SearchResult({ navigation, route }) {
         </ScrollView>
       </View>
 
-      {/* Footer (fixed) */}
-      <View style={styles.footerWrap}>
+      {/* Footer  */}
+      <View style={styles.footerContainer}>
         <Footer navigation={navigation} />
       </View>
     </View>
@@ -114,7 +114,7 @@ function SearchResult({ navigation, route }) {
 }
 
 const styles = StyleSheet.create({
-  root: {
+  Background: {
     flex: 1,
     backgroundColor: '#1C2E5C',
   },
@@ -187,8 +187,7 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
 
-  // Footer holder
-  footerWrap: {
+  footerContainer: {
     position: 'absolute',
     left: 0,
     right: 0,

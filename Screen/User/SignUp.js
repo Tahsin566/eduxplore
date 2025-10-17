@@ -3,9 +3,6 @@ import { useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StatusBar, StyleSheet, ScrollView, Alert, ActivityIndicator } from 'react-native';
 import Toast from 'react-native-toast-message';
 import { useRole } from '../../auth.context';
-import { db } from '../../firebase.config';
-import { collection, getDocs, query } from 'firebase/firestore';
-
 
 function SignUp({ navigation }) {
 
@@ -13,7 +10,6 @@ function SignUp({ navigation }) {
   const {user,isSignedIn} = useUser()
   const {setActive} = useSignUp()
   const { signUp } = useSignUp();
-
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -90,7 +86,6 @@ function SignUp({ navigation }) {
             placeholderTextColor="#94A3B8"
           />
 
-
           <Text style={styles.label}>EMAIL</Text>
           <TextInput
             style={styles.input}
@@ -109,7 +104,6 @@ function SignUp({ navigation }) {
             secureTextEntry
             onChangeText={setPassword}
           />
-
 
           <Text style={styles.label}>CONFIRM PASSWORD</Text>
           <TextInput

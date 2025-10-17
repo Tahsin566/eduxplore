@@ -1,10 +1,10 @@
-import { StyleSheet, Text, View, Image, TouchableOpacity, Alert } from 'react-native'
+import { StyleSheet, Text, View, Image, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { useProfileAndAuth, useRole } from '../../auth.context'
+import { useProfileAndAuth} from '../../auth.context'
 import { collection, doc, onSnapshot, query, updateDoc, where } from 'firebase/firestore'
 import { db } from '../../firebase.config'
 import { useAuth, useUser } from '@clerk/clerk-expo'
-import { CommonActions, StackActions, useNavigation } from '@react-navigation/native'
+import {useNavigation } from '@react-navigation/native'
 import { Ionicons } from '@expo/vector-icons'
 import * as ImagePicker from 'expo-image-picker';
 

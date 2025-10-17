@@ -1,8 +1,8 @@
-import { collection, getDocs, onSnapshot, query, where } from 'firebase/firestore';
+import { collection, onSnapshot, query, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, TextInput, TouchableOpacity, View, StatusBar } from 'react-native';
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, StatusBar } from 'react-native';
 import { db } from '../../firebase.config';
-import { useProfileAndAuth, useRole } from '../../auth.context';
+import { useProfileAndAuth,} from '../../auth.context';
 import WishlistItem from './WishlistItem';
 import { Ionicons } from '@expo/vector-icons';
 import Footer from '../User/Footer';  
@@ -35,7 +35,7 @@ function WishList({ navigation }) {
   }, []);
 
   return (
-    <View style={styles.root}>
+    <View style={styles.Background}>
       <StatusBar barStyle="light-content" />
       <View style={styles.canvas}>
         {/* Header */}
@@ -51,8 +51,6 @@ function WishList({ navigation }) {
           </TouchableOpacity>
 
           <Text style={styles.headerTitle}>Wish List</Text>
-
-          {/* spacer to keep title centered */}
           <View style={styles.iconBtn} />
         </View>
 
@@ -85,7 +83,7 @@ function WishList({ navigation }) {
         </ScrollView>
       </View>
 
-      {/* Fixed footer */}
+      {/* Fixed  */}
       <View style={styles.footerWrap}>
         <Footer navigation={navigation} />
       </View>
@@ -95,7 +93,7 @@ function WishList({ navigation }) {
 
 export default WishList;
 const styles = StyleSheet.create({
-  root: {
+  Background: {
     flex: 1,
     backgroundColor: '#1C2E5C',
   },

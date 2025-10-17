@@ -1,12 +1,8 @@
-import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, StatusBar, ActivityIndicator, Alert } from 'react-native';
+import { View, Text, TextInput, TouchableOpacity, StyleSheet, Platform, StatusBar, ActivityIndicator } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import UseWeb from '../../hooks/useWeb';
-import { useAuth, useSignIn, useSSO, useUser } from '@clerk/clerk-expo';
-import { useFocusEffect, useNavigation } from '@react-navigation/native';
-import { useCallback, useContext, useEffect, useState } from 'react';
-import { addDoc, collection, getDoc, query, where } from 'firebase/firestore';
-import { db } from '../../firebase.config';
-import { AuthContext, useRole } from '../../auth.context';
+import { useAuth, useSignIn, useSSO} from '@clerk/clerk-expo';
+import { useState } from 'react';
 import { FontAwesome5 } from '@expo/vector-icons';
 import Toast from 'react-native-toast-message';
 
@@ -79,15 +75,14 @@ function SignIn({ navigation }) {
       <View style={styles.container}>
         <StatusBar barStyle="light-content" />
 
-        {/* Logo / Title */}
-        <View style={styles.logoWrap}>
+        {/* Logo & Title */}
+        <View style={styles.logo}>
           <Logo />
           <Text style={styles.header}>Sign in</Text>
         </View>
 
-        {/* Card (same layout, colors adjusted) */}
+        {/* Card  */}
         <View style={styles.card}>
-
           {/* Email */}
           <Text style={styles.label}>Email</Text>
           <TextInput
@@ -114,7 +109,7 @@ function SignIn({ navigation }) {
             <Text style={styles.forgotPassword}>Forgot password</Text>
           </TouchableOpacity>
 
-          {/* Primary Sign In (same size/layout; color changed to white) */}
+          {/* Primary Sign In  */}
           <TouchableOpacity style={styles.primaryBtn} onPress={handleSignIn}>
             {loading ? <ActivityIndicator size="small" color="#fff" /> : <Text style={styles.primaryBtnText}>Sign in</Text>}
           </TouchableOpacity>
@@ -158,8 +153,7 @@ const styles = StyleSheet.create({
     justifyContent: 'flex-start',
   },
 
-  /* Top */
-  logoWrap: {
+  logo: {
     width: '100%',
     alignItems: 'center',
     marginTop: 8,

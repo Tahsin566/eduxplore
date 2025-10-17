@@ -1,4 +1,4 @@
-import { addDoc, collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
+import { collection, doc, getDocs, query, updateDoc, where } from 'firebase/firestore';
 import React, { useEffect, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, StyleSheet, ScrollView, ActivityIndicator } from 'react-native';
 import { useProfileAndAuth } from '../../auth.context';
@@ -8,7 +8,6 @@ import Toast from 'react-native-toast-message';
 
 const EditProfile = ({ navigation }) => {
 
-  
   const { profile } = useProfileAndAuth();
 
   const [name, setName] = useState('');
@@ -92,14 +91,13 @@ const EditProfile = ({ navigation }) => {
 
   return (
     <ScrollView contentContainerStyle={styles.container}>
-      {/* App bar with centered title */}
-      <View style={styles.appbar}>
-        <TouchableOpacity style={styles.appbarSide} onPress={() => navigation.navigate('ViewProfile')}>
+      {/* header */}
+      <View style={styles.Header}>
+        <TouchableOpacity style={styles.backArrow} onPress={() => navigation.navigate('ViewProfile')}>
           <Ionicons name="chevron-back" size={24} color="#EAF2FA" />
         </TouchableOpacity>
-        <Text style={styles.appbarTitle}>Profile Settings</Text>
-        {/* spacer to keep the title centered */}
-        <View style={styles.appbarSide} />
+        <Text style={styles.HeaderTitle}>Profile Settings</Text>
+        <View style={styles.backArrow} />
       </View>
 
       <View style={styles.form}>
@@ -129,7 +127,7 @@ const EditProfile = ({ navigation }) => {
           <Text style={styles.inputText}>{groupSSC || 'Select Science, Commerce or Arts'}</Text>
         </TouchableOpacity>
         {showGroupSSCPicker && (
-          <View style={styles.pickerCardRight}>
+          <View style={styles.picker}>
             {['Science', 'Commerce', 'Arts'].map((option) => (
               <TouchableOpacity
                 key={option}
@@ -150,7 +148,7 @@ const EditProfile = ({ navigation }) => {
           <Text style={styles.inputText}>{groupHSC || 'Select Science, Commerce or Arts'}</Text>
         </TouchableOpacity>
         {showGroupHSCPicker && (
-          <View style={styles.pickerCardRight}>
+          <View style={styles.picker}>
             {['Science', 'Commerce', 'Arts'].map((option) => (
               <TouchableOpacity
                 key={option}
@@ -194,11 +192,11 @@ const EditProfile = ({ navigation }) => {
         />
 
         <TouchableOpacity
-          style={[styles.saveBtn, { opacity: isFormChanged() ? 1 : 0.45 }]}
+          style={[styles.saveButton, { opacity: isFormChanged() ? 1 : 0.45 }]}
           disabled={!isFormChanged()}
           onPress={handleSave}
         >
-          {loading ? <ActivityIndicator size="small" color="#000" />:<Text style={styles.saveBtnText}>Save Changes</Text>}
+          {loading ? <ActivityIndicator size="small" color="#000" />:<Text style={styles.saveButtonText}>Save Changes</Text>}
         </TouchableOpacity>
       </View>
     </ScrollView>
@@ -215,15 +213,15 @@ const styles = StyleSheet.create({
     paddingBottom: 24
   },
 
-  appbar: {
+  Header: {
     paddingHorizontal: 12,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between'
 
   },
-  appbarSide: { width: 28, alignItems: 'center', justifyContent: 'center' },
-  appbarTitle: { color: '#EAF2FA', fontSize: 20, fontWeight: '700' },
+  backArrow: { width: 28, alignItems: 'center', justifyContent: 'center' },
+  HeaderTitle: { color: '#EAF2FA', fontSize: 20, fontWeight: '700' },
 
   form: {
     width: '86%',
@@ -248,7 +246,7 @@ const styles = StyleSheet.create({
   },
   inputText: { color: '#1F2937' },
 
-  pickerCardRight: {
+  picker: {
     alignSelf: 'flex-end',
     backgroundColor: '#FFFFFF',
     borderRadius: 6,
@@ -262,15 +260,16 @@ const styles = StyleSheet.create({
   },
   option: { paddingVertical: 8, paddingHorizontal: 10 },
   optionText: { color: '#1F2937', fontSize: 12 },
-  saveBtn: {
+  saveButton: {
     backgroundColor: '#FFFFFF',
     borderRadius: 6,
     height: 36,
     alignItems: 'center',
     justifyContent: 'center',
+    marginLeft:85,
     marginTop: 18,
     marginBottom: 24,
-    width: '100%',
+    width: '50%',
   },
-  saveBtnText: { color: '#0F172A', fontWeight: '700', fontSize: 12 },
+  saveButtonText: { color: '#0F172A', fontWeight: '700', fontSize: 12 },
 });

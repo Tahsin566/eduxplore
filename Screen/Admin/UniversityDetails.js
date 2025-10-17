@@ -12,7 +12,7 @@ import Markdown from 'react-native-markdown-display';
 import Toast from 'react-native-toast-message';
 
 
-export default function UniversityDetails({ route }) {
+export default function UniversityOverview({ route }) {
 
   const { profile, role } = useProfileAndAuth()
   const navigation = useNavigation();

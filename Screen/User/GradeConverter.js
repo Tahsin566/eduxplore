@@ -5,9 +5,9 @@ import Footer from '../User/Footer';
 export default function Menu({ navigation }) {
   return (
     <View style={styles.container}>
-      {/* Header with back chevron and centered title */}
+      {/* Header */}
       <View style={styles.headerBar}>
-        <TouchableOpacity onPress={() => navigation.replace('Home')} style={styles.backBtn}>
+        <TouchableOpacity onPress={() => navigation.replace('Home')} style={styles.backButton}>
           <Ionicons name="chevron-back" size={24} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.headerText}>Grade Converter</Text>
@@ -15,62 +15,55 @@ export default function Menu({ navigation }) {
       </View>
 
       <ScrollView contentContainerStyle={styles.scroll}>
-        {/* VPD Card */}
+        {/* VPD */}
         <View style={styles.card}>
           <View style={styles.iconTile}>
             <Ionicons name="calculator" size={24} color="#FFFFFF" />
           </View>
           <Text style={styles.cardTitle}>VPD Calculator</Text>
-          <Text style={styles.cardSub}>
+          <Text style={styles.cardContent}>
             Calculate your  VPD{'\n'}
             (Vorprüfungsdokumentation) for{'\n'}
             German university
           </Text>
           <TouchableOpacity
-            style={styles.cta}
+            style={styles.calculateButton}
             onPress={() => navigation.navigate('VPDCalculator')}
             activeOpacity={0.85}
           >
-            <Text style={styles.ctaText}>Calculate VPD</Text>
+            <Text style={styles.calculateButtonText}>Calculate VPD</Text>
           </TouchableOpacity>
         </View>
 
-        {/* ECTS Card */}
+        {/* ECTS  */}
         <View style={styles.card}>
           <View style={styles.iconTile}>
             <Ionicons name="pie-chart" size={24} color="#FFFFFF" />
           </View>
           <Text style={styles.cardTitle}>ECTS Calculator</Text>
-          <Text style={styles.cardSub}>
-            Calculate your  VPD{'\n'}
-            (Vorprüfungsdokumentation) for{'\n'}
-            German university
+          <Text style={styles.cardContent}>
+            Calculate your  ECTS{'\n'}
           </Text>
           <TouchableOpacity
-            style={styles.cta}
+            style={styles.calculateButton}
             onPress={() => navigation.navigate('ECTSCalculator')}
             activeOpacity={0.85}
           >
-            <Text style={styles.ctaText}>Calculate ECTS</Text>
+            <Text style={styles.calculateButtonText}>Calculate ECTS</Text>
           </TouchableOpacity>
         </View>
       </ScrollView>
 
-      {/* Footer nav */}
-      <View style={styles.footerWrap}>
+      {/* Footer */}
+      <View style={styles.footerContainer}>
         <Footer navigation={navigation} />
       </View>
     </View>
   );
 }
 
-const NAVY = '#1C2E5C';
-const CARD_BG = '#E9EEF3';
-const TILE_BG = '#6C5CE7';
-const CTA_BG = '#4C6EF5';
-
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: NAVY },
+  container: { flex: 1, backgroundColor: '#1C2E5C' },
   headerBar: {
     marginBottom: 16,
     paddingHorizontal: 16,
@@ -78,14 +71,13 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'space-between',
   },
-  backBtn: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
-  backTxt: { color: '#FFFFFF', fontSize: 26, lineHeight: 26, marginTop: -2 },
+  backButton: { width: 24, height: 24, alignItems: 'center', justifyContent: 'center' },
   headerText: { color: '#FFFFFF', fontSize: 20, fontWeight: '700',marginLeft: -1 },
 
   scroll: { paddingHorizontal: 16, paddingBottom: 20 },
 
   card: {
-    backgroundColor: CARD_BG,
+    backgroundColor: '#E9EEF3',
     borderRadius: 10,
     padding: 16,
     marginTop: 16,
@@ -99,7 +91,7 @@ const styles = StyleSheet.create({
     width: 56,
     height: 56,
     borderRadius: 12,
-    backgroundColor: TILE_BG,
+    backgroundColor: '#6C5CE7',
     alignItems: 'center',
     justifyContent: 'center',
     alignSelf: 'center',
@@ -112,23 +104,26 @@ const styles = StyleSheet.create({
     textAlign: 'left',
     marginTop: 4,
   },
-  cardSub: {
+  cardContent: {
     color: '#5B6B7A',
     fontSize: 12,
     marginTop: 6,
     lineHeight: 16,
   },
-  cta: {
+  calculateButton: {
     alignSelf: 'flex-start',
-    backgroundColor: CTA_BG,
+    backgroundColor: '#4C6EF5',
     marginTop: 12,
     borderRadius: 8,
     paddingVertical: 10,
     paddingHorizontal: 14,
   },
-  ctaText: { color: '#FFFFFF', fontWeight: '700' },
+  calculateButtonText: { color: '#FFFFFF', fontWeight: '700' },
 
-  footerWrap: {
-    borderTopWidth: 0,
+    footerContainer: {
+    position: 'absolute',
+    left: 0,
+    right: 0,
+    bottom: 0,
   },
 });

@@ -1,10 +1,13 @@
 import { createStackNavigator } from '@react-navigation/stack';
-
-
+import { StatusBar } from 'expo-status-bar';
+import { View } from 'react-native';
+import { useRole } from './auth.context.js';
+import Loading from './components/loading.js';
+//user
 import SignIn from './Screen/User/SignIn.js';
 import SignUp from './Screen/User/SignUp.js';
 import Home from './Screen/User/Home.js';
-import ProfileSettings from './Screen/User/EditProfile.js';
+import EditProfile from './Screen/User/EditProfile.js';
 import GradeConverter from './Screen/User/GradeConverter.js';
 import ECTSCalculator from './Screen/User/ECTSCalculator.js';
 import VPDCalculator from './Screen/User/VPDCalculator.js';
@@ -15,34 +18,27 @@ import Result from './Screen/User/Result.js';
 import Community from './Screen/User/Community.js';
 import ViewProfile from './Screen/User/ViewProfile.js';
 import LOMChecker from './Screen/User/LOM.js';
-
+import ForgotPassword from './Screen/User/ForgotPassword.js';
 //admin
 import AdminRolesScreen from './Screen/Admin/RolesScreen.js';
 import BachelorList from './Screen/Admin/BachelorList.js';
 import MastersList from './Screen/Admin/MastersList.js';
 import UpdateWebinar from './Screen/Admin/UpdateWebinar.js';
 import RegisteredList from './Screen/Admin/RegisteredList.js'
-import UniversityDetails from './Screen/User/UniversityDetails.js'
+import UniversityDetails from './Screen/Admin/UniversityDetails.js'
 import AddUniDetails from './Screen/Admin/AddUniDetails.js'
 import UpdateUniDetails from './Screen/Admin/UpdateUniDetails.js'
 import Notification from './Screen/User/Notification.js';
 import HomeScreen from './Screen/Admin/HomeScreen.js';
 import UniversityList from './Screen/Admin/UniversityList.js';
 import ManageAccount from './Screen/Admin/ManageAccount.js';
-import Loading from './components/loading.js';
 import AdminNotification from './Screen/Admin/AdminNotification.js';
 import PHDList from './Screen/Admin/phdList.js';
-import { StatusBar } from 'expo-status-bar';
-import { View } from 'react-native';
-import { useRole } from './auth.context.js';
 import AddWebinar from './Screen/Admin/AddWebinar.js';
 import Webinars from './Screen/Admin/Webinars.js';
-import ForgotPassword from './Screen/User/ForgotPassword.js';
 import SendNotification from './Screen/Admin/SendNotification.js';
 
-
 const Stack = createStackNavigator();
-
 
 export default function AppNavigator() {
 
@@ -61,7 +57,7 @@ export default function AppNavigator() {
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="Home" component={Home} />
         <Stack.Screen name="SignUp" component={SignUp} />
-        <Stack.Screen name="ProfileSettings" component={ProfileSettings} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="ViewProfile" component={ViewProfile} />
         <Stack.Screen name="LOM" component={LOMChecker} />
         <Stack.Screen name="GradeConverter" component={GradeConverter} />
@@ -88,7 +84,7 @@ export default function AppNavigator() {
         <Stack.Screen name="SendNotification" component={SendNotification} />
         <Stack.Screen name="Webinars" component={Webinars} />
         <Stack.Screen name="ManageAccounts" component={ManageAccount} />
-        <Stack.Screen name="forgot" component={ForgotPassword} />
+        <Stack.Screen name="ForgotPassword" component={ForgotPassword} />
         <Stack.Screen name="AdminNotification" component={AdminNotification} />
       </Stack.Navigator>
     </>

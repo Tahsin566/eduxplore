@@ -41,7 +41,7 @@ export default function VPDCalculator({ navigation }) {
 
       <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
         {/* Level picker */}
-        <Text style={styles.label}>Calculating VPD For</Text>
+        <Text style={styles.inputfieldTitle}>Calculating VPD For</Text>
         <TouchableOpacity style={styles.dropdown} onPress={() => setShowDropdown(!showDropdown)}>
           <Text style={styles.dropdownText}>{level}</Text>
         </TouchableOpacity>
@@ -63,7 +63,7 @@ export default function VPDCalculator({ navigation }) {
         )}
 
         {/* Inputs */}
-        <Text style={styles.label}>Current CGPA</Text>
+        <Text style={styles.inputfieldTitle}>Current CGPA</Text>
         <TextInput
           style={styles.input}
           keyboardType="decimal-pad"
@@ -73,7 +73,7 @@ export default function VPDCalculator({ navigation }) {
 
         {level === 'Bachelor' && (
           <>
-            <Text style={styles.label}>HSC Grade</Text>
+            <Text style={styles.inputfieldTitle}>HSC Grade</Text>
             <TextInput
               style={styles.input}
               keyboardType="decimal-pad"
@@ -83,7 +83,7 @@ export default function VPDCalculator({ navigation }) {
           </>
         )}
 
-        <Text style={styles.label}>Maximum Possible CGPA</Text>
+        <Text style={styles.inputfieldTitle}>Maximum Possible CGPA</Text>
         <TextInput
           style={styles.input}
           keyboardType="decimal-pad"
@@ -91,7 +91,7 @@ export default function VPDCalculator({ navigation }) {
           onChangeText={setMaxCgpa}
         />
 
-        <Text style={styles.label}>Minimum Possible CGPA</Text>
+        <Text style={styles.inputfieldTitle}>Minimum Possible CGPA</Text>
         <TextInput
           style={styles.input}
           keyboardType="decimal-pad"
@@ -100,9 +100,9 @@ export default function VPDCalculator({ navigation }) {
         />
 
         {/* Calculate button (blue, with icon) */}
-        <TouchableOpacity style={styles.calcBtn} onPress={calculateVPD} activeOpacity={0.85}>
+        <TouchableOpacity style={styles.CalculateButton} onPress={calculateVPD} activeOpacity={0.85}>
           <Ionicons name="calculator" size={16} color="#fff" style={{ marginRight: 6 }} />
-          <Text style={styles.calcBtnText}>Calculate VPD</Text>
+          <Text style={styles.ButtonText}>Calculate VPD</Text>
         </TouchableOpacity>
 
         {/* Result */}
@@ -133,22 +133,20 @@ export default function VPDCalculator({ navigation }) {
           ))}
         </View>
 
-        {/* bottom padding so content isn't hidden by footer */}
         <View style={{ height: 16 }} />
       </ScrollView>
 
       {/* Footer */}
-      <View style={styles.footerWrap}>
+      <View style={styles.footerContainer}>
         <Footer navigation={navigation} />
       </View>
     </View>
   );
 }
 
-const NAVY = '#1C2E5C';
 
 const styles = StyleSheet.create({
-  screen: { flex: 1, backgroundColor: NAVY },
+  screen: { flex: 1, backgroundColor: '#1C2E5C' },
   topBar: {
     paddingHorizontal: 16,
     flexDirection: 'row',
@@ -161,7 +159,7 @@ const styles = StyleSheet.create({
 
   content: { paddingHorizontal: 16, paddingBottom: 8 },
 
-  label: { color: '#FFFFFF', fontSize: 14, marginTop: 12, marginBottom: 6 },
+  inputfieldTitle: { color: '#FFFFFF', fontSize: 14, marginTop: 12, marginBottom: 6 },
 
   dropdown: {
     flexDirection: 'row',
@@ -186,7 +184,7 @@ const styles = StyleSheet.create({
     color: '#000',
   },
 
-  calcBtn: {
+  CalculateButton: {
     alignSelf: 'center',
     marginTop: 16,
     backgroundColor: '#4C6EF5',
@@ -196,7 +194,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  calcBtnText: { color: '#FFFFFF', fontSize: 14, fontWeight: '700' },
+  ButtonText: { color: '#FFFFFF', fontSize: 14, fontWeight: '700' },
 
   resultLabel: { color: '#FFFFFF', fontSize: 14, marginTop: 18, marginBottom: 6 },
 
@@ -218,9 +216,9 @@ const styles = StyleSheet.create({
     backgroundColor: '#FFFFFF',
     fontSize: 12,
   },
-  headerCell: { color: '#FFFFFF', fontWeight: '700', backgroundColor: NAVY },
+  headerCell: { color: '#FFFFFF', fontWeight: '700', backgroundColor: '#1C2E5C' },
 
-  footerWrap: {
+  footerContainer: {
     borderTopWidth: 0,
   },
 });
