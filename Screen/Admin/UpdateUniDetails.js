@@ -52,35 +52,35 @@ export default function UpdateUniDetails({ route }) {
 
     if(input === 'overview' || input === 'requirements' || input === 'about') {
       if (!markDown.test(name)) {
-        Toast.show({ text1: 'Invalid details', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        Toast.show({ text1: 'Invalid details', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
         return
       }
     }
 
     if(input === 'name' || input === 'person' || input === 'designation' || input === 'address' || input === 'language') {
       if (!stringRegex.test(name)) {
-        Toast.show({ text1: 'Invalid person details', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        Toast.show({ text1: 'Invalid person details', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
         return
       }
     }
 
     if(input === 'email') {
       if (!emailRegex.test(name)) {
-        Toast.show({ text1: 'Invalid email', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        Toast.show({ text1: 'Invalid email', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
         return
       }
     }
 
     if(input === 'ieltsScore') {
       if (!Number(name)) {
-        Toast.show({ text1: 'Invalid IELTS score', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        Toast.show({ text1: 'Invalid IELTS score', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
         return
       }
     }
 
     if(input === 'fee'){
       if(!Number(tutionFee)){
-        Toast.show({ text1: 'Invalid tution fee', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        Toast.show({ text1: 'Invalid tution fee', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
         return
       }
     }
@@ -138,7 +138,7 @@ export default function UpdateUniDetails({ route }) {
       return data?.secure_url
 
     } catch (error) {
-      Toast.show({ text1: 'Error uploading image', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Error uploading image', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return ''
     }
   };

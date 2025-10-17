@@ -60,10 +60,10 @@ function SignUp({ navigation }) {
 
     } catch (error) {
       setLoading(false);
-      Toast.show({ text1: error.message, type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 13 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: error.message, type: 'error',  text1Style: { color: 'red', fontSize: 13 }, autoHide: true, visibilityTime: 1000 })
 
       if (error.message.includes('Password has been found in an online data breach')) {
-        Toast.show({ text1: 'Password is weak, use a strong password', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 12 }, autoHide: true, visibilityTime: 1000 })
+        Toast.show({ text1: 'Password is weak, use a strong password', type: 'error',  text1Style: { color: 'red', fontSize: 12 }, autoHide: true, visibilityTime: 1000 })
       }
     }
   };

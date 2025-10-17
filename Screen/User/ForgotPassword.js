@@ -24,7 +24,7 @@ const ForgotPassword = ({ navigation }) => {
 
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
     if (!emailRegex.test(email)) {
-      Toast.show({ text1: 'Invalid email', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Invalid email', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 
@@ -36,7 +36,7 @@ const ForgotPassword = ({ navigation }) => {
       setSuccessfulCreation(true)
       setError('')
     } catch (err) {
-      Toast.show({ text1: 'Error resetting password', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Error resetting password', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   }
 
@@ -58,12 +58,12 @@ const ForgotPassword = ({ navigation }) => {
 
       if (result.status === 'complete') {
         await setActive({ session: result.createdSessionId })
-        Toast.show({ text1: 'Successfull', type: 'success', topOffset: -10, text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        Toast.show({ text1: 'Successfull', type: 'success',  text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       } else {
-        Toast.show({ text1: 'Failed', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+        Toast.show({ text1: 'Failed', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       }
     } catch (err) {
-      Toast.show({ text1: 'Error resetting password', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Error resetting password', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   }
 

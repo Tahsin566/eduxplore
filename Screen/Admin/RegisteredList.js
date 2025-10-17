@@ -48,7 +48,7 @@ const sendEmail = async () => {
     body: `Hello user, please click on the link below to join the webinar ${link}`
   });
   if(result.status === 'sent'){
-    Toast.show({ text1: 'Email sent successfully', type: 'success', topOffset: -10, text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+    Toast.show({ text1: 'Email sent successfully', type: 'success',  text1Style: { color: 'green', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
   }
 };   
 

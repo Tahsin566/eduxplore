@@ -23,7 +23,7 @@ export default function AdminNotification() {
     try {
       await deleteDoc(doc(db, "notification", id));
     } catch (error) {
-      Toast.show({ text1: 'Error deleting notification', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Error deleting notification', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
     }
   }
 

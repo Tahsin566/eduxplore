@@ -116,7 +116,7 @@ export default function AddUniDetails() {
       website &&
       ieltsScore
     )){
-      Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'All fields are required', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 
@@ -140,7 +140,7 @@ export default function AddUniDetails() {
     }
 
     if(!Number(ieltsScore)){
-      Toast.show({ text1: 'IELTS score should be a number', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'IELTS score should be a number', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 

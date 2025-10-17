@@ -40,14 +40,14 @@ export default function UpdateWebinar({ route }) {
   const updateWebinar = async () => {
 
     if (!topic || !date || !guest || !description) {
-      Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'All fields are required', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 
     const stringRegex = /^[A-Z]+[a-zA-Z0-9 .,]*/;
 
     if (!stringRegex.test(topic) || !stringRegex.test(guest) || !stringRegex.test(description)) {
-      Toast.show({ text1: 'Invalid details', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Invalid details', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 

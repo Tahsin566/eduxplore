@@ -26,12 +26,12 @@ export default function SendNotification() {
     const stringRegex = /^[A-Z]{1}[a-zA-Z0-9 .,]*/;
 
     if(!(message && recipient)) {
-      Toast.show({ text1: 'All fields are required', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'All fields are required', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 
     if (!stringRegex.test(message)) {
-      Toast.show({ text1: 'Invalid message', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Invalid message', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 
