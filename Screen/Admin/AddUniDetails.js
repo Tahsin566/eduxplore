@@ -45,7 +45,6 @@ export default function AddUniDetails() {
       Toast.show({
         type: 'error',
         text1: 'Permission to access media library is required!',
-        topOffset: -10,
         text1Style: { color: 'red', fontSize: 16 },
         autoHide: true,
         visibilityTime: 1000
@@ -91,7 +90,7 @@ export default function AddUniDetails() {
       return data?.secure_url
 
     } catch (error) {
-      Toast.show({ text1: 'Error uploading image', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Error uploading image', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return ''
     }
   };
@@ -126,17 +125,17 @@ export default function AddUniDetails() {
     const markDown = /[a-zA-Z0-9 -\.,#\*]/;
 
     if (!stringRegex.test(name) || !stringRegex.test(person) || !stringRegex.test(designation) || !stringRegex.test(address) || !stringRegex.test(language)) {
-      Toast.show({ text1: 'Invalid person details', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Invalid person details', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 
     if (!emailRegex.test(email)) {
-      Toast.show({ text1: 'Invalid email', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Invalid email', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 
     if(!markDown.test(overView) || !markDown.test(requirements) || !markDown.test(AboutUniversity)){
-      Toast.show({ text1: 'Invalid details', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Invalid details', type: 'error',  text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 
@@ -146,7 +145,7 @@ export default function AddUniDetails() {
     }
 
     if(!Number(tutionFee)){
-      Toast.show({ text1: 'Tution fee should be a number', type: 'error', topOffset: -10, text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
+      Toast.show({ text1: 'Tution fee should be a number', type: 'error', text1Style: { color: 'red', fontSize: 16 }, autoHide: true, visibilityTime: 1000 })
       return
     }
 

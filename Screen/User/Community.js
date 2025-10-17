@@ -250,9 +250,9 @@ export default function Community({ navigation }) {
   // avatar 
   function resolveAvatar(msg, isMine) {
     if (isMine) {
-      return profile?.photo || user?.imageUrl || null;
+      return profile?.photo || user?.imageUrl || 'https://imgs.search.brave.com/4nHCavnFNTf_v5ApJD7Yl9uyyGDD4pMOEqlx3WEFY_U/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMjE0/OTkyMjI2Ny92ZWN0/b3IvdXNlci1pY29u/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz1pNmpZUGZCMXBX/aks4cGxsNllSeEFL/OWZnQm1mNjUtdzV3/YktIOVIxZHlRPQ';
     }
-    return msg && msg.photo ? msg.photo : null;
+    return msg && msg.photo ? msg.photo : 'https://imgs.search.brave.com/4nHCavnFNTf_v5ApJD7Yl9uyyGDD4pMOEqlx3WEFY_U/rs:fit:500:0:1:0/g:ce/aHR0cHM6Ly9tZWRp/YS5nZXR0eWltYWdl/cy5jb20vaWQvMjE0/OTkyMjI2Ny92ZWN0/b3IvdXNlci1pY29u/LmpwZz9zPTYxMng2/MTImdz0wJms9MjAm/Yz1pNmpZUGZCMXBX/aks4cGxsNllSeEFL/OWZnQm1mNjUtdzV3/YktIOVIxZHlRPQ';
   }
 
   // simple highlight timer
@@ -547,7 +547,7 @@ const styles = StyleSheet.create({
     width: 34, height: 34, borderRadius: 17, backgroundColor: '#b0bec5',
     alignItems: 'center', justifyContent: 'center'
   },
-  avatarLetter: { color: '#1F2933', fontWeight: '700' },
+  avatarLetter: { color: 'red', fontWeight: '700' },
 
   messageBubble: {
     padding: 8,
